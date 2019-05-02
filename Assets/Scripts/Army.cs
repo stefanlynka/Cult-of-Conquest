@@ -1,0 +1,91 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Army : MonoBehaviour
+{
+    public bool selected = false;
+    public static GameObject highlightFog;
+
+    public Race race;
+    public GameObject currentNode;
+    public GameObject map;
+    public bool mouseOverArmy = false;
+    public int maxMoves = 2;
+    public int movesLeft = 2;
+
+
+
+    // Start is called before the first frame update
+    void Start(){
+        map = GameObject.Find("/Map");
+    }
+
+    // Update is called once per frame
+    void Update(){
+        Inputs();
+    }
+
+    private void OnMouseEnter() {
+        mouseOverArmy = true;
+    }
+
+    private void OnMouseExit() {
+        mouseOverArmy = false;
+    }
+
+    public void HighlightNodes(GameObject node, int distance) {
+        List<GameObject> neighbours = node.GetComponent<Node>().Neighbours;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            if (neighbour.GetComponent<Node>().occupiable) {
+                neighbour.GetComponent<Node>().Highlight();
+                if (distance > 1 && neighbour.GetComponent<Node>().owner == race) {
+                    HighlightNodes(neighbour, distance - 1);
+                }
+            }
+        }
+    }
+    public void Inputs() {
+        if (Input.GetMouseButtonDown(0)) {
+        }
+    }
+    private void OnMouseDown() {
+        Player.armyClicked = gameObject;
+    }
+
+    public void UnhighlightNodes() {
+        map.GetComponent<NodeManager>().UnhighlightNodes();
+    }
+    public void Select() {
+        selected = true;
+        transform.localScale *= 2;
+        HighlightNodes(currentNode, movesLeft);
+    }
+    public void Deselect() {
+        print("deselected");
+        selected = false;
+        transform.localScale *= 0.5f;
+        UnhighlightNodes();
+    }
+    public void MoveToNode(GameObject destination) {
+        currentNode.GetComponent<Node>().occupied = false;
+        currentNode.GetComponent<Node>().occupant = null;
+        transform.position = new Vector3(destination.transform.position.x, destination.transform.position.y, transform.position.z);
+        currentNode = destination;
+        destination.GetComponent<Node>().owner = race;
+        destination.GetComponent<Node>().occupied = true;
+        destination.GetComponent<Node>().occupant = gameObject;
+    }
+}
+
+public enum Race {
+    Noumenon,
+    Dukkha,
+    Paratrophs,
+    Unmar,
+    Eidalons,
+    Carnot,
+    Independent,
+    None
+}
