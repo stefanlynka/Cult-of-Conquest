@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NodeManager : MonoBehaviour
 {
-    public List<GameObject> Nodes = new List<GameObject>();
+    public List<GameObject> nodes = new List<GameObject>();
 
     float nodeDistance = 0.7f;
     float nodeDistanceBuffer = 0.2f;
@@ -26,8 +26,8 @@ public class NodeManager : MonoBehaviour
     }
 
     void LabelNodes() {
-        for (int i = 0; i < Nodes.Count; i++) {
-            GameObject node = Nodes[i];
+        for (int i = 0; i < nodes.Count; i++) {
+            GameObject node = nodes[i];
             SetNodeNeighbours(node);
         }
     }
@@ -36,7 +36,7 @@ public class NodeManager : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++) {
             GameObject node = transform.GetChild(i).gameObject;
             if (node.GetComponent<Node>()) {
-                Nodes.Add(node);
+                nodes.Add(node);
             }
         }
     }
@@ -52,35 +52,34 @@ public class NodeManager : MonoBehaviour
     }
 
     void SituateNeighbours(GameObject node, GameObject otherNode) {
-        node.GetComponent<Node>().Neighbours.Add(otherNode);
+        node.GetComponent<Node>().neighbours.Add(otherNode);
         if (otherNode.transform.localPosition.y >= node.transform.localPosition.y) {
             if (Mathf.Abs(node.transform.localPosition.x - otherNode.transform.localPosition.x) < nodeDistanceBuffer) {
-                node.GetComponent<Node>().NeighbourUp = otherNode;
+                node.GetComponent<Node>().neighbourUp = otherNode;
             }
             else if ((node.transform.localPosition.x + nodeDistanceBuffer) < otherNode.transform.localPosition.x) {
-                node.GetComponent<Node>().NeighbourUpRight = otherNode;
+                node.GetComponent<Node>().neighbourUpRight = otherNode;
             }
             else {
-                node.GetComponent<Node>().NeighbourUpLeft = otherNode;
+                node.GetComponent<Node>().neighbourUpLeft = otherNode;
             }
         }
         else {
             if (Mathf.Abs(node.transform.localPosition.x - otherNode.transform.localPosition.x) < nodeDistanceBuffer) {
-                node.GetComponent<Node>().NeighbourDown = otherNode;
+                node.GetComponent<Node>().neighbourDown = otherNode;
             }
             else if ((node.transform.localPosition.x + nodeDistanceBuffer) < otherNode.transform.localPosition.x) {
-                node.GetComponent<Node>().NeighbourDownRight = otherNode;
+                node.GetComponent<Node>().neighbourDownRight = otherNode;
             }
             else {
-                node.GetComponent<Node>().NeighbourDownLeft = otherNode;
+                node.GetComponent<Node>().neighbourDownLeft = otherNode;
             }
         }
     }
 
     public void UnhighlightNodes() {
-        print("nodes getting unhighlighted");
-        for (int i = 0; i  < Nodes.Count; i++) {
-            GameObject node = Nodes[i];
+        for (int i = 0; i  < nodes.Count; i++) {
+            GameObject node = nodes[i];
             node.GetComponent<Node>().Unhighlight();
         }
     }

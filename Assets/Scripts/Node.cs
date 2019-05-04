@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
-    public List<GameObject> Neighbours = new List<GameObject>();
-    public GameObject NeighbourUpLeft;
-    public GameObject NeighbourUp;
-    public GameObject NeighbourUpRight;
-    public GameObject NeighbourDownLeft;
-    public GameObject NeighbourDown;
-    public GameObject NeighbourDownRight;
+    public List<GameObject> neighbours = new List<GameObject>();
+    public GameObject neighbourUpLeft;
+    public GameObject neighbourUp;
+    public GameObject neighbourUpRight;
+    public GameObject neighbourDownLeft;
+    public GameObject neighbourDown;
+    public GameObject neighbourDownRight;
+
+    public GameObject nodeMenu;
 
     public int moneyIncome = 1;
     public int zealIncome = 0;
@@ -32,7 +34,7 @@ public class Node : MonoBehaviour
 
     // Start is called before the first frame update
     void Start(){
-        
+        nodeMenu = GameObject.Find("/Node Menu");
     }
 
     // Update is called once per frame
@@ -41,12 +43,11 @@ public class Node : MonoBehaviour
     }
 
     public void Highlight() {
-        if (!highlighted) transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z-20);
+        if (!highlighted) transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z-10);
         highlighted = true;
     }
     public void Unhighlight() {
-        print("unhighlighted");
-        if (highlighted) transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 20);
+        if (highlighted) transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 10);
         highlighted = false;
     }
 
@@ -58,15 +59,17 @@ public class Node : MonoBehaviour
         */
     }
     private void OnMouseDown() {
-        print("clicked");
         Player.nodeClicked = gameObject;
-        /*
-        if (Player.selectedArmy && highlighted) {
-            print("newNode");
-            Player.selectedArmy.GetComponent<Army>().currentNode = gameObject;
-            Player.selectedArmy.GetComponent<Army>().Deselect();
+    }
+    private void OnMouseOver() {
+        if (Input.GetMouseButtonDown(1)) {
+            //nodeMenu.GetComponent<NodeMenu>().EnterMenu(gameObject);
+            Player.nodeClicked = gameObject;
         }
-        */
+    }
+    public GameObject GetOccupant() {
+        if (occupant) return occupant;
+        else return null;
     }
 }
 

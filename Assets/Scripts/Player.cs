@@ -6,17 +6,24 @@ public class Player : MonoBehaviour
 {
     public static GameObject highlightFog;
 
-    public List<GameObject> Armies = new List<GameObject>();
+    public List<GameObject> armies = new List<GameObject>();
     public bool isArmySelected = false;
     public static GameObject selectedArmy;
     public static GameObject nodeClicked;
-    public static GameObject armyClicked;
+    public static GameObject armyLeftClicked;
+    public static GameObject armyRightClicked;
+    public static GameObject nodeMenu;
+
+    public int money = 100;
 
     // Start is called before the first frame update
     void Start(){
         highlightFog = GameObject.Find("/Highlight");
-        highlightFog.transform.position = new Vector3(0, 0, 0);
+        highlightFog.transform.position = new Vector3(0, 0, 10);
         highlightFog.SetActive(false);
+        armies.Add(GameObject.Find("/Army Blue"));
+        armies.Add(GameObject.Find("/Army Red"));
+        nodeMenu = GameObject.Find("/Node Menu");
     }
 
     // Update is called once per frame
@@ -30,8 +37,8 @@ public class Player : MonoBehaviour
 
     void CheckSelected() {
         isArmySelected = false;
-        for (int i = 0; i < Armies.Count; i++) {
-            GameObject army = Armies[i];
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
             if (army.GetComponent<Army>().selected) {
                 isArmySelected = true;
                 selectedArmy = army;
@@ -43,57 +50,66 @@ public class Player : MonoBehaviour
     }
 
     public void ImplementClicks() {
-        print("Node clicked: " + nodeClicked);
-        if (armyClicked && armyClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted) {
-            nodeClicked = armyClicked.GetComponent<Army>().currentNode;
+        //print("Node clicked: " + nodeClicked);
+        if (armyLeftClicked && armyLeftClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted) {
+            nodeClicked = armyLeftClicked.GetComponent<Army>().currentNode;
         }
         if (nodeClicked && nodeClicked.GetComponent<Node>().highlighted && isArmySelected) {
-            print("Moving army");
+            //print("Moving army");
             attackNode(selectedArmy, nodeClicked);
             selectedArmy.GetComponent<Army>().Deselect();
-            if (armyClicked) print("also moving other army");
+            //if (armyClicked) print("also moving other army");
         }
-        else if (armyClicked) {
+        else if (armyLeftClicked) {
             if (!selectedArmy) {
-                armyClicked.GetComponent<Army>().Select();
-                print("new army selected");
+                armyLeftClicked.GetComponent<Army>().Select();
+                //print("new army selected");
             }
             else {
-                print("no army selected, deselecting");
+                //print("no army selected, deselecting");
                 selectedArmy.GetComponent<Army>().Deselect();
-                if (armyClicked != selectedArmy) {
-                    print("different army, selecting new one");
-                    armyClicked.GetComponent<Army>().Select();
-                    selectedArmy = armyClicked;
+                if (armyLeftClicked != selectedArmy) {
+                    //print("different army, selecting new one");
+                    armyLeftClicked.GetComponent<Army>().Select();
+                    selectedArmy = armyLeftClicked;
                 }
             }
         }
         else if (selectedArmy && Input.GetMouseButtonDown(0)) {
-            print("clicked on anything else, deselecting");
+            //print("clicked on anything else, deselecting");
             selectedArmy.GetComponent<Army>().Deselect();
         }
-        armyClicked = null;
+
+        if (Input.GetMouseButtonDown(1)) {
+            if (!nodeMenu.GetComponent<NodeMenu>().open) {
+                if (nodeClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeClicked);
+                if (armyRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
+            }
+            else {
+                nodeMenu.GetComponent<NodeMenu>().ExitMenu();
+            }
+        }
+
+        armyLeftClicked = null;
+        armyRightClicked = null;
         nodeClicked = null;
     }
 
     public void attackNode(GameObject army, GameObject node) {
         if (node.GetComponent<Node>().occupiable) {
             if (!node.GetComponent<Node>().occupied) {
-                print("moving in freely");
+                //print("moving in freely");
                 army.GetComponent<Army>().MoveToNode(node);
             }
             else {
-                print("node occupied");
+                //print("node occupied");
                 GameObject otherArmy = node.GetComponent<Node>().occupant;
                 if (army.GetComponent<Army>().race != army.GetComponent<Army>().race) {
-                    print("attack!");
+                    //print("attack!");
                 }
                 else {
-                    print("change places");
+                    //print("change places");
                     switchNodes(army, army.GetComponent<Army>().currentNode, otherArmy, node);
-                    //otherArmy.GetComponent<Army>().MoveToNode(army.GetComponent<Army>().currentNode);
-                    //army.GetComponent<Army>().MoveToNode(node);
-
                 }
             }
         }
