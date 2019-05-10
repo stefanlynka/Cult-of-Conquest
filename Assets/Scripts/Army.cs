@@ -26,7 +26,6 @@ public class Army : MonoBehaviour
 
     // Update is called once per frame
     void Update(){
-        Inputs();
     }
 
     private void OnMouseEnter() {
@@ -36,12 +35,16 @@ public class Army : MonoBehaviour
     private void OnMouseExit() {
         mouseOverArmy = false;
     }
+    private void OnMouseOver() {
+        if (Input.GetMouseButtonDown(0)) {
+            Player.armyLeftClicked = gameObject;
+        }
+        if (Input.GetMouseButtonDown(1)) {
+            Player.armyRightClicked = gameObject;
+        }
+    }
 
     void SetStartingUnits() {
-        backRow[0] = new MapUnit();
-        backRow[0].name = "commander";
-        backRow[1] = new MapUnit();
-        frontRow[2] = new MapUnit();
     }
 
     public void HighlightNodes(GameObject node, int distance) {
@@ -54,23 +57,6 @@ public class Army : MonoBehaviour
                     HighlightNodes(neighbour, distance - 1);
                 }
             }
-        }
-    }
-    public void Inputs() {
-        if (Input.GetMouseButtonDown(0)) {
-        }
-    }
-    /*
-    private void OnMouseDown() {
-        Player.armyClicked = gameObject;
-    }
-    */
-    private void OnMouseOver() {
-        if (Input.GetMouseButtonDown(0)) {
-            Player.armyLeftClicked = gameObject;
-        }
-        if (Input.GetMouseButtonDown(1)) {
-            Player.armyRightClicked = gameObject;
         }
     }
 
@@ -99,6 +85,11 @@ public class Army : MonoBehaviour
         destination.GetComponent<Node>().owner = race;
         destination.GetComponent<Node>().occupied = true;
         destination.GetComponent<Node>().occupant = gameObject;
+    }
+
+    public void addUnit(int index, bool row, MapUnit unit) {
+        if (row) frontRow[index] = unit;
+        else backRow[index] = unit;
     }
 }
 

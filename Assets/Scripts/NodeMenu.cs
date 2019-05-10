@@ -5,6 +5,7 @@ using UnityEngine;
 public class NodeMenu : MonoBehaviour
 {
     GameObject currentNode;
+    public static GameObject currentArmy;
     GameObject[] backRowSpaces = new GameObject[5];
     GameObject[] frontRowSpaces = new GameObject[5];
 
@@ -24,8 +25,8 @@ public class NodeMenu : MonoBehaviour
         GetComponent<Panner>().SetTarget(new Vector3(0, 0, -10));
         print("node = " + node);
         print("occupant = "+node.GetComponent<Node>().GetOccupant());
-        GameObject army = node.GetComponent<Node>().GetOccupant();
-        if (army) LoadArmy(army);
+        currentArmy = node.GetComponent<Node>().GetOccupant();
+        if (currentArmy) LoadArmy();
         open = true;
     }
 
@@ -35,18 +36,17 @@ public class NodeMenu : MonoBehaviour
         open = false;
     }
 
-    void LoadArmy(GameObject army) {
-        MapUnit[] backUnits = army.GetComponent<Army>().backRow;
-        MapUnit[] frontUnits = army.GetComponent<Army>().frontRow;
+    public void LoadArmy() {
+        print("Loading Army");
+        MapUnit[] backUnits = currentArmy.GetComponent<Army>().backRow;
+        MapUnit[] frontUnits = currentArmy.GetComponent<Army>().frontRow;
         for (int i = 0; i < backUnits.Length; i++) {
             if (backUnits[i] != null) {
-                print("got a back");
                 FillUnitSpace(backRowSpaces[i], backUnits[i]);
             }
         }
         for (int i = 0; i < frontUnits.Length; i++) {
             if (frontUnits[i] != null) {
-                print("got a front");
                 FillUnitSpace(frontRowSpaces[i], frontUnits[i]);
             }
         }
@@ -59,11 +59,19 @@ public class NodeMenu : MonoBehaviour
         GameObject frontRow = Tools.GetChildNamed(unitRows, "Front Row");
         for (int i = 0; i < backRow.transform.childCount; i++) {
             GameObject unitSpace = Tools.GetChildNamed(backRow, "Unit Space " + i);
-            if (unitSpace) backRowSpaces[i] = unitSpace;
+            if (unitSpace) {
+                unitSpace.GetComponent<UnitSpace>().position = i;
+                unitSpace.GetComponent<UnitSpace>().frontRow = false;
+                backRowSpaces[i] = unitSpace;
+            }
         }
         for (int i = 0; i < frontRow.transform.childCount; i++) {
             GameObject unitSpace = Tools.GetChildNamed(frontRow, "Unit Space " + i);
-            if (unitSpace) frontRowSpaces[i] = unitSpace;
+            if (unitSpace) {
+                unitSpace.GetComponent<UnitSpace>().position = i;
+                unitSpace.GetComponent<UnitSpace>().frontRow = true;
+                frontRowSpaces[i] = unitSpace;
+            }
         }
     }
 
@@ -73,7 +81,7 @@ public class NodeMenu : MonoBehaviour
         GameObject Portrait = Tools.GetChildNamed(unitSpace, "Portrait");
         NameText.GetComponent<TextMesh>().text = unit.name;
         HealthText.GetComponent<TextMesh>().text = "HP: " + unit.currentHealth + "/" + unit.maxHealth;
-        Portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Portraits/" + unit.portraitName);
+        Portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Races/" + unit.race + "/Portrait/" + unit.portraitName);
     }
 
     void CleanUnitSpaces() {

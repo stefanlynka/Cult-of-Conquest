@@ -9,22 +9,33 @@ public class MapUnit
     public string portraitName = "zergling";
 
     public int maxHealth = 100;
-    public int currentHealth = 80;
+    public int currentHealth;
     public int damage = 10;
     public int attackRange = 2;
-    public float attackSpeed = 1.0f;
+    public int attackSpeed = 60;
     public string ability = "Whack";
 
-    public int cost = 10;
+    public int moneyCost = 10;
+    public int zealCost = 0;
+    public int power;
 
+    public MapUnit(string newName, Race newRace, string portrait) {
+        name = newName;
+        race = newRace;
+        portraitName = portrait;
+    }
 
     // Start is called before the first frame update
     void Start(){
-        
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
     void Update(){
         
+    }
+    public void SetHealth(int newHealth) {
+        maxHealth = newHealth;
+        currentHealth = maxHealth;
     }
 }
