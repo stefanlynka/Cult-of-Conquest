@@ -41,10 +41,9 @@ public class UnitShopSpace : MonoBehaviour
 
 
     private void OnMouseDown() {
-        print("buying unit");
-        NodeMenu.currentArmy.GetComponent<Army>().addUnit(UnitSpace.currentUnitPos.position, UnitSpace.currentUnitPos.frontRow, unit);
-        nodeMenu.GetComponent<NodeMenu>().LoadArmy();
-        unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
+        if (Player.money >= unit.moneyCost && Player.zeal >= unit.zealCost) {
+            BuyUnit();
+        }
     }
 
     public void AddUnit(MapUnit newUnit) {
@@ -54,5 +53,14 @@ public class UnitShopSpace : MonoBehaviour
         zealCost.GetComponent<TextMesh>().text = unit.zealCost.ToString();
         unitName.GetComponent<TextMesh>().text = unit.name;
         unitPower.GetComponent<TextMesh>().text = unit.power.ToString();
+    }
+    public void BuyUnit() {
+        print("buying unit");
+        NodeMenu.currentArmy.GetComponent<Army>().addUnit(UnitSpace.currentUnitPos.position, UnitSpace.currentUnitPos.frontRow, unit);
+        nodeMenu.GetComponent<NodeMenu>().LoadArmy();
+        unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
+        UnitSpace.buyingMenuOpen = false;
+        Player.money -= unit.moneyCost;
+        Player.zeal -= unit.zealCost;
     }
 }

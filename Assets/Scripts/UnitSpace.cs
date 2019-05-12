@@ -23,9 +23,12 @@ public class UnitSpace : MonoBehaviour
     }
     private void OnMouseDown() {
         //if (!buyingMenuOpen) {
-        unitBuyingMenu.GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
-        currentUnitSpace = gameObject;
-        currentUnitPos = new unitPos(position, frontRow);
+        if (NodeMenu.currentNode.GetComponent<Node>().occupied) {
+            unitBuyingMenu.GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
+            currentUnitSpace = gameObject;
+            currentUnitPos = new unitPos(position, frontRow);
+            buyingMenuOpen = true;
+        }
         //buyingMenuOpen = true;
         /*
         }

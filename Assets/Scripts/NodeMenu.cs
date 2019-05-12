@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NodeMenu : MonoBehaviour
 {
-    GameObject currentNode;
+    public static GameObject currentNode;
     public static GameObject currentArmy;
     GameObject[] backRowSpaces = new GameObject[5];
     GameObject[] frontRowSpaces = new GameObject[5];
@@ -22,6 +22,7 @@ public class NodeMenu : MonoBehaviour
     }
 
     public void EnterMenu(GameObject node) {
+        currentNode = node;
         GetComponent<Panner>().SetTarget(new Vector3(0, 0, -10));
         print("node = " + node);
         print("occupant = "+node.GetComponent<Node>().GetOccupant());

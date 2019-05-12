@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
     public static GameObject armyRightClicked;
     public static GameObject nodeMenu;
 
-    public int money = 100;
+    public static int money = 100;
+    public static int zeal = 0;
 
     // Start is called before the first frame update
     void Start(){
@@ -81,11 +82,11 @@ public class Player : MonoBehaviour
         }
 
         if (Input.GetMouseButtonDown(1)) {
-            if (!nodeMenu.GetComponent<NodeMenu>().open) {
+            if (!nodeMenu.GetComponent<NodeMenu>().open && !UnitSpace.buyingMenuOpen) {
                 if (nodeClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeClicked);
                 if (armyRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
             }
-            else {
+            else if (!UnitSpace.buyingMenuOpen){
                 nodeMenu.GetComponent<NodeMenu>().ExitMenu();
             }
         }
