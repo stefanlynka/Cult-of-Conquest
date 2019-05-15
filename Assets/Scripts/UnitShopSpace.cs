@@ -55,11 +55,11 @@ public class UnitShopSpace : MonoBehaviour
         unitPower.GetComponent<TextMesh>().text = unit.power.ToString();
     }
     public void BuyUnit() {
-        print("buying unit");
+        //print("buying unit");
         NodeMenu.currentArmy.GetComponent<Army>().addUnit(UnitSpace.currentUnitPos.position, UnitSpace.currentUnitPos.frontRow, unit);
         nodeMenu.GetComponent<NodeMenu>().LoadArmy();
         unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
-        UnitSpace.buyingMenuOpen = false;
+        Player.menuOpen = false;
         Player.money -= unit.moneyCost;
         Player.zeal -= unit.zealCost;
     }

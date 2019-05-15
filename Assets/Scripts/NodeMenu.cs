@@ -24,8 +24,8 @@ public class NodeMenu : MonoBehaviour
     public void EnterMenu(GameObject node) {
         currentNode = node;
         GetComponent<Panner>().SetTarget(new Vector3(0, 0, -10));
-        print("node = " + node);
-        print("occupant = "+node.GetComponent<Node>().GetOccupant());
+        //print("node = " + node);
+        //print("occupant = "+node.GetComponent<Node>().GetOccupant());
         currentArmy = node.GetComponent<Node>().GetOccupant();
         if (currentArmy) LoadArmy();
         open = true;
@@ -38,7 +38,7 @@ public class NodeMenu : MonoBehaviour
     }
 
     public void LoadArmy() {
-        print("Loading Army");
+        //print("Loading Army");
         MapUnit[] backUnits = currentArmy.GetComponent<Army>().backRow;
         MapUnit[] frontUnits = currentArmy.GetComponent<Army>().frontRow;
         for (int i = 0; i < backUnits.Length; i++) {

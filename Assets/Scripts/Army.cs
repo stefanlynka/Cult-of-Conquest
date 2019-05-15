@@ -14,6 +14,7 @@ public class Army : MonoBehaviour
     public int maxMoves = 2;
     public int movesLeft = 2;
 
+    public MapUnit[] units = new MapUnit[10];
     public MapUnit[] backRow = new MapUnit[5];
     public MapUnit[] frontRow = new MapUnit[5];
 
@@ -64,14 +65,14 @@ public class Army : MonoBehaviour
         map.GetComponent<NodeManager>().UnhighlightNodes();
     }
     public void Select() {
-        print("selected");
+        //print("selected");
         selected = true;
         transform.localScale *= 2;
         //transform.position = new Vector3(transform.position.x, transform.position.y, -20);
         HighlightNodes(currentNode, movesLeft);
     }
     public void Deselect() {
-        print("deselected");
+        //print("deselected");
         selected = false;
         transform.localScale *= 0.5f;
         //transform.position = new Vector3(transform.position.x, transform.position.y, -1);
@@ -88,18 +89,17 @@ public class Army : MonoBehaviour
     }
 
     public void addUnit(int index, bool row, MapUnit unit) {
-        if (row) frontRow[index] = unit;
-        else backRow[index] = unit;
+        MapUnit newUnit = unit.DeepCopy();
+        if (row) frontRow[index] = newUnit;
+        else backRow[index] = newUnit;
+        //units
+    }
+
+    public void Defeated() {
+        currentNode.GetComponent<Node>().occupant = null;
+        currentNode.GetComponent<Node>().occupied = false;
+        Destroy(gameObject);
     }
 }
 
-public enum Race {
-    Noumenon,
-    Dukkha,
-    Paratrophs,
-    Unmar,
-    Eidalons,
-    Carnot,
-    Independent,
-    None
-}
+

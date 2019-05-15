@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapUnit
 {
-    public string name = "Unit";
+    public string name = "";
     public Race race = Race.Independent;
     public string portraitName = "zergling";
 
@@ -14,6 +14,7 @@ public class MapUnit
     public int attackRange = 2;
     public int attackSpeed = 60;
     public string ability = "Whack";
+    //public int priorityForAttacking
 
     public int moneyCost = 10;
     public int zealCost = 0;
@@ -37,5 +38,16 @@ public class MapUnit
     public void SetHealth(int newHealth) {
         maxHealth = newHealth;
         currentHealth = maxHealth;
+    }
+    public MapUnit DeepCopy() {
+        MapUnit copy = new MapUnit(name, race, portraitName);
+        copy.SetHealth(maxHealth);
+        copy.damage = damage;
+        copy.attackRange = attackRange;
+        copy.attackSpeed = attackSpeed;
+        copy.moneyCost = moneyCost;
+        copy.zealCost = zealCost;
+        copy.power = power;
+        return copy;
     }
 }

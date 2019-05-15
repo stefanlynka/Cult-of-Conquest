@@ -28,4 +28,7 @@ public class Tools {
         render.sortingOrder = sortingOrder;
         return text;
     }
+    public static int SortByTime(Cooldown c1, Cooldown c2) {
+        return c1.timeToAct.CompareTo(c2.timeToAct);
+    }
 }

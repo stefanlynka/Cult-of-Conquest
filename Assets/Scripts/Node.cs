@@ -46,7 +46,7 @@ public class Node : MonoBehaviour
     }
 
     public void Highlight() {
-        print("highlighted: "+ gameObject);
+        //print("highlighted: "+ gameObject);
         if (!highlighted) transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z-10);
         highlighted = true;
     }
@@ -111,6 +111,7 @@ public class Node : MonoBehaviour
                     occupant.GetComponent<Army>().addUnit(0, false, prelate);
                     break;
             }
+            occupant.transform.parent = GameObject.Find("/Neutral Armies").transform;
         }
     }
 
@@ -163,22 +164,4 @@ case Race.Noumenon:
     MakeNoumenon();
     break;
 */
-
-
-
-public enum Altar {
-    Harvest,
-    Devotion,
-    Conflict,
-    Fate,
-    None
-}
-
-public enum Church {
-    Protection,
-    Armaments,
-    Tradition,
-    Origin,
-    None
-}
 

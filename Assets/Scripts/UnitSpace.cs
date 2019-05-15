@@ -7,10 +7,11 @@ public class UnitSpace : MonoBehaviour
     GameObject unitBuyingMenu;
     public static bool buyingMenuOpen = false;
     public static GameObject currentUnitSpace;
-    public static unitPos currentUnitPos;
+    public static UnitPos currentUnitPos;
 
     public int position;
     public bool frontRow;
+    public bool shop = false;
 
     // Start is called before the first frame update
     void Start(){
@@ -21,31 +22,29 @@ public class UnitSpace : MonoBehaviour
     void Update(){
         
     }
+
     private void OnMouseDown() {
         //if (!buyingMenuOpen) {
-        if (NodeMenu.currentNode.GetComponent<Node>().occupied) {
-            unitBuyingMenu.GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
-            currentUnitSpace = gameObject;
-            currentUnitPos = new unitPos(position, frontRow);
-            buyingMenuOpen = true;
+        if (shop) {
+            //print("occupied = " + NodeMenu.currentNode.GetComponent<Node>().occupied);
+            if (NodeMenu.currentNode.GetComponent<Node>().occupied) {
+                unitBuyingMenu.GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
+                currentUnitSpace = gameObject;
+                currentUnitPos = new UnitPos(position, frontRow);
+                Player.menuOpen = true;
+            }
+            //buyingMenuOpen = true;
+            /*
+            }
+            else {
+                unitBuyingMenu.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
+                currentUnitSpace = null;
+                buyingMenuOpen = false;
+            }
+            */
         }
-        //buyingMenuOpen = true;
-        /*
-        }
-        else {
-            unitBuyingMenu.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
-            currentUnitSpace = null;
-            buyingMenuOpen = false;
-        }
-        */
+        //if ()
     }
 
 }
-public struct unitPos{
-    public int position;
-    public bool frontRow;
-    public unitPos(int pos, bool row) {
-        position = pos;
-        frontRow = row;
-    }
-}
+

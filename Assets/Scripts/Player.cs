@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     public static GameObject armyLeftClicked;
     public static GameObject armyRightClicked;
     public static GameObject nodeMenu;
+    public static GameObject battleMenu;
+    public static bool menuOpen = false;
 
     public static int money = 100;
     public static int zeal = 0;
@@ -25,6 +27,7 @@ public class Player : MonoBehaviour
         armies.Add(GameObject.Find("/Army Blue"));
         armies.Add(GameObject.Find("/Army Red"));
         nodeMenu = GameObject.Find("/Node Menu");
+        battleMenu = GameObject.Find("/Battle Menu");
     }
 
     // Update is called once per frame
@@ -39,10 +42,12 @@ public class Player : MonoBehaviour
     void CheckSelected() {
         isArmySelected = false;
         for (int i = 0; i < armies.Count; i++) {
-            GameObject army = armies[i];
-            if (army.GetComponent<Army>().selected) {
-                isArmySelected = true;
-                selectedArmy = army;
+            if (armies[i] != null) {
+                GameObject army = armies[i];
+                if (army.GetComponent<Army>().selected) {
+                    isArmySelected = true;
+                    selectedArmy = army;
+                }
             }
         }
         if (!isArmySelected) selectedArmy = null;
@@ -56,7 +61,7 @@ public class Player : MonoBehaviour
             nodeClicked = armyLeftClicked.GetComponent<Army>().currentNode;
         }
         if (nodeClicked && nodeClicked.GetComponent<Node>().highlighted && isArmySelected) {
-            //print("Moving army");
+            print("Moving army");
             attackNode(selectedArmy, nodeClicked);
             selectedArmy.GetComponent<Army>().Deselect();
             //if (armyClicked) print("also moving other army");
@@ -82,11 +87,11 @@ public class Player : MonoBehaviour
         }
 
         if (Input.GetMouseButtonDown(1)) {
-            if (!nodeMenu.GetComponent<NodeMenu>().open && !UnitSpace.buyingMenuOpen) {
+            if (!nodeMenu.GetComponent<NodeMenu>().open && !menuOpen) {
                 if (nodeClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeClicked);
                 if (armyRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
             }
-            else if (!UnitSpace.buyingMenuOpen){
+            else if (!menuOpen) {
                 nodeMenu.GetComponent<NodeMenu>().ExitMenu();
             }
         }
@@ -105,16 +110,29 @@ public class Player : MonoBehaviour
             else {
                 //print("node occupied");
                 GameObject otherArmy = node.GetComponent<Node>().occupant;
-                if (army.GetComponent<Army>().race != army.GetComponent<Army>().race) {
-                    //print("attack!");
+                if (army.GetComponent<Army>().race != otherArmy.GetComponent<Army>().race) {
+                    Invade(army, otherArmy);
+                    print("attack!");
                 }
                 else {
-                    //print("change places");
+                    print("change places");
                     switchNodes(army, army.GetComponent<Army>().currentNode, otherArmy, node);
                 }
             }
         }
         //army.GetComponent<Army>().movesLeft -= 1;
+    }
+
+    public void Invade(GameObject attackingArmy, GameObject defendingArmy) {
+        menuOpen = true;
+        battleMenu.GetComponent<BattleMenu>().EnterMenu();
+        GameObject attackArmyMenu = Tools.GetChildNamed(battleMenu, "Attacking Army Menu");
+        GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
+        attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
+        battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingArmy, nodeClicked);
+        attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
     }
 
     public void switchNodes(GameObject army1, GameObject node1, GameObject army2, GameObject node2) {
