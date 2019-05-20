@@ -28,6 +28,7 @@ public class NodeMenu : MonoBehaviour
         //print("occupant = "+node.GetComponent<Node>().GetOccupant());
         currentArmy = node.GetComponent<Node>().GetOccupant();
         if (currentArmy) LoadArmy();
+        LoadAltar();
         open = true;
     }
 
@@ -50,6 +51,22 @@ public class NodeMenu : MonoBehaviour
             if (frontUnits[i] != null) {
                 FillUnitSpace(frontRowSpaces[i], frontUnits[i]);
             }
+        }
+    }
+
+    public void LoadAltar() {
+        if (currentNode.GetComponent<Node>().altar != null) {
+            Altar altar = currentNode.GetComponent<Node>().altar;
+            GameObject locationMenu = Tools.GetChildNamed(gameObject, "Location Menu");
+            GameObject altarSpace = Tools.GetChildNamed(locationMenu, "Altar Space");
+            GameObject titleText = Tools.GetChildNamed(altarSpace, "Altar Title Text");
+            GameObject altarSprite = Tools.GetChildNamed(altarSpace, "Altar Sprite");
+            GameObject descriptionText = Tools.GetChildNamed(altarSpace, "Altar Description Text");
+            
+            titleText.GetComponent<TextMesh>().text = altar.name;
+            print("Altars/Altar of " + altar.portrait);
+            altarSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Altars/Altar of " + altar.portrait);
+            descriptionText.GetComponent<TextMesh>().text = altar.description;
         }
     }
 

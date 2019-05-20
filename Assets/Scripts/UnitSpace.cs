@@ -24,7 +24,6 @@ public class UnitSpace : MonoBehaviour
     }
 
     private void OnMouseDown() {
-        //if (!buyingMenuOpen) {
         if (shop) {
             //print("occupied = " + NodeMenu.currentNode.GetComponent<Node>().occupied);
             if (NodeMenu.currentNode.GetComponent<Node>().occupied) {
@@ -33,17 +32,7 @@ public class UnitSpace : MonoBehaviour
                 currentUnitPos = new UnitPos(position, frontRow);
                 Player.menuOpen = true;
             }
-            //buyingMenuOpen = true;
-            /*
-            }
-            else {
-                unitBuyingMenu.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
-                currentUnitSpace = null;
-                buyingMenuOpen = false;
-            }
-            */
         }
-        //if ()
     }
 
 }

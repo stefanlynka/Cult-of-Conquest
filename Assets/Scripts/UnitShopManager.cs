@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitShopManager : MonoBehaviour {
+
     GameObject army;
     Race currentRace;
     int unitSpaceCount = 4;
     GameObject[] unitSpaces;
+
     // Start is called before the first frame update
     void Start() {
         initializeMembers();
@@ -26,8 +28,11 @@ public class UnitShopManager : MonoBehaviour {
             if (unitSpace) unitSpaces[i] = unitSpace;
         }
 
-        army = NodeMenu.currentArmy;
-        if (army) currentRace = army.GetComponent<Army>().race;
+        currentRace = Player.race;
+
+        transform.parent.gameObject.GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
+        //army = NodeMenu.currentArmy;
+        //if (army) currentRace = army.GetComponent<Army>().race;
     }
 
     private void MakeUnits(Race race) {

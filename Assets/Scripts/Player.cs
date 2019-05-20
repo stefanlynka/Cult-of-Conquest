@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public static GameObject highlightFog;
+    public static Race race;
 
     public List<GameObject> armies = new List<GameObject>();
     public bool isArmySelected = false;
@@ -18,6 +19,10 @@ public class Player : MonoBehaviour
 
     public static int money = 100;
     public static int zeal = 0;
+
+    public void Awake() {
+        race = Race.Noumenon;
+    }
 
     // Start is called before the first frame update
     void Start(){

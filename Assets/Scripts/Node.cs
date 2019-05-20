@@ -31,8 +31,8 @@ public class Node : MonoBehaviour
 
 
     public string effigy = "";
-    public Church church = Church.None;
-    public Altar altar = Altar.None;
+    //public Church church;
+    public Altar altar;
 
 
 
@@ -113,6 +113,10 @@ public class Node : MonoBehaviour
             }
             occupant.transform.parent = GameObject.Find("/Neutral Armies").transform;
         }
+    }
+
+    public void BuildAltar(Altar newAltar) {
+        altar = newAltar.DeepCopy();
     }
 
     MapUnit MakeNeutralUnit(string unitType) {

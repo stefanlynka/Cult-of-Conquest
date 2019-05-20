@@ -55,14 +55,14 @@ public struct UnitPos {
 
 
 // For Node
-public enum Altar {
+public enum AltarName {
     Harvest,
     Devotion,
     Conflict,
     Fate,
     None
 }
-public enum Church {
+public enum ChurchName {
     Protection,
     Armaments,
     Tradition,
