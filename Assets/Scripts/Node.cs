@@ -31,7 +31,7 @@ public class Node : MonoBehaviour
 
 
     public string effigy = "";
-    //public Church church;
+    public Temple temple;
     public Altar altar;
 
 
@@ -117,6 +117,10 @@ public class Node : MonoBehaviour
 
     public void BuildAltar(Altar newAltar) {
         altar = newAltar.DeepCopy();
+    }
+
+    public void BuildTemple(Temple newTemple) {
+        temple = newTemple.DeepCopy();
     }
 
     MapUnit MakeNeutralUnit(string unitType) {

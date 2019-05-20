@@ -70,6 +70,22 @@ public class NodeMenu : MonoBehaviour
         }
     }
 
+    public void LoadTemple() {
+        if (currentNode.GetComponent<Node>().temple != null) {
+            Temple temple = currentNode.GetComponent<Node>().temple;
+            GameObject locationMenu = Tools.GetChildNamed(gameObject, "Location Menu");
+            GameObject templeSpace = Tools.GetChildNamed(locationMenu, "Temple Space");
+            GameObject titleText = Tools.GetChildNamed(templeSpace, "Temple Title Text");
+            GameObject templeSprite = Tools.GetChildNamed(templeSpace, "Temple Sprite");
+            GameObject descriptionText = Tools.GetChildNamed(templeSpace, "Temple Description Text");
+
+            titleText.GetComponent<TextMesh>().text = temple.name;
+            print("Temples/Temple of " + temple.portrait);
+            templeSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Temples/Temple of " + temple.portrait);
+            descriptionText.GetComponent<TextMesh>().text = temple.description;
+        }
+    }
+
     void FindUnitSpaces() {
         GameObject armyMenu = Tools.GetChildNamed(gameObject, "Army Menu");
         GameObject unitRows = Tools.GetChildNamed(armyMenu, "Unit Rows");

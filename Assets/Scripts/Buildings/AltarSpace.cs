@@ -18,9 +18,7 @@ public class AltarSpace : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        print("Altar space clicked");
         if (Player.menuOpen==false) {
-            print("altar space happening");
             altarBuyingMenu.GetComponent<AltarShopManager>().EnterMenu();
             currentAltarSpace = gameObject;
             Player.menuOpen = true;
