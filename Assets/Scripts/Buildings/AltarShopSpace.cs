@@ -19,7 +19,6 @@ public class AltarShopSpace : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        print("Altar Shop Space clicked");
         if (Player.money >= altar.cost) {
             BuyAltar();
         }
@@ -35,7 +34,6 @@ public class AltarShopSpace : MonoBehaviour{
     }
     
     public void SetAltar(Altar newAltar) {
-        print("setup altar shop space");
         altar = newAltar;
         altarName.GetComponent<TextMesh>().text = altar.name;
         cost.GetComponent<TextMesh>().text = altar.cost.ToString();
