@@ -220,6 +220,8 @@ public class BattleMenu : MonoBehaviour{
             attackArmy.GetComponent<Army>().Defeated();
         }
         else if (defenders.Count == 0) {
+            defendArmy.GetComponent<Army>().owner.GetComponent<Player>().RemoveNode(battleNode);
+            attackArmy.GetComponent<Army>().owner.GetComponent<Player>().AddNode(battleNode);
             defendArmy.GetComponent<Army>().Defeated();
             attackArmy.GetComponent<Army>().MoveToNode(battleNode);
         }

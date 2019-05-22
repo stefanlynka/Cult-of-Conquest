@@ -10,6 +10,7 @@ public class Army : MonoBehaviour
     public Race race;
     public GameObject currentNode;
     public GameObject map;
+    public GameObject owner;
     public bool mouseOverArmy = false;
     public int maxMoves = 2;
     public int movesLeft = 2;
@@ -46,6 +47,7 @@ public class Army : MonoBehaviour
     }
 
     void SetStartingUnits() {
+        owner = TurnManager.human;
     }
 
     public void HighlightNodes(GameObject node, int distance) {
@@ -99,6 +101,10 @@ public class Army : MonoBehaviour
         currentNode.GetComponent<Node>().occupant = null;
         currentNode.GetComponent<Node>().occupied = false;
         Destroy(gameObject);
+    }
+
+    public void Refresh() {
+        movesLeft = maxMoves;
     }
 }
 

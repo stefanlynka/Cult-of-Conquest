@@ -29,6 +29,7 @@ public class NodeMenu : MonoBehaviour
         currentArmy = node.GetComponent<Node>().GetOccupant();
         if (currentArmy) LoadArmy();
         LoadAltar();
+        LoadTemple();
         open = true;
     }
 
@@ -64,13 +65,13 @@ public class NodeMenu : MonoBehaviour
             GameObject descriptionText = Tools.GetChildNamed(altarSpace, "Altar Description Text");
             
             titleText.GetComponent<TextMesh>().text = altar.name;
-            print("Altars/Altar of " + altar.portrait);
             altarSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Altars/Altar of " + altar.portrait);
             descriptionText.GetComponent<TextMesh>().text = altar.description;
         }
     }
 
     public void LoadTemple() {
+        print("Temple Loading");
         if (currentNode.GetComponent<Node>().temple != null) {
             Temple temple = currentNode.GetComponent<Node>().temple;
             GameObject locationMenu = Tools.GetChildNamed(gameObject, "Location Menu");
@@ -80,7 +81,6 @@ public class NodeMenu : MonoBehaviour
             GameObject descriptionText = Tools.GetChildNamed(templeSpace, "Temple Description Text");
 
             titleText.GetComponent<TextMesh>().text = temple.name;
-            print("Temples/Temple of " + temple.portrait);
             templeSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Temples/Temple of " + temple.portrait);
             descriptionText.GetComponent<TextMesh>().text = temple.description;
         }
@@ -141,5 +141,23 @@ public class NodeMenu : MonoBehaviour
                 Portrait.GetComponent<SpriteRenderer>().sprite = null;
             }
         }
+        GameObject locationMenu = Tools.GetChildNamed(gameObject, "Location Menu");
+        GameObject altarSpace = Tools.GetChildNamed(locationMenu, "Altar Space");
+        GameObject templeSpace = Tools.GetChildNamed(locationMenu, "Temple Space");
+
+        GameObject titleText = Tools.GetChildNamed(altarSpace, "Altar Title Text");
+        GameObject altarSprite = Tools.GetChildNamed(altarSpace, "Altar Sprite");
+        GameObject descriptionText = Tools.GetChildNamed(altarSpace, "Altar Description Text");
+        titleText.GetComponent<TextMesh>().text = "Altar";
+        altarSprite.GetComponent<SpriteRenderer>().sprite = null;
+        descriptionText.GetComponent<TextMesh>().text = "Click to\nbuild Altar";
+
+        titleText = Tools.GetChildNamed(templeSpace, "Temple Title Text");
+        GameObject templeSprite = Tools.GetChildNamed(templeSpace, "Temple Sprite");
+        descriptionText = Tools.GetChildNamed(templeSpace, "Temple Description Text");
+        titleText.GetComponent<TextMesh>().text = "Temple";
+        templeSprite.GetComponent<SpriteRenderer>().sprite = null;
+        descriptionText.GetComponent<TextMesh>().text = "Click to\nbuild Temple";
+
     }
 }

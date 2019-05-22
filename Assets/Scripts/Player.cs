@@ -5,8 +5,9 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public static GameObject highlightFog;
-    public static Race race;
+    public Race race = Race.Noumenon;
 
+    public List<GameObject> ownedNodes = new List<GameObject>();
     public List<GameObject> armies = new List<GameObject>();
     public bool isArmySelected = false;
     public static GameObject selectedArmy;
@@ -17,22 +18,15 @@ public class Player : MonoBehaviour
     public static GameObject battleMenu;
     public static bool menuOpen = false;
 
-    public static int money = 100;
-    public static int zeal = 0;
+    public int money = 100;
+    public int zeal = 0;
 
     public void Awake() {
-        race = Race.Noumenon;
     }
 
     // Start is called before the first frame update
     void Start(){
-        highlightFog = GameObject.Find("/Highlight");
-        highlightFog.transform.position = new Vector3(0, 0, 10);
-        highlightFog.SetActive(false);
-        armies.Add(GameObject.Find("/Army Blue"));
-        armies.Add(GameObject.Find("/Army Red"));
-        nodeMenu = GameObject.Find("/Node Menu");
-        battleMenu = GameObject.Find("/Battle Menu");
+        InitializeMembers();
     }
 
     // Update is called once per frame
@@ -42,6 +36,21 @@ public class Player : MonoBehaviour
 
     private void LateUpdate() {
         ImplementClicks();
+    }
+
+    private void InitializeMembers() {
+        highlightFog = GameObject.Find("/Highlight");
+        highlightFog.transform.position = new Vector3(0, 0, 10);
+        highlightFog.SetActive(false);
+        armies.Add(GameObject.Find("/Army Blue"));
+        armies.Add(GameObject.Find("/Army Red"));
+        nodeMenu = GameObject.Find("/Node Menu");
+        battleMenu = GameObject.Find("/Battle Menu");
+
+        for (int i = 0; i < NodeManager.nodes.Count; i++) {
+            GameObject node = NodeManager.nodes[i];
+            if (node.GetComponent<Node>().owner == race) ownedNodes.Add(node);
+        }
     }
 
     void CheckSelected() {
@@ -62,24 +71,28 @@ public class Player : MonoBehaviour
 
     public void ImplementClicks() {
         //print("Node clicked: " + nodeClicked);
+        // Node clicked again, Deselect
         if (armyLeftClicked && armyLeftClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted) {
             nodeClicked = armyLeftClicked.GetComponent<Army>().currentNode;
         }
+        // Army is selected and clicked node is highlighted, Attack 
         if (nodeClicked && nodeClicked.GetComponent<Node>().highlighted && isArmySelected) {
             print("Moving army");
             attackNode(selectedArmy, nodeClicked);
             selectedArmy.GetComponent<Army>().Deselect();
-            //if (armyClicked) print("also moving other army");
         }
+        // Different army clicked, Select new army
         else if (armyLeftClicked) {
+            // No army Selected, Select army
             if (!selectedArmy) {
-                armyLeftClicked.GetComponent<Army>().Select();
-                //print("new army selected");
+                if (armyLeftClicked.GetComponent<Army>().movesLeft > 0) {
+                    armyLeftClicked.GetComponent<Army>().Select();
+                }
             }
             else {
                 //print("no army selected, deselecting");
                 selectedArmy.GetComponent<Army>().Deselect();
-                if (armyLeftClicked != selectedArmy) {
+                if (armyLeftClicked != selectedArmy && selectedArmy.GetComponent<Army>().movesLeft > 0) {
                     //print("different army, selecting new one");
                     armyLeftClicked.GetComponent<Army>().Select();
                     selectedArmy = armyLeftClicked;
@@ -121,11 +134,11 @@ public class Player : MonoBehaviour
                 }
                 else {
                     print("change places");
-                    switchNodes(army, army.GetComponent<Army>().currentNode, otherArmy, node);
+                    SwitchNodes(army, army.GetComponent<Army>().currentNode, otherArmy, node);
                 }
             }
         }
-        //army.GetComponent<Army>().movesLeft -= 1;
+        army.GetComponent<Army>().movesLeft -= 1;
     }
 
     public void Invade(GameObject attackingArmy, GameObject defendingArmy) {
@@ -140,11 +153,55 @@ public class Player : MonoBehaviour
         defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
     }
 
-    public void switchNodes(GameObject army1, GameObject node1, GameObject army2, GameObject node2) {
+    public void SwitchNodes(GameObject army1, GameObject node1, GameObject army2, GameObject node2) {
         army1.GetComponent<Army>().MoveToNode(node2);
         army2.GetComponent<Army>().MoveToNode(node1);
         node2.GetComponent<Node>().occupied = true;
         node2.GetComponent<Node>().occupant = army1;
     }
 
+    public void RemoveNode(GameObject node) {
+        ownedNodes.Remove(node);
+    }
+    public void AddNode(GameObject node) {
+        ownedNodes.Add(node);
+    }
+
+    public void StartTurn() {
+        money += GetMoneyIncome();
+        zeal += GetZealIncome();
+        RestUnits();
+    }
+
+    public int GetMoneyIncome() {
+        int income = 0;
+        for (int i = 0; i < ownedNodes.Count; i++) {
+            GameObject node = ownedNodes[i];
+            income += node.GetComponent<Node>().GetNodeMoneyIncome();
+        }
+        return income;
+    }
+
+    public int GetZealIncome() {
+        int income = 0;
+        for (int i = 0; i < ownedNodes.Count; i++) {
+            GameObject node = ownedNodes[i];
+            income += node.GetComponent<Node>().GetNodeZealIncome();
+        }
+        return income;
+    }
+
+    private void RestUnits() {
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
+            army.GetComponent<Army>().Refresh();
+            for (int j = 0; j < army.GetComponent<Army>().units.Length; j++) {
+                if (army.GetComponent<Army>().units[i] != null) {
+                    MapUnit unit = army.GetComponent<Army>().units[i];
+                    unit.Refresh();
+                }
+            }
+            
+        }
+    }
 }

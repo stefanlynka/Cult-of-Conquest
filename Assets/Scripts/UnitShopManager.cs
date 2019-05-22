@@ -28,7 +28,7 @@ public class UnitShopManager : MonoBehaviour {
             if (unitSpace) unitSpaces[i] = unitSpace;
         }
 
-        currentRace = Player.race;
+        currentRace = TurnManager.human.GetComponent<Player>().race;
 
         transform.parent.gameObject.GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
         //army = NodeMenu.currentArmy;

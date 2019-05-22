@@ -22,7 +22,7 @@ public class AltarShopManager : MonoBehaviour{
 
     void InitializeMembers() {
         altarSpace = AltarSpace.currentAltarSpace;
-        currentRace = Player.race;
+        currentRace = TurnManager.human.GetComponent<Player>().race;
             //NodeMenu.currentNode.GetComponent<Node>().owner;
         GameObject buyingSpaces = Tools.GetChildNamed(gameObject, "Altar Buying Spaces");
         for (int i = 0; i < 4; i++) {

@@ -22,7 +22,7 @@ public class TempleShopManager : MonoBehaviour{
 
     void InitializeMembers() {
         templeSpace = TempleSpace.currentTempleSpace;
-        currentRace = Player.race;
+        currentRace = TurnManager.human.GetComponent<Player>().race;
         //NodeMenu.currentNode.GetComponent<Node>().owner;
         GameObject buyingSpaces = Tools.GetChildNamed(gameObject, "Temple Buying Spaces");
         for (int i = 0; i < 4; i++) {

@@ -9,6 +9,7 @@ public class TempleShopSpace : MonoBehaviour{
     GameObject portrait;
     GameObject description;
     GameObject nodeMenu;
+    GameObject human;
 
     GameObject templeShopManager;
 
@@ -19,8 +20,7 @@ public class TempleShopSpace : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        print("Temple Shop Space clicked");
-        if (Player.money >= temple.cost) {
+        if (human.GetComponent<Player>().money >= temple.cost) {
             BuyTemple();
         }
     }
@@ -32,10 +32,10 @@ public class TempleShopSpace : MonoBehaviour{
         description = Tools.GetChildNamed(gameObject, "Description Text");
         nodeMenu = GameObject.Find("Node Menu");
         templeShopManager = GameObject.Find("Temple Buying Menu");
+        human = GameObject.Find("/Players/Human");
     }
 
     public void SetTemple(Temple newTemple) {
-        print("setup temple shop space");
         temple = newTemple;
         templeName.GetComponent<TextMesh>().text = temple.name;
         cost.GetComponent<TextMesh>().text = temple.cost.ToString();
@@ -45,7 +45,7 @@ public class TempleShopSpace : MonoBehaviour{
     }
 
     public void BuyTemple() {
-        Player.money -= temple.cost;
+        human.GetComponent<Player>().money -= temple.cost;
         NodeMenu.currentNode.GetComponent<Node>().BuildTemple(temple);
         nodeMenu.GetComponent<NodeMenu>().LoadTemple();
         templeShopManager.GetComponent<TempleShopManager>().ExitMenu();

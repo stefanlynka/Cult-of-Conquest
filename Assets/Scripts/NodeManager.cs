@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NodeManager : MonoBehaviour
 {
-    public List<GameObject> nodes = new List<GameObject>();
+    public static List<GameObject> nodes = new List<GameObject>();
 
     float nodeDistance = 0.7f;
     float nodeDistanceBuffer = 0.2f;

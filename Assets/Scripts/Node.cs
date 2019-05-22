@@ -45,6 +45,8 @@ public class Node : MonoBehaviour
     void Update(){
     }
 
+
+
     public void Highlight() {
         //print("highlighted: "+ gameObject);
         if (!highlighted) transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z-10);
@@ -121,6 +123,18 @@ public class Node : MonoBehaviour
 
     public void BuildTemple(Temple newTemple) {
         temple = newTemple.DeepCopy();
+    }
+
+    public int GetNodeMoneyIncome() {
+        int income = difficulty * 5;
+        if (altar != null && altar.name == "Harvest") income =  (int)Mathf.Round(income * 1.4f);
+        return income;
+    }
+
+    public int GetNodeZealIncome() {
+        int income = 0;
+        if (altar != null && altar.name == "Devotion") income = 1;
+        return income;
     }
 
     MapUnit MakeNeutralUnit(string unitType) {

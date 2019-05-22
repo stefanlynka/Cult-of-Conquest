@@ -12,6 +12,7 @@ public class UnitShopSpace : MonoBehaviour
     GameObject army;
     GameObject nodeMenu;
     GameObject unitShop;
+    GameObject human;
     Race currentRace;
     int unitNumber;
 
@@ -36,12 +37,13 @@ public class UnitShopSpace : MonoBehaviour
         unitNumber = int.Parse(name.Substring(name.Length - 1));
         nodeMenu = GameObject.Find("/Node Menu");
         unitShop = GameObject.Find("/Unit Buying Menu");
+        human = GameObject.Find("/Players/Human");
     }
 
 
 
     private void OnMouseDown() {
-        if (Player.money >= unit.moneyCost && Player.zeal >= unit.zealCost) {
+        if (human.GetComponent<Player>().money >= unit.moneyCost && human.GetComponent<Player>().zeal >= unit.zealCost) {
             BuyUnit();
         }
     }
@@ -60,7 +62,7 @@ public class UnitShopSpace : MonoBehaviour
         nodeMenu.GetComponent<NodeMenu>().LoadArmy();
         unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
         Player.menuOpen = false;
-        Player.money -= unit.moneyCost;
-        Player.zeal -= unit.zealCost;
+        human.GetComponent<Player>().money -= unit.moneyCost;
+        human.GetComponent<Player>().zeal -= unit.zealCost;
     }
 }

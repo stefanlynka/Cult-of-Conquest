@@ -39,6 +39,11 @@ public class MapUnit
         maxHealth = newHealth;
         currentHealth = maxHealth;
     }
+
+    public void Refresh() {
+        currentHealth = Mathf.Min(currentHealth + 10, maxHealth);
+    }
+
     public MapUnit DeepCopy() {
         MapUnit copy = new MapUnit(name, race, portraitName);
         copy.SetHealth(maxHealth);

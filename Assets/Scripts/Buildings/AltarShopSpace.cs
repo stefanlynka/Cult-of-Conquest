@@ -9,6 +9,7 @@ public class AltarShopSpace : MonoBehaviour{
     GameObject portrait;
     GameObject description;
     GameObject nodeMenu;
+    GameObject human;
 
     GameObject altarShopManager;
 
@@ -19,7 +20,7 @@ public class AltarShopSpace : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        if (Player.money >= altar.cost) {
+        if (human.GetComponent<Player>().money >= altar.cost) {
             BuyAltar();
         }
     }
@@ -31,8 +32,9 @@ public class AltarShopSpace : MonoBehaviour{
         description = Tools.GetChildNamed(gameObject, "Description Text");
         nodeMenu = GameObject.Find("Node Menu");
         altarShopManager = GameObject.Find("Altar Buying Menu");
+        human = GameObject.Find("/Players/Human");
     }
-    
+
     public void SetAltar(Altar newAltar) {
         altar = newAltar;
         altarName.GetComponent<TextMesh>().text = altar.name;
@@ -43,7 +45,7 @@ public class AltarShopSpace : MonoBehaviour{
     }
 
     public void BuyAltar() {
-        Player.money -= altar.cost;
+        human.GetComponent<Player>().money -= altar.cost;
         NodeMenu.currentNode.GetComponent<Node>().BuildAltar(altar);
         nodeMenu.GetComponent<NodeMenu>().LoadAltar();
         altarShopManager.GetComponent<AltarShopManager>().ExitMenu();
