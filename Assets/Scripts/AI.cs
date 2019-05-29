@@ -43,30 +43,35 @@ public class AI : MonoBehaviour{
         for (int i = 0; i < armies.Count; i++) {
             GameObject army = armies[i];
             GameObject armyNode = army.GetComponent<Army>().currentNode;
+            List<GameObject> nodesInRange = new List<GameObject>();
+            nodesInRange = GetNodesInRange(nodesInRange, armyNode, army.GetComponent<Army>().movesLeft);
 
-            for (int j = nodesByThreat.Count - 1; j >= 0; j--) {
-                List<GameObject> nodesInRange = new List<GameObject>();
-                nodesInRange = GetNodesInRange(nodesInRange, armyNode, army.GetComponent<Army>().movesLeft);
-            }
-
-            int threatToArmy = ThreatToNode(armyNode);
-            GameObject mostThreatenedNode = armyNode;
-            for (int j = 0; j < armyNode.GetComponent<Node>().neighbours.Count; j++) {
-                GameObject neighbour = armyNode.GetComponent<Node>().neighbours[j];
-                if (ThreatToNode(neighbour) > threatToArmy) {
-                    threatToArmy = ThreatToNode(neighbour);
-                    mostThreatenedNode = neighbour;
+            GameObject reachableThreatenedNode = null;
+            int j = nodesByThreat.Count - 1;
+            while (reachableThreatenedNode == null) {
+                GameObject node = nodesByThreat[j];
+                if (nodesInRange.Contains(node)) {
+                    reachableThreatenedNode = node;
                 }
+                j--;
+            }
+            if (reachableThreatenedNode) {
+                print("found and moving to: " + reachableThreatenedNode);
+                GetComponent<Player>().attackNode(army, reachableThreatenedNode);
             }
         }
+
         
     }
 
     List<GameObject> GetNodesInRange(List<GameObject> nodes, GameObject node, int range) {
         if (!nodes.Contains(node)) nodes.Add(node);
         if (range > 0) {
-            //List<GameObject> neighbours = 
-            //for(int i = 0; i < )
+            List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
+            for (int i = 0; i < neighbours.Count; i++) {
+                GameObject neighbour = neighbours[i];
+                if (neighbour.GetComponent<Node>().owner == race && !neighbour.GetComponent<Node>().occupied) GetNodesInRange(nodes, neighbour, range - 1);
+            }
         }
         return nodes;
     }
