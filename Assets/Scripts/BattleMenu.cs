@@ -119,23 +119,25 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void InstantBattle() {
-        print("battle beginning");
-        print("attackers left: " + attackers.Count);
-        print("defenders left: " + defenders.Count);
+        //print("battle beginning");
+        //print("attackers left: " + attackers.Count);
+        //print("defenders left: " + defenders.Count);
         bool armyDefeated = false;
         while (!armyDefeated) {
-            print("loop");
+            //print("loop");
             //for (int i = 0; i < 10; i++) { 
             MapUnit attacker = cooldowns[0].unit;
             timer = cooldowns[0].timeToAct;
             MapUnit target = GetRandomEnemy(cooldowns[0]);
-            target.currentHealth -= attacker.damage;
+            if (target != null) {
+                target.currentHealth -= attacker.damage;
 
-            if (target.currentHealth <= 0) {
-                print("target down: " + target);
-                RemoveTargetFromCooldowns(target);
-                RemoveUnitFromLists(target);
-                RemoveUnitFromArmy(target);
+                if (target.currentHealth <= 0) {
+                    //print("target down: " + target);
+                    RemoveTargetFromCooldowns(target);
+                    RemoveUnitFromLists(target);
+                    RemoveUnitFromArmy(target);
+                }
             }
             if (attackers.Count == 0 || defenders.Count == 0) {
                 BattleOver();
@@ -159,19 +161,19 @@ public class BattleMenu : MonoBehaviour{
     }
 
     void RunSimulation() {
-        print("battle beginning");
-        print("attackers left: " + attackers.Count);
-        print("defenders left: " + defenders.Count);
+        //print("battle beginning");
+        //print("attackers left: " + attackers.Count);
+        //print("defenders left: " + defenders.Count);
         timer++;
         if (cooldowns.Count != 0) {
             while (cooldowns.Count > 0 && timer == cooldowns[0].timeToAct) {
-                print("ATTACK: " + timer);
+                //print("ATTACK: " + timer);
                 MapUnit attacker = cooldowns[0].unit;
                 MapUnit target = GetRandomEnemy(cooldowns[0]);
                 target.currentHealth -= attacker.damage;
 
                 if (target.currentHealth <= 0) {
-                    print("target down: " + target);
+                    //print("target down: " + target);
                     RemoveTargetFromCooldowns(target);
                     RemoveUnitFromLists(target);
                     RemoveUnitFromArmy(target);
@@ -213,16 +215,18 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void BattleOver() {
-        print("battle over");
-        print("attackers left: " + attackers.Count);
-        print("defenders left: " + defenders.Count);
+        //print("battle over");
+        //print("attackers left: " + attackers.Count);
+        //print("defenders left: " + defenders.Count);
         if (attackers.Count == 0) {
             attackArmy.GetComponent<Army>().Defeated();
         }
         else if (defenders.Count == 0) {
-            defendArmy.GetComponent<Army>().owner.GetComponent<Player>().RemoveNode(battleNode);
+            if (defendArmy.GetComponent<Army>().race != Race.Independent){
+                defendArmy.GetComponent<Army>().owner.GetComponent<Player>().RemoveNode(battleNode);
+                defendArmy.GetComponent<Army>().Defeated();
+            }
             attackArmy.GetComponent<Army>().owner.GetComponent<Player>().AddNode(battleNode);
-            defendArmy.GetComponent<Army>().Defeated();
             attackArmy.GetComponent<Army>().MoveToNode(battleNode);
         }
         if (retreating) {

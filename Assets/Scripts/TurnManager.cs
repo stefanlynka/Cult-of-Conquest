@@ -6,7 +6,7 @@ public class TurnManager : MonoBehaviour{
 
     public static GameObject human;
     public static GameObject currentPlayer;
-    List<GameObject> players = new List<GameObject>();
+    public List<GameObject> players = new List<GameObject>();
     List<GameObject> nodes = new List<GameObject>();
     public int index = 0;
 
@@ -29,6 +29,13 @@ public class TurnManager : MonoBehaviour{
     void InitializeMembers() {
         nodes = NodeManager.nodes;
         players.Add(human);
+
+        GameObject playerHolder = GameObject.Find("/Players");
+        for (int i = 0; i < playerHolder.transform.childCount; i++) {
+            GameObject child = playerHolder.transform.GetChild(i).gameObject;
+            if (child != human) players.Add(child);
+        }
+
         for(int i =0; i < players.Count; i++) {
             playerDict.Add(players[i].GetComponent<Player>().race, players[i]);
         }

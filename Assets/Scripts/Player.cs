@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public static GameObject highlightFog;
     public Race race = Race.Noumenon;
 
-    public List<GameObject> ownedNodes = new List<GameObject>();
     public List<GameObject> armies = new List<GameObject>();
+    public List<GameObject> ownedNodes = new List<GameObject>();
     public bool isArmySelected = false;
     public static GameObject selectedArmy;
     public static GameObject nodeClicked;
@@ -26,24 +25,33 @@ public class Player : MonoBehaviour
 
     // Start is called before the first frame update
     void Start(){
-        InitializeMembers();
     }
 
     // Update is called once per frame
     void Update(){
-        CheckSelected();
+        //print(TurnManager.currentPlayer);
+        if (gameObject == TurnManager.currentPlayer) {
+            CheckSelected();
+        }
     }
 
     private void LateUpdate() {
-        ImplementClicks();
+        if (gameObject == TurnManager.currentPlayer) {
+            ImplementClicks();
+        }
     }
 
-    private void InitializeMembers() {
-        highlightFog = GameObject.Find("/Highlight");
-        highlightFog.transform.position = new Vector3(0, 0, 10);
-        highlightFog.SetActive(false);
-        armies.Add(GameObject.Find("/Army Blue"));
-        armies.Add(GameObject.Find("/Army Red"));
+
+    public void Startup() {
+        print("initializing members");
+        for (int i = 0; i < transform.childCount; i++) {
+            GameObject child = transform.GetChild(i).gameObject;
+            if (child.GetComponent<Army>()) {
+                armies.Add(child);
+            }
+        }
+        //armies.Add(GameObject.Find("/Army Blue"));
+        //armies.Add(GameObject.Find("/Army Red"));
         nodeMenu = GameObject.Find("/Node Menu");
         battleMenu = GameObject.Find("/Battle Menu");
 
@@ -66,7 +74,7 @@ public class Player : MonoBehaviour
         }
         if (!isArmySelected) selectedArmy = null;
 
-        highlightFog.SetActive(isArmySelected);
+        NodeManager.highlightFog.SetActive(isArmySelected);
     }
 
     public void ImplementClicks() {
@@ -77,7 +85,7 @@ public class Player : MonoBehaviour
         }
         // Army is selected and clicked node is highlighted, Attack 
         if (nodeClicked && nodeClicked.GetComponent<Node>().highlighted && isArmySelected) {
-            print("Moving army");
+            //print("Moving army");
             attackNode(selectedArmy, nodeClicked);
             selectedArmy.GetComponent<Army>().Deselect();
         }
@@ -86,6 +94,7 @@ public class Player : MonoBehaviour
             // No army Selected, Select army
             if (!selectedArmy) {
                 if (armyLeftClicked.GetComponent<Army>().movesLeft > 0) {
+                    //print("A");
                     armyLeftClicked.GetComponent<Army>().Select();
                 }
             }
@@ -94,6 +103,7 @@ public class Player : MonoBehaviour
                 selectedArmy.GetComponent<Army>().Deselect();
                 if (armyLeftClicked != selectedArmy && selectedArmy.GetComponent<Army>().movesLeft > 0) {
                     //print("different army, selecting new one");
+                    //print("B");
                     armyLeftClicked.GetComponent<Army>().Select();
                     selectedArmy = armyLeftClicked;
                 }
@@ -130,10 +140,10 @@ public class Player : MonoBehaviour
                 GameObject otherArmy = node.GetComponent<Node>().occupant;
                 if (army.GetComponent<Army>().race != otherArmy.GetComponent<Army>().race) {
                     Invade(army, otherArmy);
-                    print("attack!");
+                    //print("attack!");
                 }
                 else {
-                    print("change places");
+                    //print("change places");
                     SwitchNodes(army, army.GetComponent<Army>().currentNode, otherArmy, node);
                 }
             }

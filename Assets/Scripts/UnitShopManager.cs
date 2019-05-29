@@ -74,7 +74,7 @@ public class UnitShopManager : MonoBehaviour {
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
-        acolyte.zealCost = 15;
+        acolyte.zealCost = 0;
         acolyte.power = 15;
         unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
@@ -116,7 +116,7 @@ public class UnitShopManager : MonoBehaviour {
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
-        acolyte.zealCost = 15;
+        acolyte.zealCost = 0;
         acolyte.power = 15;
         unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
@@ -158,7 +158,7 @@ public class UnitShopManager : MonoBehaviour {
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
-        acolyte.zealCost = 15;
+        acolyte.zealCost = 0;
         acolyte.power = 15;
         unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
@@ -200,7 +200,7 @@ public class UnitShopManager : MonoBehaviour {
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
-        acolyte.zealCost = 15;
+        acolyte.zealCost = 0;
         acolyte.power = 15;
         unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
@@ -242,7 +242,7 @@ public class UnitShopManager : MonoBehaviour {
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
-        acolyte.zealCost = 15;
+        acolyte.zealCost = 0;
         acolyte.power = 15;
         unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
@@ -284,7 +284,7 @@ public class UnitShopManager : MonoBehaviour {
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
-        acolyte.zealCost = 15;
+        acolyte.zealCost = 0;
         acolyte.power = 15;
         unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 

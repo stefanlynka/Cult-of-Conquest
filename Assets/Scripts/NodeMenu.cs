@@ -41,6 +41,7 @@ public class NodeMenu : MonoBehaviour
 
     public void LoadArmy() {
         //print("Loading Army");
+        print("current army:" + currentArmy);
         MapUnit[] backUnits = currentArmy.GetComponent<Army>().backRow;
         MapUnit[] frontUnits = currentArmy.GetComponent<Army>().frontRow;
         for (int i = 0; i < backUnits.Length; i++) {

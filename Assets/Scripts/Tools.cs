@@ -31,4 +31,7 @@ public class Tools {
     public static int SortByTime(Cooldown c1, Cooldown c2) {
         return c1.timeToAct.CompareTo(c2.timeToAct);
     }
+    public static int SortByThreat(GameObject node1, GameObject node2) {
+        return node1.GetComponent<Node>().GetThreatToNode().CompareTo(node2.GetComponent<Node>().GetThreatToNode());
+    }
 }

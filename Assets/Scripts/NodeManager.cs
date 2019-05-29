@@ -5,6 +5,7 @@ using UnityEngine;
 public class NodeManager : MonoBehaviour
 {
     public static List<GameObject> nodes = new List<GameObject>();
+    public static GameObject highlightFog;
 
     float nodeDistance = 0.7f;
     float nodeDistanceBuffer = 0.2f;
@@ -15,14 +16,20 @@ public class NodeManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start() {
-        CollectNodes();
-        LabelNodes();
-        
+
     }
 
     // Update is called once per frame
     void Update() {
         
+    }
+
+    public void Startup() {
+        CollectNodes();
+        LabelNodes();
+        highlightFog = GameObject.Find("/Highlight");
+        highlightFog.transform.position = new Vector3(0, 0, 10);
+        highlightFog.SetActive(false);
     }
 
     void LabelNodes() {
@@ -39,6 +46,7 @@ public class NodeManager : MonoBehaviour
                 nodes.Add(node);
             }
         }
+        print("nodes are collected");
     }
 
     void SetNodeNeighbours(GameObject node) {

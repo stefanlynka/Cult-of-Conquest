@@ -25,6 +25,19 @@ public enum Race {
     None
 }
 
+// For Option
+public struct Option {
+    public OptionName optionName;
+    public GameObject army;
+    public MapUnit unit;
+    public GameObject targetNode;
+}
+
+public enum OptionName {
+    BuildUnit,
+    AttackNode
+}
+
 // For BattleMenu
 public struct Cooldown {
     public int timeToAct;

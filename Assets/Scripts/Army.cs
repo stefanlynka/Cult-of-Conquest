@@ -15,13 +15,13 @@ public class Army : MonoBehaviour
     public int maxMoves = 2;
     public int movesLeft = 2;
 
-    public MapUnit[] units = new MapUnit[10];
-    public MapUnit[] backRow = new MapUnit[5];
-    public MapUnit[] frontRow = new MapUnit[5];
+    public MapUnit[] units = new MapUnit[8];
+    public MapUnit[] backRow = new MapUnit[4];
+    public MapUnit[] frontRow = new MapUnit[4];
 
     // Start is called before the first frame update
     void Start(){
-        map = GameObject.Find("/Map");
+        map = GameObject.Find("/Node Manager");
         SetStartingUnits();
 
     }
@@ -38,16 +38,18 @@ public class Army : MonoBehaviour
         mouseOverArmy = false;
     }
     private void OnMouseOver() {
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && TurnManager.currentPlayer.GetComponent<Player>().race==race) {
             Player.armyLeftClicked = gameObject;
         }
-        if (Input.GetMouseButtonDown(1)) {
+        if (Input.GetMouseButtonDown(1) && TurnManager.currentPlayer.GetComponent<Player>().race == race) {
             Player.armyRightClicked = gameObject;
         }
     }
 
     void SetStartingUnits() {
         owner = TurnManager.human;
+        GameObject playerList = GameObject.Find("/Players");
+        owner = transform.parent.gameObject;
     }
 
     public void HighlightNodes(GameObject node, int distance) {
@@ -67,14 +69,14 @@ public class Army : MonoBehaviour
         map.GetComponent<NodeManager>().UnhighlightNodes();
     }
     public void Select() {
-        //print("selected");
+        print("selected"+gameObject);
         selected = true;
         transform.localScale *= 2;
         //transform.position = new Vector3(transform.position.x, transform.position.y, -20);
         HighlightNodes(currentNode, movesLeft);
     }
     public void Deselect() {
-        //print("deselected");
+        print("deselected"+gameObject);
         selected = false;
         transform.localScale *= 0.5f;
         //transform.position = new Vector3(transform.position.x, transform.position.y, -1);
@@ -90,21 +92,37 @@ public class Army : MonoBehaviour
         destination.GetComponent<Node>().occupant = gameObject;
     }
 
-    public void addUnit(int index, bool row, MapUnit unit) {
+    public void addUnit(int index, bool fRow, MapUnit unit) {
         MapUnit newUnit = unit.DeepCopy();
-        if (row) frontRow[index] = newUnit;
+        if (fRow) frontRow[index] = newUnit;
         else backRow[index] = newUnit;
-        //units
+        if (fRow) index += 4;
+        units[index] = newUnit;
     }
 
     public void Defeated() {
+        print("defeated");
         currentNode.GetComponent<Node>().occupant = null;
         currentNode.GetComponent<Node>().occupied = false;
+        owner.GetComponent<Player>().armies.Remove(gameObject);
         Destroy(gameObject);
     }
 
     public void Refresh() {
         movesLeft = maxMoves;
+    }
+
+    public int GetPower() {
+        int power = 0;
+        for(int i = 0; i < units.Length; i++) {
+            if (units[i] != null) {
+                MapUnit unit = units[i];
+                power += unit.power;
+                //print("found some power: " + unit.power);
+            }
+        }
+
+        return power;
     }
 }
 

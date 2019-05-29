@@ -74,7 +74,7 @@ public class Node : MonoBehaviour
         if (homeBase != Race.None) {
             difficulty = 4;
         }
-        else {
+        else if (owner == Race.Independent) {
             GameObject army = new GameObject();
             army.AddComponent<Army>();
             army.GetComponent<Army>().race = Race.Independent;
@@ -178,6 +178,18 @@ public class Node : MonoBehaviour
 
         return unit;
     }
+
+    public int GetThreatToNode() {
+        int threat = 0;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().owner != owner) {
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
+            }
+        }
+        return threat;
+    }
+
 }
 
 /*
