@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapUnit
 {
-    public string name = "";
+    public string name;
     public Race race = Race.Independent;
     public string portraitName = "zergling";
 

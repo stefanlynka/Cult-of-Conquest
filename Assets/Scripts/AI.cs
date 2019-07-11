@@ -6,6 +6,7 @@ public class AI : MonoBehaviour{
 
     public List<GameObject> armies = new List<GameObject>();
     public List<GameObject> ownedNodes = new List<GameObject>();
+    GameObject unitShop;
 
     Race race;
     public int turnStage = 0;
@@ -30,17 +31,54 @@ public class AI : MonoBehaviour{
         armies = GetComponent<Player>().armies;
         ownedNodes = GetComponent<Player>().ownedNodes;
         race = GetComponent<Player>().race;
+        //unitShop = GameObject.Find("")
     }
 
     void CompileOptions() {
         turnStage = 1;
         List<GameObject> nodesByThreat = ownedNodes;
         nodesByThreat.Sort(Tools.SortByThreat);
+
+        MoveToThreatened(nodesByThreat);
+
+        BuyUnits();
+    }
+
+    void BuyUnits() {
+        bool moneyToSpend = true;
+        while (moneyToSpend) {
+            print("has " + GetComponent<Player>().money + " money to spend");
+            int greatestPowerDifference = 9999;
+            GameObject weakestArmy = armies[0];
+            for (int i = 0; i < armies.Count; i++) {
+                GameObject armyNode = armies[i].GetComponent<Army>().currentNode;
+                int powerDifference = armies[i].GetComponent<Army>().GetPower() - armyNode.GetComponent<Node>().GetThreatToNode();
+                if (powerDifference < greatestPowerDifference) {
+                    weakestArmy = armies[i];
+                    greatestPowerDifference = powerDifference;
+                }
+            }
+            if (weakestArmy.GetComponent<Army>().HasOpenPosition()) {
+                print("weakest has opening");
+                UnitPos position = weakestArmy.GetComponent<Army>().GetOpenPosition();
+                MapUnit unit = GetComponent<Player>().unitBlueprints[3];
+                weakestArmy.GetComponent<Army>().BuyUnit(position, unit);
+                if (GetComponent<Player>().money < unit.moneyCost) moneyToSpend = false;
+            }
+            else moneyToSpend = false;
+        }
+    }
+
+    void MoveToThreatened(List<GameObject> nodesByThreat) {
+
+        //TestIDS();
+
         for (int i = 0; i < nodesByThreat.Count; i++) {
             print(nodesByThreat[i] + ": " + nodesByThreat[i].GetComponent<Node>().GetThreatToNode());
         }
 
         for (int i = 0; i < armies.Count; i++) {
+            // For all armies
             GameObject army = armies[i];
             GameObject armyNode = army.GetComponent<Army>().currentNode;
             List<GameObject> nodesInRange = new List<GameObject>();
@@ -48,6 +86,7 @@ public class AI : MonoBehaviour{
 
             GameObject reachableThreatenedNode = null;
             int j = nodesByThreat.Count - 1;
+            // Search nodes by threat descending, choose a reachable node
             while (reachableThreatenedNode == null) {
                 GameObject node = nodesByThreat[j];
                 if (nodesInRange.Contains(node)) {
@@ -55,13 +94,29 @@ public class AI : MonoBehaviour{
                 }
                 j--;
             }
+            // If reachable node is found, attack that node
             if (reachableThreatenedNode) {
-                print("found and moving to: " + reachableThreatenedNode);
+                print("Found and moving to: " + reachableThreatenedNode);
                 GetComponent<Player>().attackNode(army, reachableThreatenedNode);
+                print("Moves left: " + army.GetComponent<Army>().movesLeft);
             }
         }
+    }
 
-        
+    void TestIDS() {
+        for (int k = 0; k < 1; k++) {
+            for (int i = 0; i < armies.Count; i++) {
+                // For all armies
+                GameObject army = armies[i];
+                GameObject armyNode = army.GetComponent<Army>().currentNode;
+                GameObject randomNeighbour = armyNode.GetComponent<Node>().GetRandomNeighbour2();
+                List<GameObject> pathway = armyNode.GetComponent<Node>().GetPathTo(randomNeighbour);
+                print("Pathway to random neighbour: " + pathway);
+                for (int j = 0; j < pathway.Count; j++) {
+                    print("Path includes: " + pathway[j]);
+                }
+            }
+        }
     }
 
     List<GameObject> GetNodesInRange(List<GameObject> nodes, GameObject node, int range) {

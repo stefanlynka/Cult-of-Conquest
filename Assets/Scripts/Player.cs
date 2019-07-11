@@ -16,8 +16,9 @@ public class Player : MonoBehaviour
     public static GameObject nodeMenu;
     public static GameObject battleMenu;
     public static bool menuOpen = false;
+    public List<MapUnit> unitBlueprints = new List<MapUnit>();
 
-    public int money = 100;
+    public int money = 20;
     public int zeal = 0;
 
     public void Awake() {
@@ -130,25 +131,39 @@ public class Player : MonoBehaviour
     }
 
     public void attackNode(GameObject army, GameObject node) {
-        if (node.GetComponent<Node>().occupiable) {
-            if (!node.GetComponent<Node>().occupied) {
-                //print("moving in freely");
-                army.GetComponent<Army>().MoveToNode(node);
-            }
-            else {
-                //print("node occupied");
-                GameObject otherArmy = node.GetComponent<Node>().occupant;
-                if (army.GetComponent<Army>().race != otherArmy.GetComponent<Army>().race) {
-                    Invade(army, otherArmy);
-                    //print("attack!");
+        print("Attack node   x: " + node.transform.localPosition.x + " y: " + node.transform.localPosition.y);
+        GameObject finalNode = node;
+        // If army isn't next to target, attack one step closer until adjacent
+        while (!army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(node) && army.GetComponent<Army>().currentNode != node) {
+            print("not adjacent to target yet");
+            List<GameObject> moveList = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetPathTo(node);
+            moveList.RemoveAt(0);
+            node = moveList[0];
+            attackNode(army, node);
+        }
+        // If army is next to target, go there        
+        if (army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(finalNode)) {
+            print("adjacent to target");
+            if (finalNode.GetComponent<Node>().occupiable) {
+                if (!finalNode.GetComponent<Node>().occupied) {
+                    //print("moving in freely");
+                    army.GetComponent<Army>().MoveToNode(finalNode);
                 }
                 else {
-                    //print("change places");
-                    SwitchNodes(army, army.GetComponent<Army>().currentNode, otherArmy, node);
+                    //print("node occupied");
+                    GameObject otherArmy = finalNode.GetComponent<Node>().occupant;
+                    if (army.GetComponent<Army>().race != otherArmy.GetComponent<Army>().race) {
+                        Invade(army, otherArmy);
+                        //print("attack!");
+                    }
+                    else {
+                        //print("change places");
+                        SwitchNodes(army, army.GetComponent<Army>().currentNode, otherArmy, finalNode);
+                    }
                 }
             }
+            army.GetComponent<Army>().movesLeft -= 1;
         }
-        army.GetComponent<Army>().movesLeft -= 1;
     }
 
     public void Invade(GameObject attackingArmy, GameObject defendingArmy) {
@@ -214,4 +229,5 @@ public class Player : MonoBehaviour
             
         }
     }
+
 }

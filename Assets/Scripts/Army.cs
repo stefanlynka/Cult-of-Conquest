@@ -92,7 +92,18 @@ public class Army : MonoBehaviour
         destination.GetComponent<Node>().occupant = gameObject;
     }
 
-    public void addUnit(int index, bool fRow, MapUnit unit) {
+    public void BuyUnit(UnitPos unitPos, MapUnit unit) {
+        print("trying to buy unit");
+        if (unit.moneyCost <= owner.GetComponent<Player>().money && unit.zealCost <= owner.GetComponent<Player>().zeal) {
+            owner.GetComponent<Player>().money -= unit.moneyCost;
+            owner.GetComponent<Player>().zeal -= unit.zealCost;
+            AddUnit(unitPos.position, unitPos.frontRow, unit);
+        }
+        else print("not enough money");
+    }
+
+    public void AddUnit(int index, bool fRow, MapUnit unit) {
+        print("adding unit");
         MapUnit newUnit = unit.DeepCopy();
         if (fRow) frontRow[index] = newUnit;
         else backRow[index] = newUnit;
@@ -123,6 +134,28 @@ public class Army : MonoBehaviour
         }
 
         return power;
+    }
+
+    public bool HasOpenPosition() {
+        for (int i = 0 ; i < units.Length; i++) {
+            if (units[i] == null) return true;
+        }
+        print("no openings");
+        return false;
+    }
+
+    public UnitPos GetOpenPosition() {
+        for (int i = 0; i < frontRow.Length; i++) {
+            if (frontRow[i] == null) {
+                return new UnitPos(i, true);
+            }
+        }
+        for (int i = 0; i < backRow.Length; i++) {
+            if (backRow[i] == null) {
+                return new UnitPos(i, false);
+            }
+        }
+        return new UnitPos(0, true);
     }
 }
 

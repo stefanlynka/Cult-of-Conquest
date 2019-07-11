@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour{
 
-    List<GameObject> players = new List<GameObject>();
-    GameObject nodeManager, playerMenu;
+    public static List<GameObject> players = new List<GameObject>();
+    GameObject nodeManager, playerMenu, uniShopManager;
 
     // Start is called before the first frame update
     void Start(){
@@ -25,6 +25,7 @@ public class Controller : MonoBehaviour{
             GameObject child = playerMenu.transform.GetChild(i).gameObject;
             if (child.GetComponent<Player>()) players.Add(child);
         }
+        uniShopManager = GameObject.Find("/Unit Buying Menu/Unit Spaces");
     }
     void CallStartupFunctions() {
         nodeManager.GetComponent<NodeManager>().Startup();
@@ -32,5 +33,6 @@ public class Controller : MonoBehaviour{
             GameObject player = players[i];
             player.GetComponent<Player>().Startup();
         }
+        uniShopManager.GetComponent<UnitShopManager>().initializeMembers();
     }
 }

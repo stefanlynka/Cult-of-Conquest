@@ -70,6 +70,67 @@ public class Node : MonoBehaviour
         else return null;
     }
 
+    // ITERATIVE DEEPENING SEEEEAAAAAAAARCH
+    public List<GameObject> GetPathTo(GameObject node) {
+        List<GameObject> path = new List<GameObject>();
+        int depth = 1;
+        Race player = owner;
+        bool solved = false;
+        while (solved == false) {
+            List<GameObject> goodPath = new List<GameObject>();
+            goodPath = ExtendPathToNeighbours(node, goodPath, depth, player);
+            if (goodPath != null) return goodPath;
+            depth++;
+            if (depth > 8) {
+                //print("we couldn't find it");
+                return null;
+            }
+        }
+        return null;
+    }
+    // Recursive path search used in GetPathTo()
+    List<GameObject> ExtendPathToNeighbours(GameObject targetNode, List<GameObject> visited, int currentDepth, Race player) {
+        visited.Add(gameObject);
+        if (gameObject == targetNode) {
+            //print("found the one");
+            return visited;
+        }
+        if (currentDepth > 0) {
+            currentDepth--;
+            for (int i = 0; i < neighbours.Count; i++) {
+                GameObject neighbour = neighbours[i];
+                List<GameObject> goodPath = new List<GameObject>();
+                if (neighbour.GetComponent<Node>().owner == player && !visited.Contains(neighbour)) {
+                    List<GameObject> deepCopyVisited = Tools.DeepCopyGameObjectList(visited);
+                    goodPath = neighbour.GetComponent<Node>().ExtendPathToNeighbours(targetNode, deepCopyVisited, currentDepth, player);
+                    if (goodPath != null) {
+                        visited.Insert(0,gameObject);
+                        //print("part of the path");
+                        return goodPath;
+                    }
+                }
+            }
+        }
+        //print("not here");
+        return null;
+    }
+
+    // Get a random neighbour
+    public GameObject GetRandomNeighbour() {
+        int rand = Random.Range(0, neighbours.Count);
+        return neighbours[rand];
+    }
+    // Get a neighbour of a neighbour who isn't this node
+    public GameObject GetRandomNeighbour2() {
+        print("looking for n2");
+        int rand = Random.Range(0, neighbours.Count);
+        GameObject neighbour = neighbours[rand];
+        GameObject secondNeighbour = neighbour.GetComponent<Node>().GetRandomNeighbour();
+        while (secondNeighbour == gameObject) secondNeighbour = neighbour.GetComponent<Node>().GetRandomNeighbour();
+        print("found second neighbour at: x:" + secondNeighbour.transform.localPosition.x + " y:" + secondNeighbour.transform.localPosition.y);
+        return secondNeighbour;
+    }
+
     private void Setup() {
         if (homeBase != Race.None) {
             difficulty = 4;
@@ -88,29 +149,29 @@ public class Node : MonoBehaviour
             MapUnit prelate = MakeNeutralUnit("prelate");
             switch (difficulty) {
                 case 1:
-                    occupant.GetComponent<Army>().addUnit(0, true, peon);
-                    occupant.GetComponent<Army>().addUnit(1, true, peon);
-                    occupant.GetComponent<Army>().addUnit(2, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(1, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(2, true, peon);
                     break;
                 case 2:
-                    occupant.GetComponent<Army>().addUnit(0, true, peon);
-                    occupant.GetComponent<Army>().addUnit(1, true, acolyte);
-                    occupant.GetComponent<Army>().addUnit(2, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(1, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(2, true, acolyte);
                     break;
                 case 3:
-                    occupant.GetComponent<Army>().addUnit(0, true, peon);
-                    occupant.GetComponent<Army>().addUnit(1, true, peon);
-                    occupant.GetComponent<Army>().addUnit(2, true, acolyte);
-                    occupant.GetComponent<Army>().addUnit(3, true, acolyte);
-                    occupant.GetComponent<Army>().addUnit(0, false, shaman);
+                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(1, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(2, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(3, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(0, false, shaman);
                     break;
                 case 4:
-                    occupant.GetComponent<Army>().addUnit(0, true, acolyte);
-                    occupant.GetComponent<Army>().addUnit(1, true, acolyte);
-                    occupant.GetComponent<Army>().addUnit(2, true, shaman);
-                    occupant.GetComponent<Army>().addUnit(3, true, shaman);
-                    occupant.GetComponent<Army>().addUnit(0, false, prelate);
-                    occupant.GetComponent<Army>().addUnit(0, false, prelate);
+                    occupant.GetComponent<Army>().AddUnit(0, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(1, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(2, true, shaman);
+                    occupant.GetComponent<Army>().AddUnit(3, true, shaman);
+                    occupant.GetComponent<Army>().AddUnit(0, false, prelate);
+                    occupant.GetComponent<Army>().AddUnit(0, false, prelate);
                     break;
             }
             occupant.transform.parent = GameObject.Find("/Neutral Armies").transform;

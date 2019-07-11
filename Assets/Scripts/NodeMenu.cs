@@ -40,8 +40,8 @@ public class NodeMenu : MonoBehaviour
     }
 
     public void LoadArmy() {
-        //print("Loading Army");
-        print("current army:" + currentArmy);
+        print("Loading Army");
+        //print("current army:" + currentArmy);
         MapUnit[] backUnits = currentArmy.GetComponent<Army>().backRow;
         MapUnit[] frontUnits = currentArmy.GetComponent<Army>().frontRow;
         for (int i = 0; i < backUnits.Length; i++) {
@@ -72,7 +72,7 @@ public class NodeMenu : MonoBehaviour
     }
 
     public void LoadTemple() {
-        print("Temple Loading");
+        //print("Temple Loading");
         if (currentNode.GetComponent<Node>().temple != null) {
             Temple temple = currentNode.GetComponent<Node>().temple;
             GameObject locationMenu = Tools.GetChildNamed(gameObject, "Location Menu");

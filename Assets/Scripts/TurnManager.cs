@@ -6,7 +6,7 @@ public class TurnManager : MonoBehaviour{
 
     public static GameObject human;
     public static GameObject currentPlayer;
-    public List<GameObject> players = new List<GameObject>();
+    List<GameObject> players = new List<GameObject>();
     List<GameObject> nodes = new List<GameObject>();
     public int index = 0;
 
@@ -47,6 +47,8 @@ public class TurnManager : MonoBehaviour{
         index++;
         if (index >= players.Count) index = 0;
         currentPlayer = players[index];
+        GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().AssignUnits(currentPlayer);
+        //GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().MakeUnits(currentPlayer.GetComponent<Player>().race);
         currentPlayer.GetComponent<Player>().StartTurn();
     }
 
