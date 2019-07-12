@@ -131,11 +131,11 @@ public class Player : MonoBehaviour
     }
 
     public void attackNode(GameObject army, GameObject node) {
-        print("Attack node   x: " + node.transform.localPosition.x + " y: " + node.transform.localPosition.y);
+        //print("Attack node   x: " + node.transform.localPosition.x + " y: " + node.transform.localPosition.y);
         GameObject finalNode = node;
         // If army isn't next to target, attack one step closer until adjacent
         while (!army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(node) && army.GetComponent<Army>().currentNode != node) {
-            print("not adjacent to target yet");
+            //print("not adjacent to target yet");
             List<GameObject> moveList = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetPathTo(node);
             moveList.RemoveAt(0);
             node = moveList[0];
@@ -143,14 +143,14 @@ public class Player : MonoBehaviour
         }
         // If army is next to target, go there        
         if (army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(finalNode)) {
-            print("adjacent to target");
+            //print("adjacent to target");
             if (finalNode.GetComponent<Node>().occupiable) {
                 if (!finalNode.GetComponent<Node>().occupied) {
                     //print("moving in freely");
                     army.GetComponent<Army>().MoveToNode(finalNode);
                 }
                 else {
-                    //print("node occupied");
+                    print("node occupied");
                     GameObject otherArmy = finalNode.GetComponent<Node>().occupant;
                     if (army.GetComponent<Army>().race != otherArmy.GetComponent<Army>().race) {
                         Invade(army, otherArmy);
@@ -173,7 +173,7 @@ public class Player : MonoBehaviour
         GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
-        battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingArmy, nodeClicked);
+        battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingArmy, defendingArmy.GetComponent<Army>().currentNode);
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
     }

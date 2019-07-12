@@ -29,10 +29,16 @@ public class Controller : MonoBehaviour{
     }
     void CallStartupFunctions() {
         nodeManager.GetComponent<NodeManager>().Startup();
+        uniShopManager.GetComponent<UnitShopManager>().Startup();
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
             player.GetComponent<Player>().Startup();
+            for (int j = 0; j < player.transform.childCount; j++) {
+                GameObject child = player.transform.GetChild(j).gameObject;
+                if (child.GetComponent<Army>()) {
+                    child.GetComponent<Army>().Startup();
+                }
+            }
         }
-        uniShopManager.GetComponent<UnitShopManager>().initializeMembers();
     }
 }

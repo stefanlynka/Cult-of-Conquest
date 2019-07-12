@@ -122,13 +122,27 @@ public class Node : MonoBehaviour
     }
     // Get a neighbour of a neighbour who isn't this node
     public GameObject GetRandomNeighbour2() {
-        print("looking for n2");
+        //print("looking for n2");
         int rand = Random.Range(0, neighbours.Count);
         GameObject neighbour = neighbours[rand];
         GameObject secondNeighbour = neighbour.GetComponent<Node>().GetRandomNeighbour();
         while (secondNeighbour == gameObject) secondNeighbour = neighbour.GetComponent<Node>().GetRandomNeighbour();
-        print("found second neighbour at: x:" + secondNeighbour.transform.localPosition.x + " y:" + secondNeighbour.transform.localPosition.y);
+        //print("found second neighbour at: x:" + secondNeighbour.transform.localPosition.x + " y:" + secondNeighbour.transform.localPosition.y);
         return secondNeighbour;
+    }
+
+    public GameObject GetGreatestThreat() {
+        GameObject biggestThreat = null;
+        int threat = 0;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            // If the neighbouring node is occupied, is owned by another race, and is the new biggest threat
+            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().owner != owner && neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower() > threat) {
+                biggestThreat = neighbour;
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
+            }
+        }
+        return biggestThreat;
     }
 
     private void Setup() {

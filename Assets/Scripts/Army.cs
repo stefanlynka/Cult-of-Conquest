@@ -22,12 +22,14 @@ public class Army : MonoBehaviour
     // Start is called before the first frame update
     void Start(){
         map = GameObject.Find("/Node Manager");
-        SetStartingUnits();
-
     }
 
     // Update is called once per frame
     void Update(){
+    }
+
+    public void Startup() {
+        SetStartingUnits();
     }
 
     private void OnMouseEnter() {
@@ -50,6 +52,7 @@ public class Army : MonoBehaviour
         owner = TurnManager.human;
         GameObject playerList = GameObject.Find("/Players");
         owner = transform.parent.gameObject;
+        AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[2]);
     }
 
     public void HighlightNodes(GameObject node, int distance) {
@@ -85,6 +88,8 @@ public class Army : MonoBehaviour
     public void MoveToNode(GameObject destination) {
         currentNode.GetComponent<Node>().occupied = false;
         currentNode.GetComponent<Node>().occupant = null;
+        print("dest coming");
+        print("destination : " + destination.name);
         transform.position = new Vector3(destination.transform.position.x, destination.transform.position.y, transform.position.z);
         currentNode = destination;
         destination.GetComponent<Node>().owner = race;

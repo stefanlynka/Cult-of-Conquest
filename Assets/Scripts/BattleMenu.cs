@@ -92,6 +92,7 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void SetupBattle(GameObject attackingArmy, GameObject defendingArmy, GameObject node) {
+        print("Battle has been setup");
         SetupArmies(attackingArmy, defendingArmy);
         StartingCooldowns();
         battleNode = node;

@@ -36,12 +36,15 @@ public class AI : MonoBehaviour{
 
     void CompileOptions() {
         turnStage = 1;
-        List<GameObject> nodesByThreat = ownedNodes;
-        nodesByThreat.Sort(Tools.SortByThreat);
-
-        MoveToThreatened(nodesByThreat);
 
         BuyUnits();
+
+        List<GameObject> nodesByThreat = ownedNodes;
+        nodesByThreat.Sort(Tools.SortByThreat);
+        MoveToThreatened(nodesByThreat);
+
+        AttackLargestThreat();
+
     }
 
     void BuyUnits() {
@@ -70,11 +73,9 @@ public class AI : MonoBehaviour{
     }
 
     void MoveToThreatened(List<GameObject> nodesByThreat) {
-
         //TestIDS();
-
         for (int i = 0; i < nodesByThreat.Count; i++) {
-            print(nodesByThreat[i] + ": " + nodesByThreat[i].GetComponent<Node>().GetThreatToNode());
+            //print(nodesByThreat[i] + ": " + nodesByThreat[i].GetComponent<Node>().GetThreatToNode());
         }
 
         for (int i = 0; i < armies.Count; i++) {
@@ -96,14 +97,25 @@ public class AI : MonoBehaviour{
             }
             // If reachable node is found, attack that node
             if (reachableThreatenedNode) {
-                print("Found and moving to: " + reachableThreatenedNode);
+                //print("Found and moving to: " + reachableThreatenedNode);
                 GetComponent<Player>().attackNode(army, reachableThreatenedNode);
-                print("Moves left: " + army.GetComponent<Army>().movesLeft);
+                //print("Moves left: " + army.GetComponent<Army>().movesLeft);
             }
         }
     }
 
-    void TestIDS() {
+    void AttackLargestThreat() {
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
+            GameObject armyNode = army.GetComponent<Army>().currentNode;
+            GameObject target = armyNode.GetComponent<Node>().GetGreatestThreat();
+            if (target!= null) {
+                GetComponent<Player>().attackNode(army, target);
+            }
+        }
+    }
+
+        void TestIDS() {
         for (int k = 0; k < 1; k++) {
             for (int i = 0; i < armies.Count; i++) {
                 // For all armies

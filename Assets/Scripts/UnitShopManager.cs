@@ -11,8 +11,6 @@ public class UnitShopManager : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        initializeMembers();
-
     }
 
     // Update is called once per frame
@@ -20,7 +18,11 @@ public class UnitShopManager : MonoBehaviour {
 
     }
 
-    public void initializeMembers() {
+    public void Startup() {
+        InitializeMembers();
+    }
+
+    public void InitializeMembers() {
         unitSpaces = new GameObject[unitSpaceCount];
         for (int i = 0; i < transform.childCount; i++) {
             GameObject unitSpace = Tools.GetChildNamed(gameObject, "Buy Unit Space " + i);
