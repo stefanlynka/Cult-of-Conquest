@@ -56,6 +56,13 @@ public enum BattleType {
     rts
 }
 
+// For AI
+public struct Intent {
+    public string type;
+    public GameObject army;
+    public GameObject node;
+}
+
 // For UnitSpace
 public struct UnitPos {
     public int position;
@@ -75,7 +82,7 @@ public enum AltarName {
     Fate,
     None
 }
-public enum ChurchName {
+public enum TempleName {
     Protection,
     Armaments,
     Tradition,

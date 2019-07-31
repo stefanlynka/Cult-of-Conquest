@@ -228,13 +228,15 @@ public class BattleMenu : MonoBehaviour{
                 defendArmy.GetComponent<Army>().Defeated();
             }
             attackArmy.GetComponent<Army>().owner.GetComponent<Player>().AddNode(battleNode);
-            attackArmy.GetComponent<Army>().MoveToNode(battleNode);
+            attackArmy.GetComponent<Army>().MoveToNode(battleNode); 
         }
         if (retreating) {
             ExitMenu();
         }
         retreating = false;
         inSimulation = false;
+        attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+        print("Action Complete, readyToExecute set");
     }
 
     public MapUnit GetRandomEnemy(Cooldown cooldown) {

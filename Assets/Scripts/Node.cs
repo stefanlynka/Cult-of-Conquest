@@ -45,8 +45,6 @@ public class Node : MonoBehaviour
     void Update(){
     }
 
-
-
     public void Highlight() {
         //print("highlighted: "+ gameObject);
         if (!highlighted) transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z-10);
@@ -136,13 +134,48 @@ public class Node : MonoBehaviour
         int threat = 0;
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
+
             // If the neighbouring node is occupied, is owned by another race, and is the new biggest threat
+            if (neighbour.GetComponent<Node>().owner != owner && threat < neighbour.GetComponent<Node>().GetPower()) {
+                biggestThreat = neighbour;
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().GetPower());
+            }
+            /*
             if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().owner != owner && neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower() > threat) {
                 biggestThreat = neighbour;
                 threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
             }
+            */
         }
         return biggestThreat;
+    }
+
+    public void UpdateSprite() {
+        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        if (homeBase == Race.None) {
+            Sprite newSprite = renderer.sprite;
+            switch (owner) {
+                case Race.Carnot:
+                    newSprite = Resources.Load<Sprite>("Nodes/CarnotNode");
+                    break;
+                case Race.Dukkha:
+                    newSprite = Resources.Load<Sprite>("Nodes/DukkhaNode");
+                    break;
+                case Race.Eidalons:
+                    newSprite = Resources.Load<Sprite>("Nodes/EidalonNode");
+                    break;
+                case Race.Noumenon:
+                    newSprite = Resources.Load<Sprite>("Nodes/NoumenonNode");
+                    break;
+                case Race.Paratrophs:
+                    newSprite = Resources.Load<Sprite>("Nodes/ParatrophNode");
+                    break;
+                case Race.Unmar:
+                    newSprite = Resources.Load<Sprite>("Nodes/UnmarNode");
+                    break;
+            }
+            renderer.sprite = newSprite;
+        }
     }
 
     private void Setup() {
@@ -190,6 +223,7 @@ public class Node : MonoBehaviour
             }
             occupant.transform.parent = GameObject.Find("/Neutral Armies").transform;
         }
+        UpdateSprite();
     }
 
     public void BuildAltar(Altar newAltar) {
@@ -202,13 +236,13 @@ public class Node : MonoBehaviour
 
     public int GetNodeMoneyIncome() {
         int income = difficulty * 5;
-        if (altar != null && altar.name == "Harvest") income =  (int)Mathf.Round(income * 1.4f);
+        if (altar != null && altar.name == AltarName.Harvest) income =  (int)Mathf.Round(income * 1.4f);
         return income;
     }
 
     public int GetNodeZealIncome() {
         int income = 0;
-        if (altar != null && altar.name == "Devotion") income = 1;
+        if (altar != null && altar.name == AltarName.Devotion) income = 1;
         return income;
     }
 
@@ -263,6 +297,15 @@ public class Node : MonoBehaviour
             }
         }
         return threat;
+    }
+
+    public int GetPower() {
+        int power = 0;
+        if (occupant != null)                                       power += occupant.GetComponent<Army>().GetPower();
+        if (altar != null && altar.name == AltarName.Conflict)      power += 30;
+        if (temple != null && temple.name == TempleName.Protection) power += 50;
+
+        return power;
     }
 
 }

@@ -37,9 +37,9 @@ public class TempleShopSpace : MonoBehaviour{
 
     public void SetTemple(Temple newTemple) {
         temple = newTemple;
-        templeName.GetComponent<TextMesh>().text = temple.name;
+        templeName.GetComponent<TextMesh>().text = temple.name.ToString();
         cost.GetComponent<TextMesh>().text = temple.cost.ToString();
-        templeName.GetComponent<TextMesh>().text = temple.name;
+        templeName.GetComponent<TextMesh>().text = temple.name.ToString();
         portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Temples/Temple of " + temple.portrait);
         description.GetComponent<TextMesh>().text = temple.description;
     }

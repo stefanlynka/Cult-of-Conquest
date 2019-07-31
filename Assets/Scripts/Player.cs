@@ -131,6 +131,7 @@ public class Player : MonoBehaviour
     }
 
     public void attackNode(GameObject army, GameObject node) {
+        army.GetComponent<Army>().movesLeft--;
         //print("Attack node   x: " + node.transform.localPosition.x + " y: " + node.transform.localPosition.y);
         GameObject finalNode = node;
         // If army isn't next to target, attack one step closer until adjacent

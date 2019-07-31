@@ -89,12 +89,18 @@ public class Army : MonoBehaviour
         currentNode.GetComponent<Node>().occupied = false;
         currentNode.GetComponent<Node>().occupant = null;
         print("dest coming");
+        print("army movin " + name);
         print("destination : " + destination.name);
         transform.position = new Vector3(destination.transform.position.x, destination.transform.position.y, transform.position.z);
         currentNode = destination;
         destination.GetComponent<Node>().owner = race;
         destination.GetComponent<Node>().occupied = true;
         destination.GetComponent<Node>().occupant = gameObject;
+        destination.GetComponent<Node>().UpdateSprite();
+        if (owner.GetComponent<AI>()) {
+            print("ready for next action");
+            owner.GetComponent<AI>().readyToExecute = true;
+        }
     }
 
     public void BuyUnit(UnitPos unitPos, MapUnit unit) {
@@ -108,7 +114,7 @@ public class Army : MonoBehaviour
     }
 
     public void AddUnit(int index, bool fRow, MapUnit unit) {
-        print("adding unit");
+        //print("adding unit");
         MapUnit newUnit = unit.DeepCopy();
         if (fRow) frontRow[index] = newUnit;
         else backRow[index] = newUnit;

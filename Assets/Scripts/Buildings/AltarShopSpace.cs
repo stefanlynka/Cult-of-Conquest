@@ -37,9 +37,9 @@ public class AltarShopSpace : MonoBehaviour{
 
     public void SetAltar(Altar newAltar) {
         altar = newAltar;
-        altarName.GetComponent<TextMesh>().text = altar.name;
+        altarName.GetComponent<TextMesh>().text = altar.name.ToString();
         cost.GetComponent<TextMesh>().text = altar.cost.ToString();
-        altarName.GetComponent<TextMesh>().text = altar.name;
+        altarName.GetComponent<TextMesh>().text = altar.name.ToString();
         portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Altars/Altar of "+altar.portrait);
         description.GetComponent<TextMesh>().text = altar.description;
     }

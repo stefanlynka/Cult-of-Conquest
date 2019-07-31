@@ -65,7 +65,7 @@ public class NodeMenu : MonoBehaviour
             GameObject altarSprite = Tools.GetChildNamed(altarSpace, "Altar Sprite");
             GameObject descriptionText = Tools.GetChildNamed(altarSpace, "Altar Description Text");
             
-            titleText.GetComponent<TextMesh>().text = altar.name;
+            titleText.GetComponent<TextMesh>().text = altar.name.ToString();
             altarSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Altars/Altar of " + altar.portrait);
             descriptionText.GetComponent<TextMesh>().text = altar.description;
         }
@@ -81,7 +81,7 @@ public class NodeMenu : MonoBehaviour
             GameObject templeSprite = Tools.GetChildNamed(templeSpace, "Temple Sprite");
             GameObject descriptionText = Tools.GetChildNamed(templeSpace, "Temple Description Text");
 
-            titleText.GetComponent<TextMesh>().text = temple.name;
+            titleText.GetComponent<TextMesh>().text = temple.name.ToString();
             templeSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Temples/Temple of " + temple.portrait);
             descriptionText.GetComponent<TextMesh>().text = temple.description;
         }
