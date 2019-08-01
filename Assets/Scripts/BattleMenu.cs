@@ -17,6 +17,7 @@ public class BattleMenu : MonoBehaviour{
     public List<MapUnit> defenders = new List<MapUnit>();
     public List<MapUnit> attackersFrontRow = new List<MapUnit>();
     public List<MapUnit> attackersBackRow = new List<MapUnit>();
+    public List<MapUnit> defendersBuildings = new List<MapUnit>(); 
     public List<MapUnit> defendersFrontRow = new List<MapUnit>();
     public List<MapUnit> defendersBackRow = new List<MapUnit>();
 
@@ -58,6 +59,7 @@ public class BattleMenu : MonoBehaviour{
         defenders.Clear();
         attackersFrontRow.Clear();
         attackersBackRow.Clear();
+        defendersBuildings.Clear();
         defendersFrontRow.Clear();
         defendersBackRow.Clear();
 
@@ -89,10 +91,22 @@ public class BattleMenu : MonoBehaviour{
                 defendersBackRow.Add(DBackRow[i]);
             }
         }
+        GameObject defendingNode = defendingArmy.GetComponent<Army>().currentNode;
+        Temple temple = defendingNode.GetComponent<Node>().temple;
+        Altar altar = defendingNode.GetComponent<Node>().altar;
+        if (temple != null) {
+            units.Add(temple.unit);
+            defenders.Add(temple.unit);
+            defendersBuildings.Add(temple.unit);
+        }
+        if (altar != null) {
+            units.Add(altar.unit);
+            defenders.Add(altar.unit);
+            defendersBuildings.Add(altar.unit);
+        }
     }
 
     public void SetupBattle(GameObject attackingArmy, GameObject defendingArmy, GameObject node) {
-        print("Battle has been setup");
         SetupArmies(attackingArmy, defendingArmy);
         StartingCooldowns();
         battleNode = node;
@@ -112,6 +126,7 @@ public class BattleMenu : MonoBehaviour{
             Cooldown newCooldown = new Cooldown(rand, defenders[i], "defender");
             cooldowns.Add(newCooldown);
         }
+
         cooldowns.Sort(Tools.SortByTime);
 
         for (int i = 0; i < cooldowns.Count; i++) {
@@ -124,6 +139,7 @@ public class BattleMenu : MonoBehaviour{
         //print("attackers left: " + attackers.Count);
         //print("defenders left: " + defenders.Count);
         bool armyDefeated = false;
+        if (defenders.Count <= 0) armyDefeated = true;
         while (!armyDefeated) {
             //print("loop");
             //for (int i = 0; i < 10; i++) { 
@@ -153,6 +169,7 @@ public class BattleMenu : MonoBehaviour{
         }
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendArmy);
         timer = 0;
     }
 
@@ -191,12 +208,14 @@ public class BattleMenu : MonoBehaviour{
                 cooldowns.Sort(Tools.SortByTime);
                 attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
                 defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
+                defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendArmy);
             }
         }
         else BattleOver();
     }
 
     public void Retreat() {
+        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
         if (inSimulation) {
             RemoveAttackCooldowns();
             retreating = true;
@@ -235,14 +254,15 @@ public class BattleMenu : MonoBehaviour{
         }
         retreating = false;
         inSimulation = false;
-        attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
-        print("Action Complete, readyToExecute set");
+        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+        print("Action Complete, readyToExecute");
     }
 
     public MapUnit GetRandomEnemy(Cooldown cooldown) {
         MapUnit target;
         if (cooldown.side == "attacker") {
-            if (defendersFrontRow.Count > 0) target = defendersFrontRow[Random.Range(0, defendersFrontRow.Count)];
+            if (defendersBuildings.Count > 0) target = defendersBuildings[Random.Range(0, defendersBuildings.Count)];
+            else if (defendersFrontRow.Count > 0) target = defendersFrontRow[Random.Range(0, defendersFrontRow.Count)];
             else target = defendersBackRow[Random.Range(0, defendersBackRow.Count)];
         }
         else {
@@ -270,6 +290,7 @@ public class BattleMenu : MonoBehaviour{
         attackersFrontRow.Remove(unit);
         defendersBackRow.Remove(unit);
         defendersFrontRow.Remove(unit);
+        defendersBuildings.Remove(unit);
     }
 
     public void RemoveUnitFromArmy(MapUnit unit) {
@@ -289,6 +310,11 @@ public class BattleMenu : MonoBehaviour{
                 array[i] = null;
             }
         }
+    }
+
+    public bool IsBattleOver() {
+        if (attackers.Count <= 0 || defenders.Count <= 0) return true;
+        return false;
     }
 
 }

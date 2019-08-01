@@ -50,14 +50,13 @@ public class AI : MonoBehaviour{
         for (int i = 0; i < armies.Count; i++) {
             GameObject currentArmy = armies[i];
             if (AttackNearbyThreat(currentArmy)) {
-                print("Attack performed, waiting");
+                //print("Attack performed, waiting");
                 readyToExecute = false;
                 return;
             }
             
             if (MoveToThreatenedNode(currentArmy)) {
-                print("Move performed, waiting");
-                //readyToExecute = false;
+                //print("Move performed, waiting");
                 return;
             }
         }
@@ -83,7 +82,7 @@ public class AI : MonoBehaviour{
     }
 
     void BuyUnits() {
-        print("army count: "+armies.Count);
+        //print("army count: "+armies.Count);
         bool moneyToSpend = true;
         while (moneyToSpend) {
             //print("has " + GetComponent<Player>().money + " money to spend");
@@ -98,7 +97,7 @@ public class AI : MonoBehaviour{
                 }
             }
             if (weakestArmy.GetComponent<Army>().HasOpenPosition()) {
-                print("weakest has opening");
+                //print("weakest has opening");
                 UnitPos position = weakestArmy.GetComponent<Army>().GetOpenPosition();
                 MapUnit unit = GetComponent<Player>().unitBlueprints[3];
                 weakestArmy.GetComponent<Army>().BuyUnit(position, unit);
@@ -187,11 +186,11 @@ public class AI : MonoBehaviour{
         GameObject armyNode = army.GetComponent<Army>().currentNode;
         GameObject target = armyNode.GetComponent<Node>().GetGreatestThreat();
         if (target != null) {
-            print("target exists");
-            print("Should I? " + ShouldAttack(army, target));
+            //print("target exists");
+            //print("Should I? " + ShouldAttack(army, target));
         }
         if (target != null && ShouldAttack(army, target)) {
-            print("ATTACK!");
+            //print("ATTACK!");
             GetComponent<Player>().attackNode(army, target);
             return true;
         }

@@ -75,18 +75,20 @@ public struct UnitPos {
 
 
 // For Node
-public enum AltarName {
-    Harvest,
-    Devotion,
-    Conflict,
-    Fate,
-    None
-}
+
 public enum TempleName {
     Protection,
     Armaments,
     Tradition,
     Origin,
+    None
+}
+public enum AltarName {
+    Harvest,
+    Devotion,
+    Conflict,
+    Fate,
+    Armaments,
     None
 }
 

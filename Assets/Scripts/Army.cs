@@ -72,14 +72,12 @@ public class Army : MonoBehaviour
         map.GetComponent<NodeManager>().UnhighlightNodes();
     }
     public void Select() {
-        print("selected"+gameObject);
         selected = true;
         transform.localScale *= 2;
         //transform.position = new Vector3(transform.position.x, transform.position.y, -20);
         HighlightNodes(currentNode, movesLeft);
     }
     public void Deselect() {
-        print("deselected"+gameObject);
         selected = false;
         transform.localScale *= 0.5f;
         //transform.position = new Vector3(transform.position.x, transform.position.y, -1);
@@ -88,9 +86,6 @@ public class Army : MonoBehaviour
     public void MoveToNode(GameObject destination) {
         currentNode.GetComponent<Node>().occupied = false;
         currentNode.GetComponent<Node>().occupant = null;
-        print("dest coming");
-        print("army movin " + name);
-        print("destination : " + destination.name);
         transform.position = new Vector3(destination.transform.position.x, destination.transform.position.y, transform.position.z);
         currentNode = destination;
         destination.GetComponent<Node>().owner = race;
@@ -98,7 +93,6 @@ public class Army : MonoBehaviour
         destination.GetComponent<Node>().occupant = gameObject;
         destination.GetComponent<Node>().UpdateSprite();
         if (owner.GetComponent<AI>()) {
-            print("ready for next action");
             owner.GetComponent<AI>().readyToExecute = true;
         }
     }

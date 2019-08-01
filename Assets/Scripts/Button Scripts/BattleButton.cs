@@ -14,7 +14,6 @@ public class BattleButton : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-        
     }
 
     private void OnMouseDown() {
@@ -27,7 +26,7 @@ public class BattleButton : MonoBehaviour{
         else if (buttonType == "retreat") {
             battleMenu.GetComponent<BattleMenu>().Retreat();
         }
-        else if (buttonType == "back") {
+        else if (buttonType == "back" && battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
             battleMenu.GetComponent<BattleMenu>().ExitMenu();
         }
     }

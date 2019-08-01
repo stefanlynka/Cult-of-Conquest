@@ -10,10 +10,17 @@ public class Altar{
     public string description;
     public string ability;
 
+    public MapUnit unit;
+
     public Altar(AltarName newName, int newCost) {
         name = newName;
         cost = newCost;
         portrait = newName.ToString();
+        unit = new MapUnit("altar", Race.None, "");
+        unit.maxHealth = 100;
+        unit.currentHealth = 100;
+        unit.damage = 10;
+        unit.attackSpeed = 20;
     }
 
     public Altar DeepCopy() {

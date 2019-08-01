@@ -132,7 +132,7 @@ public class Player : MonoBehaviour
 
     public void attackNode(GameObject army, GameObject node) {
         army.GetComponent<Army>().movesLeft--;
-        //print("Attack node   x: " + node.transform.localPosition.x + " y: " + node.transform.localPosition.y);
+
         GameObject finalNode = node;
         // If army isn't next to target, attack one step closer until adjacent
         while (!army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(node) && army.GetComponent<Army>().currentNode != node) {
@@ -163,7 +163,7 @@ public class Player : MonoBehaviour
                     }
                 }
             }
-            army.GetComponent<Army>().movesLeft -= 1;
+            //army.GetComponent<Army>().movesLeft -= 1;
         }
     }
 
@@ -174,9 +174,11 @@ public class Player : MonoBehaviour
         GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingArmy);
         battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingArmy, defendingArmy.GetComponent<Army>().currentNode);
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingArmy);
     }
 
     public void SwitchNodes(GameObject army1, GameObject node1, GameObject army2, GameObject node2) {
@@ -194,6 +196,7 @@ public class Player : MonoBehaviour
     }
 
     public void StartTurn() {
+        print("Start Turn!");
         money += GetMoneyIncome();
         zeal += GetZealIncome();
         RestUnits();

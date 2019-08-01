@@ -10,10 +10,17 @@ public class Temple {
     public string description;
     public string ability;
 
+    public MapUnit unit;
+
     public Temple(TempleName newName, int newCost) {
         name = newName;
         cost = newCost;
         portrait = newName.ToString();
+        unit = new MapUnit("Temple", Race.None, "");
+        unit.maxHealth = 200;
+        unit.currentHealth = 200;
+        unit.damage = 50;
+        unit.attackSpeed = 100;
     }
 
     public Temple DeepCopy() {
