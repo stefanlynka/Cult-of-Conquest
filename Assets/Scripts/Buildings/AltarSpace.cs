@@ -18,10 +18,10 @@ public class AltarSpace : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        if (Player.menuOpen==false) {
+        if (Player.menuOpen==1) {
             altarBuyingMenu.GetComponent<AltarShopManager>().EnterMenu();
             currentAltarSpace = gameObject;
-            Player.menuOpen = true;
+            Player.menuOpen = 2;
         }
     }
 }

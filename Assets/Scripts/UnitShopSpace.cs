@@ -61,6 +61,6 @@ public class UnitShopSpace : MonoBehaviour
         army.GetComponent<Army>().BuyUnit(unitPos, unit);
         nodeMenu.GetComponent<NodeMenu>().LoadArmy();
         unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
-        Player.menuOpen = false;
+        Player.menuOpen = 1;
     }
 }

@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TurnButton : MonoBehaviour{
-
-
-
+public class RitualButton : MonoBehaviour{
     // Start is called before the first frame update
-    void Start(){
+    void Start() {
         
     }
 
@@ -17,9 +14,10 @@ public class TurnButton : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        if (Player.menuOpen == 0) {
-            GameObject turnManager = GameObject.Find("/Turn Manager");
-            turnManager.GetComponent<TurnManager>().NextTurn();
+        if (Player.menuOpen == 1) {
+            GameObject ritualMenu = GameObject.Find("/Ritual Menu");
+            ritualMenu.GetComponent<RitualMenu>().EnterMenu();
+            Player.menuOpen = 2;
         }
     }
 }

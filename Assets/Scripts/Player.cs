@@ -15,8 +15,9 @@ public class Player : MonoBehaviour
     public static GameObject armyRightClicked;
     public static GameObject nodeMenu;
     public static GameObject battleMenu;
-    public static bool menuOpen = false;
+    public static int menuOpen = 0;
     public List<MapUnit> unitBlueprints = new List<MapUnit>();
+    public List<Ritual> ritualBlueprints = new List<Ritual>();
 
     public int money = 20;
     public int zeal = 0;
@@ -115,12 +116,13 @@ public class Player : MonoBehaviour
             selectedArmy.GetComponent<Army>().Deselect();
         }
 
+        //Right click
         if (Input.GetMouseButtonDown(1)) {
-            if (!nodeMenu.GetComponent<NodeMenu>().open && !menuOpen) {
+            if (!nodeMenu.GetComponent<NodeMenu>().open && menuOpen == 0) {
                 if (nodeClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeClicked);
                 if (armyRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
             }
-            else if (!menuOpen) {
+            else if (menuOpen == 1) {
                 nodeMenu.GetComponent<NodeMenu>().ExitMenu();
             }
         }
@@ -168,7 +170,7 @@ public class Player : MonoBehaviour
     }
 
     public void Invade(GameObject attackingArmy, GameObject defendingArmy) {
-        menuOpen = true;
+        menuOpen = 1;
         battleMenu.GetComponent<BattleMenu>().EnterMenu();
         GameObject attackArmyMenu = Tools.GetChildNamed(battleMenu, "Attacking Army Menu");
         GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
@@ -195,11 +197,28 @@ public class Player : MonoBehaviour
         ownedNodes.Add(node);
     }
 
+    public bool BuyRitual(Ritual ritual) {
+        if (zeal >= ritual.zealCost) {
+            zeal -= ritual.zealCost;
+            NodeMenu.currentNode.GetComponent<Node>().plannedRitual = Tools.DeepCopyRitual(ritual);
+            return true;
+        }
+        return false;
+    }
+
     public void StartTurn() {
         print("Start Turn!");
         money += GetMoneyIncome();
         zeal += GetZealIncome();
         RestUnits();
+        UpdateNodes();
+    }
+
+    void UpdateNodes() {
+        for(int i = 0; i< ownedNodes.Count; i++) {
+            GameObject node = ownedNodes[i];
+            node.GetComponent<Node>().UpdateRitual();
+        }
     }
 
     public int GetMoneyIncome() {

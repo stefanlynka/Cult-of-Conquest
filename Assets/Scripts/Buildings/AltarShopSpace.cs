@@ -49,6 +49,6 @@ public class AltarShopSpace : MonoBehaviour{
         NodeMenu.currentNode.GetComponent<Node>().BuildAltar(altar);
         nodeMenu.GetComponent<NodeMenu>().LoadAltar();
         altarShopManager.GetComponent<AltarShopManager>().ExitMenu();
-        Player.menuOpen = false;
+        Player.menuOpen = 1;
     }
 }

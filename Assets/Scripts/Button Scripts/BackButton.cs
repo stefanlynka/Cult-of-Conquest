@@ -15,8 +15,8 @@ public class BackButton : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
+        unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
         UnitSpace.buyingMenuOpen = false;
-        Player.menuOpen = false;
+        Player.menuOpen = 1;
     }
 }

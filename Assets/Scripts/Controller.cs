@@ -5,7 +5,7 @@ using UnityEngine;
 public class Controller : MonoBehaviour{
 
     public static List<GameObject> players = new List<GameObject>();
-    GameObject nodeManager, playerMenu, uniShopManager;
+    GameObject nodeManager, playerMenu, uniShopManager, ritualManager;
 
     // Start is called before the first frame update
     void Start(){
@@ -26,10 +26,12 @@ public class Controller : MonoBehaviour{
             if (child.GetComponent<Player>()) players.Add(child);
         }
         uniShopManager = GameObject.Find("/Unit Buying Menu/Unit Spaces");
+        ritualManager = GameObject.Find("/Ritual Menu");
     }
     void CallStartupFunctions() {
         nodeManager.GetComponent<NodeManager>().Startup();
         uniShopManager.GetComponent<UnitShopManager>().Startup();
+        ritualManager.GetComponent<RitualManager>().Startup();
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
             player.GetComponent<Player>().Startup();

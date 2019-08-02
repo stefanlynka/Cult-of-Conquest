@@ -31,12 +31,14 @@ public class NodeMenu : MonoBehaviour
         LoadAltar();
         LoadTemple();
         open = true;
+        Player.menuOpen = 1;
     }
 
     public void ExitMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(0, 11, -10));
         CleanUnitSpaces();
         open = false;
+        Player.menuOpen = 0;
     }
 
     public void LoadArmy() {

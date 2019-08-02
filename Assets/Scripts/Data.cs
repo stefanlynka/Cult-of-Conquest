@@ -25,6 +25,19 @@ public enum Race {
     None
 }
 
+public struct Ritual {
+    public int zealCost;
+    public int prepTime;
+    public string name;
+    public string description;
+    public Ritual(string newName, int cost, int time, string desc) {
+        zealCost = cost;
+        prepTime = time;
+        name = newName;
+        description = desc;
+    }
+}
+
 // For Option
 public struct Option {
     public OptionName optionName;
@@ -91,4 +104,5 @@ public enum AltarName {
     Armaments,
     None
 }
+
 

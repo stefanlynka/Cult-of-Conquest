@@ -34,11 +34,11 @@ public class TempleShopManager : MonoBehaviour{
 
     public void EnterMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
-        Player.menuOpen = true;
+        Player.menuOpen = 2;
     }
     public void ExitMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(0, 15, -15));
-        Player.menuOpen = false;
+        Player.menuOpen = 1;
     }
 
     void MakeTemples(Race race) {

@@ -49,6 +49,6 @@ public class TempleShopSpace : MonoBehaviour{
         NodeMenu.currentNode.GetComponent<Node>().BuildTemple(temple);
         nodeMenu.GetComponent<NodeMenu>().LoadTemple();
         templeShopManager.GetComponent<TempleShopManager>().ExitMenu();
-        Player.menuOpen = false;
+        Player.menuOpen = 1;
     }
 }

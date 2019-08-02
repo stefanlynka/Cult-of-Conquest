@@ -30,7 +30,7 @@ public class UnitSpace : MonoBehaviour
                 unitBuyingMenu.GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
                 currentUnitSpace = gameObject;
                 currentUnitPos = new UnitPos(position, frontRow);
-                Player.menuOpen = true;
+                Player.menuOpen = 2;
             }
         }
     }

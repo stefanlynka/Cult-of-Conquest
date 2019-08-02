@@ -40,11 +40,11 @@ public class BattleMenu : MonoBehaviour{
 
     public void EnterMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(0, 0, -10));
-        Player.menuOpen = true;
+        Player.menuOpen = 1;
     }
     public void ExitMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(20, 0, -10));
-        Player.menuOpen = false;
+        Player.menuOpen = 0;
     }
 
     void SetupArmies(GameObject attackingArmy, GameObject defendingArmy) {

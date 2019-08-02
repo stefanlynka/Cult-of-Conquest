@@ -1,0 +1,28 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class RitualSlot : MonoBehaviour{
+
+    public Ritual ritualBlueprint;
+    public GameObject human;
+
+    // Start is called before the first frame update
+    void Start(){
+        human = GameObject.Find("Players/Human");
+    }
+
+    // Update is called once per frame
+    void Update(){
+        
+    }
+
+    private void OnMouseDown() {
+        if (Player.menuOpen == 2) {
+            if (human.GetComponent<Player>().BuyRitual(ritualBlueprint)) {
+                print("return true");
+                transform.parent.GetComponent<RitualMenu>().ExitMenu();
+            }
+        }
+    }
+}

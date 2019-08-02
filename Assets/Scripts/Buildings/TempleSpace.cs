@@ -18,10 +18,10 @@ public class TempleSpace : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        if (Player.menuOpen == false) {
+        if (Player.menuOpen == 1) {
             templeBuyingMenu.GetComponent<TempleShopManager>().EnterMenu();
             currentTempleSpace = gameObject;
-            Player.menuOpen = true;
+            Player.menuOpen = 2;
         }
     }
 }

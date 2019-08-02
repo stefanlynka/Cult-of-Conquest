@@ -43,4 +43,9 @@ public class Tools {
     public static int SortByThreat(GameObject node1, GameObject node2) {
         return node1.GetComponent<Node>().GetThreatToNode().CompareTo(node2.GetComponent<Node>().GetThreatToNode());
     }
+
+    public static Ritual DeepCopyRitual(Ritual ritual) {
+        Ritual copy = new Ritual(ritual.name, ritual.zealCost, ritual.prepTime, ritual.description);
+        return copy;
+    }
 }

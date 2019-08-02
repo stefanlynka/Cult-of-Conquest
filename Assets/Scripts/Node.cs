@@ -27,6 +27,8 @@ public class Node : MonoBehaviour
     public bool occupied = false;
     public bool occupiable = true;
     public bool highlighted = false;
+    public Ritual plannedRitual;
+    public Ritual activeRitual;
 
 
 
@@ -148,6 +150,21 @@ public class Node : MonoBehaviour
             */
         }
         return biggestThreat;
+    }
+
+    public void UpdateRitual() {
+        if (plannedRitual.name != null) {
+            plannedRitual.prepTime--;
+            if (plannedRitual.prepTime == 0) {
+                print("RITUAL ACTIVATED!!!!!!!");
+                activeRitual = plannedRitual;
+            }
+            if (plannedRitual.prepTime < 0) {
+                print("RITUAL ENDED!");
+                plannedRitual.name = "";
+                activeRitual.name = "";
+            }
+        }
     }
 
     public void UpdateSprite() {
