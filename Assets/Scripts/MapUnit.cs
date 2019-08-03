@@ -14,6 +14,9 @@ public class MapUnit
     public int attackRange = 2;
     public int attackSpeed = 60;
     public string ability = "Whack";
+    public int maxShield = 0;
+    public int currentShield = 0;
+    public bool marred = false;
     //public int priorityForAttacking
 
     public int moneyCost = 10;
@@ -53,6 +56,9 @@ public class MapUnit
         copy.moneyCost = moneyCost;
         copy.zealCost = zealCost;
         copy.power = power;
+        copy.maxShield = maxShield;
+        copy.currentShield = currentShield;
+        copy.marred = marred;
         return copy;
     }
 }

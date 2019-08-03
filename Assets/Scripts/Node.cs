@@ -204,6 +204,7 @@ public class Node : MonoBehaviour
             army.AddComponent<Army>();
             army.GetComponent<Army>().race = Race.Independent;
             army.GetComponent<Army>().currentNode = gameObject;
+            army.GetComponent<Army>().owner = GameObject.Find("/Neutral Player");
             army.transform.position = transform.position;
             occupant = army;
             occupied = true;

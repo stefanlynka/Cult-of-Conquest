@@ -48,12 +48,12 @@ public class NodeMenu : MonoBehaviour
         MapUnit[] frontUnits = currentArmy.GetComponent<Army>().frontRow;
         for (int i = 0; i < backUnits.Length; i++) {
             if (backUnits[i] != null) {
-                FillUnitSpace(backRowSpaces[i], backUnits[i]);
+                backRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(backUnits[i]);
             }
         }
         for (int i = 0; i < frontUnits.Length; i++) {
             if (frontUnits[i] != null) {
-                FillUnitSpace(frontRowSpaces[i], frontUnits[i]);
+                frontRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(frontUnits[i]);
             }
         }
     }
@@ -112,14 +112,21 @@ public class NodeMenu : MonoBehaviour
         }
     }
 
+    /*
     void FillUnitSpace(GameObject unitSpace, MapUnit unit) {
         GameObject NameText = Tools.GetChildNamed(unitSpace, "Name Text");
         GameObject HealthText = Tools.GetChildNamed(unitSpace, "Health Text");
         GameObject Portrait = Tools.GetChildNamed(unitSpace, "Portrait");
+        GameObject Shield = Tools.GetChildNamed(unitSpace, "Shield");
         NameText.GetComponent<TextMesh>().text = unit.name;
         HealthText.GetComponent<TextMesh>().text = "HP: " + unit.currentHealth + "/" + unit.maxHealth;
         Portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Races/" + unit.race + "/Portrait/" + unit.portraitName);
+        if (unit.currentShield == 0) Shield.GetComponent<SpriteRenderer>().sprite = null;
+        if (unit.currentShield == 1) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield1");
+        if (unit.currentShield == 2) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield2");
+        if (unit.currentShield == 3) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield3");
     }
+    */
 
     void CleanUnitSpaces() {
         for (int i = 0; i < backRowSpaces.Length; i++) {

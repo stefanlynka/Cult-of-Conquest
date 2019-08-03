@@ -141,77 +141,79 @@ public class BattleMenu : MonoBehaviour{
         bool armyDefeated = false;
         if (defenders.Count <= 0) armyDefeated = true;
         while (!armyDefeated) {
-            //print("loop");
-            //for (int i = 0; i < 10; i++) { 
-            MapUnit attacker = cooldowns[0].unit;
             timer = cooldowns[0].timeToAct;
-            MapUnit target = GetRandomEnemy(cooldowns[0]);
-            if (target != null) {
-                target.currentHealth -= attacker.damage;
-
-                if (target.currentHealth <= 0) {
-                    //print("target down: " + target);
-                    RemoveTargetFromCooldowns(target);
-                    RemoveUnitFromLists(target);
-                    RemoveUnitFromArmy(target);
-                }
-            }
-            if (attackers.Count == 0 || defenders.Count == 0) {
-                BattleOver();
-                armyDefeated = true;
-            }
-
-
-            Cooldown newCooldown = new Cooldown(attacker.attackSpeed + timer, attacker, cooldowns[0].side);
-            cooldowns.Add(newCooldown);
-            cooldowns.RemoveAt(0);
-            cooldowns.Sort(Tools.SortByTime);
+            // Run Next Attack
+            armyDefeated = NextAttack(false);
         }
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendArmy);
         timer = 0;
     }
+    
+    bool NextAttack(bool retreating) {
+        MapUnit attacker = cooldowns[0].unit;
+        MapUnit target = GetRandomEnemy(cooldowns[0]);
+        GameObject attackingUnitArmy, defendingUnitArmy;
+        if (cooldowns[0].side == "attacker") {
+            attackingUnitArmy = attackArmy;
+            defendingUnitArmy = defendArmy;
+        }
+        else {
+            attackingUnitArmy = defendArmy;
+            defendingUnitArmy = attackArmy;
+        }
 
-    public void StartSimulation() {
-        inSimulation = true;
-        timer = 0;
+        if (target != null) {
+            if (target.currentShield > 0) target.currentShield--;
+            else {
+                target.currentHealth -= attacker.damage;
+                // If the unit dealing damage is on the attacking side, the defending army triggers "Take Damage"
+                defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.TakeDamage(target);
+            }
+
+            if (target.currentHealth <= 0) {
+                defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.ArmyLostUnit(defendingUnitArmy);
+                RemoveTargetFromCooldowns(target);
+                RemoveUnitFromLists(target);
+                RemoveUnitFromArmy(target);
+            }
+        }
+        if (attackers.Count == 0 || defenders.Count == 0) {
+            BattleOver();
+            return true;
+        }
+        if (!retreating) {
+            Cooldown newCooldown = new Cooldown(attacker.attackSpeed + timer, attacker, cooldowns[0].side);
+            cooldowns.Add(newCooldown);
+        }
+        cooldowns.RemoveAt(0);
+        cooldowns.Sort(Tools.SortByTime);
+        return false;
     }
 
+
     void RunSimulation() {
-        //print("battle beginning");
-        //print("attackers left: " + attackers.Count);
-        //print("defenders left: " + defenders.Count);
         timer++;
         if (cooldowns.Count != 0) {
             while (cooldowns.Count > 0 && timer == cooldowns[0].timeToAct) {
-                //print("ATTACK: " + timer);
-                MapUnit attacker = cooldowns[0].unit;
-                MapUnit target = GetRandomEnemy(cooldowns[0]);
-                target.currentHealth -= attacker.damage;
-
-                if (target.currentHealth <= 0) {
-                    //print("target down: " + target);
-                    RemoveTargetFromCooldowns(target);
-                    RemoveUnitFromLists(target);
-                    RemoveUnitFromArmy(target);
+                // Run Next Attack
+                inSimulation = !NextAttack(retreating);
+                if (!inSimulation) {
+                    cooldowns.RemoveAt(0);
+                    cooldowns.Sort(Tools.SortByTime);
                 }
-                if (attackers.Count == 0 || defenders.Count == 0) {
-                    BattleOver();
-                    inSimulation = false;
-                }
-                if (!retreating) {
-                    Cooldown newCooldown = new Cooldown(attacker.attackSpeed + timer, attacker, cooldowns[0].side);
-                    cooldowns.Add(newCooldown);
-                }
-                cooldowns.RemoveAt(0);
-                cooldowns.Sort(Tools.SortByTime);
                 attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
                 defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
                 defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendArmy);
             }
         }
         else BattleOver();
+    }
+
+    public void StartSimulation() {
+        inSimulation = true;
+        timer = 0;
     }
 
     public void Retreat() {
@@ -263,11 +265,13 @@ public class BattleMenu : MonoBehaviour{
         if (cooldown.side == "attacker") {
             if (defendersBuildings.Count > 0) target = defendersBuildings[Random.Range(0, defendersBuildings.Count)];
             else if (defendersFrontRow.Count > 0) target = defendersFrontRow[Random.Range(0, defendersFrontRow.Count)];
-            else target = defendersBackRow[Random.Range(0, defendersBackRow.Count)];
+            else if (defendersBackRow.Count > 0) target = defendersBackRow[Random.Range(0, defendersBackRow.Count)];
+            else target = null;
         }
         else {
             if (attackersFrontRow.Count > 0) target = attackersFrontRow[Random.Range(0, attackersFrontRow.Count)];
-            else target = attackersBackRow[Random.Range(0, attackersBackRow.Count)];
+            else if (attackersBackRow.Count > 0) target = attackersBackRow[Random.Range(0, attackersBackRow.Count)];
+            else target = null;
         }
 
         return target;

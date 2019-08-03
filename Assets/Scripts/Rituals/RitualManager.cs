@@ -22,7 +22,6 @@ public class RitualManager : MonoBehaviour {
     }
 
     public void InitializeMembers() {
-        print("rituals starting");
         GameObject playerList = GameObject.Find("/Players");
         for (int i = 0; i < playerList.transform.childCount; i++) {
             GameObject child = playerList.transform.GetChild(i).gameObject;

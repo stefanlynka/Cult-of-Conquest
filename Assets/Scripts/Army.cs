@@ -14,6 +14,7 @@ public class Army : MonoBehaviour
     public bool mouseOverArmy = false;
     public int maxMoves = 2;
     public int movesLeft = 2;
+    public bool marred = false;
 
     public MapUnit[] units = new MapUnit[8];
     public MapUnit[] backRow = new MapUnit[4];
@@ -102,6 +103,8 @@ public class Army : MonoBehaviour
         if (unit.moneyCost <= owner.GetComponent<Player>().money && unit.zealCost <= owner.GetComponent<Player>().zeal) {
             owner.GetComponent<Player>().money -= unit.moneyCost;
             owner.GetComponent<Player>().zeal -= unit.zealCost;
+            owner.GetComponent<Player>().raceTraits.NewUnit(unit);
+            print("new shield = "+unit.maxShield);
             AddUnit(unitPos.position, unitPos.frontRow, unit);
         }
         else print("not enough money");

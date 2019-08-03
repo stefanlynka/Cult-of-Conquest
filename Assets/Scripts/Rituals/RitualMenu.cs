@@ -8,7 +8,6 @@ public class RitualMenu : MonoBehaviour{
     // Start is called before the first frame update
     void Start(){
         GetComponent<Panner>().SetTarget(new Vector3(20, 0, -15));
-        print("gogogo");
     }
 
     // Update is called once per frame

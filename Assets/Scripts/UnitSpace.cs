@@ -35,5 +35,27 @@ public class UnitSpace : MonoBehaviour
         }
     }
 
+    public void LoadUnit(MapUnit unit) {
+        GameObject NameText = Tools.GetChildNamed(gameObject, "Name Text");
+        GameObject HealthText = Tools.GetChildNamed(gameObject, "Health Text");
+        GameObject Portrait = Tools.GetChildNamed(gameObject, "Portrait");
+        GameObject Shield = Tools.GetChildNamed(gameObject, "Shield");
+
+        if (unit == null) {
+            NameText.GetComponent<TextMesh>().text = "";
+            HealthText.GetComponent<TextMesh>().text = "";
+            Portrait.GetComponent<SpriteRenderer>().sprite = null;
+            Shield.GetComponent<SpriteRenderer>().sprite = null;
+        }
+        else {
+            NameText.GetComponent<TextMesh>().text = unit.name;
+            HealthText.GetComponent<TextMesh>().text = "HP: " + unit.currentHealth + "/" + unit.maxHealth;
+            Portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Races/" + unit.race + "/Portrait/" + unit.portraitName);
+            if (unit.currentShield == 0) Shield.GetComponent<SpriteRenderer>().sprite = null;
+            if (unit.currentShield == 1) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield1");
+            if (unit.currentShield == 2) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield2");
+            if (unit.currentShield == 3) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield3");
+        }
+    }
 }
 

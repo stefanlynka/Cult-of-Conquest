@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Race race = Race.Noumenon;
-
     public List<GameObject> armies = new List<GameObject>();
     public List<GameObject> ownedNodes = new List<GameObject>();
-    public bool isArmySelected = false;
+    public List<MapUnit> unitBlueprints = new List<MapUnit>();
+    public List<Ritual> ritualBlueprints = new List<Ritual>();
+
     public static GameObject selectedArmy;
     public static GameObject nodeClicked;
     public static GameObject armyLeftClicked;
@@ -16,17 +16,19 @@ public class Player : MonoBehaviour
     public static GameObject nodeMenu;
     public static GameObject battleMenu;
     public static int menuOpen = 0;
-    public List<MapUnit> unitBlueprints = new List<MapUnit>();
-    public List<Ritual> ritualBlueprints = new List<Ritual>();
 
+    public RaceTraits raceTraits;
+    public Race race = Race.Noumenon;
     public int money = 20;
     public int zeal = 0;
+    public bool isArmySelected = false;
 
     public void Awake() {
     }
 
     // Start is called before the first frame update
     void Start(){
+        SetupRaceTraits();
     }
 
     // Update is called once per frame
@@ -61,6 +63,11 @@ public class Player : MonoBehaviour
             GameObject node = NodeManager.nodes[i];
             if (node.GetComponent<Node>().owner == race) ownedNodes.Add(node);
         }
+        //SetupRaceTraits();
+    }
+
+    void SetupRaceTraits() {
+        raceTraits = GameObject.Find("/Race Manager").GetComponent<RaceManager>().GetRaceTraits(race);
     }
 
     void CheckSelected() {
@@ -212,6 +219,7 @@ public class Player : MonoBehaviour
         zeal += GetZealIncome();
         RestUnits();
         UpdateNodes();
+        //print("Number 6 = " + raceTraits.UnitFunction(3));
     }
 
     void UpdateNodes() {

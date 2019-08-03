@@ -46,36 +46,43 @@ public class ArmyMenu : MonoBehaviour {
         MapUnit[] frontUnits = newArmy.GetComponent<Army>().frontRow;
         for (int i = 0; i < backUnits.Length; i++) {
             if (backUnits[i] != null) {
-                FillUnitSpace(backRowSpaces[i], backUnits[i]);
+                backRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(backUnits[i]);
             }
-            else if (backRowSpaces[i] != null) FillUnitSpace(backRowSpaces[i], null);
+            else if (backRowSpaces[i] != null) backRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(null);
         }
         for (int i = 0; i < frontUnits.Length; i++) {
             if (frontUnits[i] != null) {
-                FillUnitSpace(frontRowSpaces[i], frontUnits[i]);
+                frontRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(frontUnits[i]);
             }
-            else if (frontRowSpaces[i] != null) FillUnitSpace(frontRowSpaces[i], null);
+            else if (frontRowSpaces[i] != null) frontRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(null);
 
         }
     }
 
+    /*
     void FillUnitSpace(GameObject unitSpace, MapUnit unit) {
         GameObject NameText = Tools.GetChildNamed(unitSpace, "Name Text");
         GameObject HealthText = Tools.GetChildNamed(unitSpace, "Health Text");
         GameObject Portrait = Tools.GetChildNamed(unitSpace, "Portrait");
+        GameObject Shield = Tools.GetChildNamed(unitSpace, "Shield");
 
         if (unit == null) {
             NameText.GetComponent<TextMesh>().text = "";
             HealthText.GetComponent<TextMesh>().text = "";
             Portrait.GetComponent<SpriteRenderer>().sprite = null;
+            Shield.GetComponent<SpriteRenderer>().sprite = null;
         }
         else {
             NameText.GetComponent<TextMesh>().text = unit.name;
             HealthText.GetComponent<TextMesh>().text = "HP: " + unit.currentHealth + "/" + unit.maxHealth;
             Portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Races/" + unit.race + "/Portrait/" + unit.portraitName);
+            if (unit.currentShield == 0) Shield.GetComponent<SpriteRenderer>().sprite = null;
+            if (unit.currentShield == 1) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield1");
+            if (unit.currentShield == 2) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield2");
+            if (unit.currentShield == 3) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield3");
         }
     }
-
+    */
     void CleanUnitSpaces() {
         for (int i = 0; i < backRowSpaces.Length; i++) {
             if (backRowSpaces[i] != null) {
@@ -92,8 +99,9 @@ public class ArmyMenu : MonoBehaviour {
 
     public void LoadBuildings(GameObject defendingArmy) {
         GameObject armyNode = defendingArmy.GetComponent<Army>().currentNode;
-        GameObject templeSpace = Tools.GetChildNamed(gameObject, "Temple Space");
-        GameObject altarSpace = Tools.GetChildNamed(gameObject, "Altar Space");
+        GameObject protection = Tools.GetChildNamed(gameObject, "Protection Buildings");
+        GameObject templeSpace = Tools.GetChildNamed(protection, "Temple Space");
+        GameObject altarSpace = Tools.GetChildNamed(protection, "Altar Space");
 
         GameObject nameText = Tools.GetChildNamed(templeSpace, "Name Text");
         GameObject healthText = Tools.GetChildNamed(templeSpace, "Health Text");
