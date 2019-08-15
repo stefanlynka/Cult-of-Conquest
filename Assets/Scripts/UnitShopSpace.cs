@@ -18,14 +18,32 @@ public class UnitShopSpace : MonoBehaviour
 
     public MapUnit unit;
 
+    bool mouseOver = false;
+    Color defaultColour;
+
+
     // Start is called before the first frame update
     void Start(){
         initializeMembers();
+        defaultColour = GetComponent<SpriteRenderer>().color;
     }
 
     // Update is called once per frame
     void Update(){
-        
+        UpdateColour();
+    }
+
+    private void OnMouseOver() {
+        mouseOver = true;
+    }
+    private void UpdateColour() {
+        if (mouseOver) {
+            GetComponent<SpriteRenderer>().color = Color.gray;
+        }
+        else {
+            GetComponent<SpriteRenderer>().color = defaultColour;
+        }
+        mouseOver = false;
     }
 
     private void initializeMembers() {
@@ -37,7 +55,7 @@ public class UnitShopSpace : MonoBehaviour
         unitNumber = int.Parse(name.Substring(name.Length - 1));
         nodeMenu = GameObject.Find("/Node Menu");
         unitShop = GameObject.Find("/Unit Buying Menu");
-        human = GameObject.Find("/Players/Human");
+        human = Player.human;
     }
 
 
@@ -59,6 +77,9 @@ public class UnitShopSpace : MonoBehaviour
     public void BuyUnit(GameObject army, UnitPos unitPos) {
         //print("buying unit");
         army.GetComponent<Army>().BuyUnit(unitPos, unit);
+        LeaveMenu();
+    }
+    public void LeaveMenu() {
         nodeMenu.GetComponent<NodeMenu>().LoadArmy();
         unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
         Player.menuOpen = 1;

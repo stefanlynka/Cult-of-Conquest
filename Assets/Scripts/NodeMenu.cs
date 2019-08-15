@@ -47,14 +47,14 @@ public class NodeMenu : MonoBehaviour
         MapUnit[] backUnits = currentArmy.GetComponent<Army>().backRow;
         MapUnit[] frontUnits = currentArmy.GetComponent<Army>().frontRow;
         for (int i = 0; i < backUnits.Length; i++) {
-            if (backUnits[i] != null) {
-                backRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(backUnits[i]);
-            }
+            //if (backUnits[i] != null) {
+            backRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(backUnits[i]);
+            //}
         }
         for (int i = 0; i < frontUnits.Length; i++) {
-            if (frontUnits[i] != null) {
-                frontRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(frontUnits[i]);
-            }
+            //if (frontUnits[i] != null) {
+            frontRowSpaces[i].GetComponent<UnitSpace>().LoadUnit(frontUnits[i]);
+            //}
         }
     }
 

@@ -11,6 +11,13 @@ public class Tools {
         return null;
     }
 
+    public static GameObject GetChildNameContains(GameObject parent, string keyWord) {
+        for (int i = 0; i < parent.transform.childCount; i++) {
+            if (parent.transform.GetChild(i).name.Contains(keyWord)) return parent.transform.GetChild(i).gameObject;
+        }
+        return null;
+    }
+
     public static GameObject MakeText(GameObject parent, string name, Vector3 offset, int fontSize, int sortingOrder) {
         GameObject text = new GameObject();
         text.name = "Text";
@@ -42,6 +49,9 @@ public class Tools {
     }
     public static int SortByThreat(GameObject node1, GameObject node2) {
         return node1.GetComponent<Node>().GetThreatToNode().CompareTo(node2.GetComponent<Node>().GetThreatToNode());
+    }
+    public static int SortByPower(MapUnit unit1, MapUnit unit2) {
+        return unit1.power.CompareTo(unit2.power);
     }
 
     public static Ritual DeepCopyRitual(Ritual ritual) {

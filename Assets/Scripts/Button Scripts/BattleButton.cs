@@ -7,6 +7,7 @@ public class BattleButton : MonoBehaviour{
     public string buttonType;
     GameObject battleMenu;
 
+
     // Start is called before the first frame update
     void Start(){
         battleMenu = transform.parent.transform.parent.transform.parent.gameObject;

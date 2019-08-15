@@ -49,7 +49,9 @@ public class MapUnit
 
     public MapUnit DeepCopy() {
         MapUnit copy = new MapUnit(name, race, portraitName);
-        copy.SetHealth(maxHealth);
+        //copy.SetHealth(maxHealth);
+        copy.currentHealth = currentHealth;
+        copy.maxHealth = maxHealth;
         copy.damage = damage;
         copy.attackRange = attackRange;
         copy.attackSpeed = attackSpeed;

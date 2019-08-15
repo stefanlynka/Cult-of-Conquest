@@ -134,6 +134,29 @@ public class BattleMenu : MonoBehaviour{
         }
     }
 
+    public void StartSimulation() {
+        inSimulation = true;
+        timer = 0;
+    }
+
+    void RunSimulation() {
+        timer++;
+        if (cooldowns.Count != 0) {
+            while (cooldowns.Count > 0 && timer == cooldowns[0].timeToAct) {
+                // Run Next Attack
+                inSimulation = !NextAttack(retreating);
+                if (!inSimulation) {
+                    cooldowns.RemoveAt(0);
+                    cooldowns.Sort(Tools.SortByTime);
+                }
+                attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
+                defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
+                defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendArmy);
+            }
+        }
+        else BattleOver();
+    }
+
     public void InstantBattle() {
         //print("battle beginning");
         //print("attackers left: " + attackers.Count);
@@ -174,9 +197,10 @@ public class BattleMenu : MonoBehaviour{
 
             if (target.currentHealth <= 0) {
                 defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.ArmyLostUnit(defendingUnitArmy);
+                attackingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.KilledEnemy(attackingUnitArmy, target);
                 RemoveTargetFromCooldowns(target);
                 RemoveUnitFromLists(target);
-                RemoveUnitFromArmy(target);
+                defendingUnitArmy.GetComponent<Army>().RemoveUnit(target);
             }
         }
         if (attackers.Count == 0 || defenders.Count == 0) {
@@ -192,29 +216,6 @@ public class BattleMenu : MonoBehaviour{
         return false;
     }
 
-
-    void RunSimulation() {
-        timer++;
-        if (cooldowns.Count != 0) {
-            while (cooldowns.Count > 0 && timer == cooldowns[0].timeToAct) {
-                // Run Next Attack
-                inSimulation = !NextAttack(retreating);
-                if (!inSimulation) {
-                    cooldowns.RemoveAt(0);
-                    cooldowns.Sort(Tools.SortByTime);
-                }
-                attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
-                defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
-                defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendArmy);
-            }
-        }
-        else BattleOver();
-    }
-
-    public void StartSimulation() {
-        inSimulation = true;
-        timer = 0;
-    }
 
     public void Retreat() {
         if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
@@ -237,9 +238,12 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void BattleOver() {
-        //print("battle over");
-        //print("attackers left: " + attackers.Count);
-        //print("defenders left: " + defenders.Count);
+        attackArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.BattleOver(attackArmy);
+        defendArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.BattleOver(defendArmy);
+        GameObject winningArmy = defendArmy;
+        if (defenders.Count == 0) winningArmy = attackArmy;
+        winningArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.WonBattle(winningArmy);
+
         if (attackers.Count == 0) {
             attackArmy.GetComponent<Army>().Defeated();
         }
@@ -295,25 +299,6 @@ public class BattleMenu : MonoBehaviour{
         defendersBackRow.Remove(unit);
         defendersFrontRow.Remove(unit);
         defendersBuildings.Remove(unit);
-    }
-
-    public void RemoveUnitFromArmy(MapUnit unit) {
-        Army AScript = attackArmy.GetComponent<Army>();
-        Army DScript = defendArmy.GetComponent<Army>();
-        RemoveUnitFromArray(AScript.units, unit);
-        RemoveUnitFromArray(AScript.backRow, unit);
-        RemoveUnitFromArray(AScript.frontRow, unit);
-        RemoveUnitFromArray(DScript.units, unit);
-        RemoveUnitFromArray(DScript.backRow, unit);
-        RemoveUnitFromArray(DScript.frontRow, unit);
-    }
-
-    public void RemoveUnitFromArray(MapUnit[] array, MapUnit unit) {
-        for (int i = 0; i < array.Length; i++) {
-            if (array[i] == unit) {
-                array[i] = null;
-            }
-        }
     }
 
     public bool IsBattleOver() {

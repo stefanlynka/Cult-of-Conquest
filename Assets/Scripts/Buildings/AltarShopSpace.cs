@@ -32,7 +32,7 @@ public class AltarShopSpace : MonoBehaviour{
         description = Tools.GetChildNamed(gameObject, "Description Text");
         nodeMenu = GameObject.Find("Node Menu");
         altarShopManager = GameObject.Find("Altar Buying Menu");
-        human = GameObject.Find("/Players/Human");
+        human = Player.human;
     }
 
     public void SetAltar(Altar newAltar) {

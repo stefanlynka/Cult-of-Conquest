@@ -14,11 +14,12 @@ public class Army : MonoBehaviour
     public bool mouseOverArmy = false;
     public int maxMoves = 2;
     public int movesLeft = 2;
-    public bool marred = false;
+    public bool marredBattle = false;
 
     public MapUnit[] units = new MapUnit[8];
     public MapUnit[] backRow = new MapUnit[4];
     public MapUnit[] frontRow = new MapUnit[4];
+    public List<MapUnit> defeatedEnemies = new List<MapUnit>();
 
     // Start is called before the first frame update
     void Start(){
@@ -117,6 +118,25 @@ public class Army : MonoBehaviour
         else backRow[index] = newUnit;
         if (fRow) index += 4;
         units[index] = newUnit;
+    }
+
+    public MapUnit GetUnit(UnitPos pos) {
+        if (pos.frontRow) return frontRow[pos.position];
+        else return backRow[pos.position];
+    }
+    public void RemoveUnit(MapUnit unit) {
+        RemoveUnitFromArray(units, unit);
+        RemoveUnitFromArray(frontRow, unit);
+        RemoveUnitFromArray(backRow, unit);
+        print("units removed");
+    }
+
+    void RemoveUnitFromArray(MapUnit[] array, MapUnit unit) {
+        for (int i = 0; i < array.Length; i++) {
+            if (array[i] == unit) {
+                array[i] = null;
+            }
+        }
     }
 
     public void Defeated() {

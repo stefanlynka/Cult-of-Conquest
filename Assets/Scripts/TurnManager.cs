@@ -13,7 +13,7 @@ public class TurnManager : MonoBehaviour{
     Dictionary<Race, GameObject> playerDict = new Dictionary<Race, GameObject>();
 
     private void Awake() {
-        human = GameObject.Find("/Players/Human");
+        human = Player.human;
     }
 
     // Start is called before the first frame update

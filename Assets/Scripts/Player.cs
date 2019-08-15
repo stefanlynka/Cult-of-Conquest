@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public List<MapUnit> unitBlueprints = new List<MapUnit>();
     public List<Ritual> ritualBlueprints = new List<Ritual>();
 
+    public static GameObject human;
     public static GameObject selectedArmy;
     public static GameObject nodeClicked;
     public static GameObject armyLeftClicked;
@@ -24,6 +25,7 @@ public class Player : MonoBehaviour
     public bool isArmySelected = false;
 
     public void Awake() {
+        if (name == "Human") human = gameObject;
     }
 
     // Start is called before the first frame update
@@ -252,8 +254,8 @@ public class Player : MonoBehaviour
             GameObject army = armies[i];
             army.GetComponent<Army>().Refresh();
             for (int j = 0; j < army.GetComponent<Army>().units.Length; j++) {
-                if (army.GetComponent<Army>().units[i] != null) {
-                    MapUnit unit = army.GetComponent<Army>().units[i];
+                if (army.GetComponent<Army>().units[j] != null) {
+                    MapUnit unit = army.GetComponent<Army>().units[j];
                     unit.Refresh();
                 }
             }

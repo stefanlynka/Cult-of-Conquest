@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class UnitShopManager : MonoBehaviour {
 
-    GameObject army;
+    GameObject army, nodeMenu, unitShop, dissectButton;
     Race currentRace;
     int unitSpaceCount = 4;
     GameObject[] unitSpaces;
+
 
     // Start is called before the first frame update
     void Start() {
@@ -32,14 +33,46 @@ public class UnitShopManager : MonoBehaviour {
         currentRace = TurnManager.human.GetComponent<Player>().race;
 
         transform.parent.gameObject.GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
+
+        nodeMenu = GameObject.Find("/Node Menu");
+        unitShop = GameObject.Find("/Unit Buying Menu");
+        dissectButton = Tools.GetChildNamed(gameObject, "Dissect Button");
+
         //army = NodeMenu.currentArmy;
         //if (army) currentRace = army.GetComponent<Army>().race;
         List<GameObject> players = Controller.players;
-        for (int i = 0;i < players.Count; i++) {
+        for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
             MakeUnits(player.GetComponent<Player>().race, player);
             if (!player.GetComponent<AI>()) AssignUnits(player);
         }
+    }
+
+    public void EnterMenu() {
+        transform.parent.GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
+        if (Dissectable(NodeMenu.currentArmy, UnitSpace.currentUnitPos)) {
+            dissectButton.SetActive(true);
+        }
+        else {
+            dissectButton.SetActive(false);
+        }
+    }
+    bool Dissectable(GameObject army, UnitPos position) {
+        MapUnit unit = army.GetComponent<Army>().GetUnit(position);
+        if (Player.human.GetComponent<Player>().race == Race.Paratrophs) {
+            if (unit != null) {
+                if (unit.race != Player.human.GetComponent<Player>().race) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void LeaveMenu() {
+        nodeMenu.GetComponent<NodeMenu>().LoadArmy();
+        unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
+        Player.menuOpen = 1;
     }
 
     public void MakeUnits(Race race, GameObject player) {

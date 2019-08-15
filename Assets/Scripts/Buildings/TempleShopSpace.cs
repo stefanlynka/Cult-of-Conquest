@@ -32,7 +32,7 @@ public class TempleShopSpace : MonoBehaviour{
         description = Tools.GetChildNamed(gameObject, "Description Text");
         nodeMenu = GameObject.Find("Node Menu");
         templeShopManager = GameObject.Find("Temple Buying Menu");
-        human = GameObject.Find("/Players/Human");
+        human = Player.human;
     }
 
     public void SetTemple(Temple newTemple) {

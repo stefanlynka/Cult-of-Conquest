@@ -9,7 +9,7 @@ public class RitualSlot : MonoBehaviour{
 
     // Start is called before the first frame update
     void Start(){
-        human = GameObject.Find("Players/Human");
+        human = Player.human;
     }
 
     // Update is called once per frame

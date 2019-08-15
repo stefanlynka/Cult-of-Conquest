@@ -11,7 +11,7 @@ public class ResourceTexts : MonoBehaviour
     void Start(){
         moneyText = Tools.GetChildNamed(gameObject, "Money Text");
         zealText = Tools.GetChildNamed(gameObject, "Zeal Text");
-        human = GameObject.Find("Players/Human");
+        human = Player.human;
     }
 
     // Update is called once per frame

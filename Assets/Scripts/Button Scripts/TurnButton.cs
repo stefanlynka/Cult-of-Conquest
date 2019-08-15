@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class TurnButton : MonoBehaviour{
 
-
-
     // Start is called before the first frame update
     void Start(){
-        
     }
 
     // Update is called once per frame
     void Update(){
-        
     }
 
     private void OnMouseDown() {
@@ -22,4 +18,5 @@ public class TurnButton : MonoBehaviour{
             turnManager.GetComponent<TurnManager>().NextTurn();
         }
     }
+
 }
