@@ -18,35 +18,18 @@ public class UnitShopSpace : MonoBehaviour
 
     public MapUnit unit;
 
-    bool mouseOver = false;
-    Color defaultColour;
 
 
     // Start is called before the first frame update
     void Start(){
-        initializeMembers();
-        defaultColour = GetComponent<SpriteRenderer>().color;
+        InitializeMembers();
     }
 
     // Update is called once per frame
     void Update(){
-        UpdateColour();
     }
 
-    private void OnMouseOver() {
-        mouseOver = true;
-    }
-    private void UpdateColour() {
-        if (mouseOver) {
-            GetComponent<SpriteRenderer>().color = Color.gray;
-        }
-        else {
-            GetComponent<SpriteRenderer>().color = defaultColour;
-        }
-        mouseOver = false;
-    }
-
-    private void initializeMembers() {
+    public void InitializeMembers() {
         portrait = Tools.GetChildNamed(gameObject, "Portrait");
         moneyCost = Tools.GetChildNamed(gameObject, "Money Cost Text");
         zealCost = Tools.GetChildNamed(gameObject, "Zeal Cost Text");

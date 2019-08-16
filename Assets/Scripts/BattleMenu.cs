@@ -219,6 +219,7 @@ public class BattleMenu : MonoBehaviour{
 
     public void Retreat() {
         if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+        defendArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.EnemyRetreated(defendArmy);
         if (inSimulation) {
             RemoveAttackCooldowns();
             retreating = true;

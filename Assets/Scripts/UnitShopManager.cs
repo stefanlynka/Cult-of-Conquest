@@ -23,6 +23,7 @@ public class UnitShopManager : MonoBehaviour {
         InitializeMembers();
     }
 
+
     public void InitializeMembers() {
         unitSpaces = new GameObject[unitSpaceCount];
         for (int i = 0; i < transform.childCount; i++) {
@@ -44,21 +45,45 @@ public class UnitShopManager : MonoBehaviour {
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
             MakeUnits(player.GetComponent<Player>().race, player);
-            if (!player.GetComponent<AI>()) AssignUnits(player);
+            if (!player.GetComponent<AI>()) {
+                AssignUnits(player);
+                //SetupUnitShopSpaces();
+            }
+        }
+    }
+
+    public void SetupUnitShopSpaces() {
+        for (int i = 0; i < transform.childCount; i++) {
+            GameObject child = transform.GetChild(i).gameObject;
+            if (child.name.Contains("Buy Unit Space")) {
+                if (Player.human.GetComponent<Player>().race == Race.Noumenon) Tools.GetChildNamed(child, "Fake").GetComponent<BuyFakeButton>().InitializeMembers();
+                else Tools.GetChildNamed(child, "Fake").SetActive(false);
+            }
         }
     }
 
     public void EnterMenu() {
         transform.parent.GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
-        if (Dissectable(NodeMenu.currentArmy, UnitSpace.currentUnitPos)) {
+
+        MapUnit unit = NodeMenu.currentArmy.GetComponent<Army>().GetUnit(UnitSpace.currentUnitPos);
+        if (Dissectable(unit)) {
             dissectButton.SetActive(true);
         }
         else {
             dissectButton.SetActive(false);
         }
+
+        GameObject hideButton = Tools.GetChildNamed(gameObject, "Hide Button");
+        if (Player.human.GetComponent<Player>().race != Race.Noumenon) {
+            hideButton.SetActive(false);
+        }
+        else {
+            GameObject costButton = Tools.GetChildNamed(hideButton, "Cost Indicator");
+            if (unit == null) Tools.GetChildNamed(costButton, "Cost Text").GetComponent<TextMesh>().text = "";
+            else Tools.GetChildNamed(costButton, "Cost Text").GetComponent<TextMesh>().text = (unit.moneyCost / 4).ToString();
+        }
     }
-    bool Dissectable(GameObject army, UnitPos position) {
-        MapUnit unit = army.GetComponent<Army>().GetUnit(position);
+    bool Dissectable(MapUnit unit) {
         if (Player.human.GetComponent<Player>().race == Race.Paratrophs) {
             if (unit != null) {
                 if (unit.race != Player.human.GetComponent<Player>().race) {

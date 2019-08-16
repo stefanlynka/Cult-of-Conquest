@@ -17,6 +17,7 @@ public class MapUnit
     public int maxShield = 0;
     public int currentShield = 0;
     public bool marred = false;
+    public bool hidden = false;
     //public int priorityForAttacking
 
     public int moneyCost = 10;

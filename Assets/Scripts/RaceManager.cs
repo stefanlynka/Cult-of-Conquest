@@ -48,6 +48,7 @@ public class RaceManager : MonoBehaviour{
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
+        traits.EnemyRetreated = InducedVictory;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
     }
@@ -56,6 +57,7 @@ public class RaceManager : MonoBehaviour{
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
+        traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
     }
@@ -64,6 +66,7 @@ public class RaceManager : MonoBehaviour{
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = StoreEnemy;
+        traits.EnemyRetreated = Empty;
         traits.BattleOver = ReassembleEnemies;
         traits.WonBattle = Empty;
     }
@@ -73,6 +76,7 @@ public class RaceManager : MonoBehaviour{
         traits.TakeDamage = UnitBecomeMarred;
         traits.ArmyLostUnit = ArmyBecomeMarred;
         traits.KilledEnemy = Empty;
+        traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = WinUnmarred;
     }
@@ -81,6 +85,7 @@ public class RaceManager : MonoBehaviour{
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
+        traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
     }
@@ -89,6 +94,7 @@ public class RaceManager : MonoBehaviour{
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
+        traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
     }
@@ -97,6 +103,7 @@ public class RaceManager : MonoBehaviour{
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
+        traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
     }
@@ -144,6 +151,9 @@ public class RaceManager : MonoBehaviour{
         }
         army.GetComponent<Army>().defeatedEnemies.Clear();
     }
+    public void InducedVictory(GameObject army) {
+        army.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
+    }
 
     public void Empty(MapUnit unit) {}
     public void Empty() {}
@@ -167,7 +177,7 @@ public class RaceTraits {
     public DelegateUnit TakeDamage;
     public DelegateObjectUnit KilledEnemy;
     public DelegateGameObject ArmyLostUnit;
-    public DelegateGameObject RetreatedAgainst;
+    public DelegateGameObject EnemyRetreated;
     public DelegateGameObject WonBattle;
     public DelegateGameObject BattleOver;
 }
