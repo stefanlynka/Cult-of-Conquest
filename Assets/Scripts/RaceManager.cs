@@ -51,6 +51,7 @@ public class RaceManager : MonoBehaviour{
         traits.EnemyRetreated = InducedVictory;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
+        traits.StartTurn = Empty;
     }
     void MakeDukkha(RaceTraits traits) {
         traits.NewUnit = Empty;
@@ -60,6 +61,7 @@ public class RaceManager : MonoBehaviour{
         traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
+        traits.StartTurn = Empty;
     }
     void MakeParatrophs(RaceTraits traits) {
         traits.NewUnit = Empty;
@@ -69,6 +71,7 @@ public class RaceManager : MonoBehaviour{
         traits.EnemyRetreated = Empty;
         traits.BattleOver = ReassembleEnemies;
         traits.WonBattle = Empty;
+        traits.StartTurn = Empty;
     }
     void MakeUnmar(RaceTraits traits) {
 
@@ -79,6 +82,7 @@ public class RaceManager : MonoBehaviour{
         traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = WinUnmarred;
+        traits.StartTurn = Empty;
     }
     void MakeEidalons(RaceTraits traits) {
         traits.NewUnit = Empty;
@@ -88,6 +92,7 @@ public class RaceManager : MonoBehaviour{
         traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
+        traits.StartTurn = Empty;
     }
     void MakeCarnot(RaceTraits traits) {
         traits.NewUnit = Empty;
@@ -97,6 +102,7 @@ public class RaceManager : MonoBehaviour{
         traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
+        traits.StartTurn = IsolationCheck;
     }
     void MakeIndependent(RaceTraits traits) {
         traits.NewUnit = Empty;
@@ -106,6 +112,7 @@ public class RaceManager : MonoBehaviour{
         traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
+        traits.StartTurn = Empty;
     }
 
 
@@ -124,11 +131,9 @@ public class RaceManager : MonoBehaviour{
         if (!army.GetComponent<Army>().marredBattle) {
             army.GetComponent<Army>().marredBattle = true;
         }
-        print("WE LOST ONE");
     }
     public void WinUnmarred(GameObject army) {
         if (!army.GetComponent<Army>().marredBattle) {
-            print("Unmarred Victory!");
             army.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
         }
         else army.GetComponent<Army>().marredBattle = false;
@@ -153,6 +158,15 @@ public class RaceManager : MonoBehaviour{
     }
     public void InducedVictory(GameObject army) {
         army.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
+    }
+    public void IsolationCheck(GameObject player) {
+        List<GameObject> armies = player.GetComponent<Player>().armies;
+        int numIsolated = 0;
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
+            if (army.GetComponent<Army>().Isolated()) numIsolated++;
+        }
+        player.GetComponent<Player>().zeal += numIsolated;
     }
 
     public void Empty(MapUnit unit) {}
@@ -180,4 +194,5 @@ public class RaceTraits {
     public DelegateGameObject EnemyRetreated;
     public DelegateGameObject WonBattle;
     public DelegateGameObject BattleOver;
+    public DelegateGameObject StartTurn;
 }

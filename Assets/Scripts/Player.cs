@@ -11,7 +11,8 @@ public class Player : MonoBehaviour
 
     public static GameObject human;
     public static GameObject selectedArmy;
-    public static GameObject nodeClicked;
+    public static GameObject nodeLeftClicked;
+    public static GameObject nodeRightClicked;
     public static GameObject armyLeftClicked;
     public static GameObject armyRightClicked;
     public static GameObject nodeMenu;
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour
     public int money = 20;
     public int zeal = 0;
     public bool isArmySelected = false;
+    public GameObject randomPanel;
 
     public void Awake() {
         if (name == "Human") human = gameObject;
@@ -60,6 +62,7 @@ public class Player : MonoBehaviour
         //armies.Add(GameObject.Find("/Army Red"));
         nodeMenu = GameObject.Find("/Node Menu");
         battleMenu = GameObject.Find("/Battle Menu");
+        randomPanel = GameObject.Find("/Random Panel");
 
         for (int i = 0; i < NodeManager.nodes.Count; i++) {
             GameObject node = NodeManager.nodes[i];
@@ -88,57 +91,82 @@ public class Player : MonoBehaviour
         NodeManager.highlightFog.SetActive(isArmySelected);
     }
 
-    public void ImplementClicks() {
-        //print("Node clicked: " + nodeClicked);
-        // Node clicked again, Deselect
+    bool LeftClickedOnNearbyEnemy() {
         if (armyLeftClicked && armyLeftClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted) {
-            nodeClicked = armyLeftClicked.GetComponent<Army>().currentNode;
+            nodeLeftClicked = armyLeftClicked.GetComponent<Army>().currentNode;
+            return true;
         }
-        // Army is selected and clicked node is highlighted, Attack 
-        if (nodeClicked && nodeClicked.GetComponent<Node>().highlighted && isArmySelected) {
-            //print("Moving army");
-            attackNode(selectedArmy, nodeClicked);
-            selectedArmy.GetComponent<Army>().Deselect();
+        if (nodeLeftClicked && nodeLeftClicked.GetComponent<Node>().highlighted && isArmySelected) return true;
+        return false;
+    }
+    bool RightClickedOnNearbyEnemy() {
+        if (armyRightClicked && armyRightClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted) {
+            nodeRightClicked = armyRightClicked.GetComponent<Army>().currentNode;
+            return true;
         }
-        // Different army clicked, Select new army
-        else if (armyLeftClicked) {
-            // No army Selected, Select army
-            if (!selectedArmy) {
-                if (armyLeftClicked.GetComponent<Army>().movesLeft > 0) {
-                    //print("A");
+        if (nodeRightClicked && nodeRightClicked.GetComponent<Node>().highlighted && isArmySelected) return true;
+        return false;
+    }
+    bool ClickingOnAnArmy() {
+        if (!selectedArmy && armyLeftClicked.GetComponent<Army>().movesLeft > 0) return true;
+        return false;
+    }
+    bool ClickingOnDifferentArmy() {
+        if (armyLeftClicked != selectedArmy && armyLeftClicked.GetComponent<Army>().movesLeft > 0) return true;
+        return false;
+    }
+    bool LeftClickedAnythingElse() {
+        if (selectedArmy && Input.GetMouseButtonDown(0)) return true;
+        return false;
+    }
+
+    public void ImplementClicks() {
+
+        if (menuOpen == 0) {
+
+            if (LeftClickedOnNearbyEnemy()) {
+                attackNode(selectedArmy, nodeLeftClicked);
+                selectedArmy.GetComponent<Army>().Deselect();
+            }
+
+            else if (armyLeftClicked) {
+                if (ClickingOnAnArmy()) {
                     armyLeftClicked.GetComponent<Army>().Select();
                 }
+                else if (selectedArmy) {
+                    selectedArmy.GetComponent<Army>().Deselect();
+                    if (ClickingOnDifferentArmy()) {
+                        armyLeftClicked.GetComponent<Army>().Select();
+                        selectedArmy = armyLeftClicked;
+                    }
+                }
+            }
+        
+            else if (LeftClickedAnythingElse()) {
+                selectedArmy.GetComponent<Army>().Deselect();
+            }
+
+            if (!selectedArmy) {
+                if (nodeRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
+                else if (armyRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
             }
             else {
-                //print("no army selected, deselecting");
-                selectedArmy.GetComponent<Army>().Deselect();
-                if (armyLeftClicked != selectedArmy && selectedArmy.GetComponent<Army>().movesLeft > 0) {
-                    //print("different army, selecting new one");
-                    //print("B");
-                    armyLeftClicked.GetComponent<Army>().Select();
-                    selectedArmy = armyLeftClicked;
+                if (randomPanel.activeSelf && RightClickedOnNearbyEnemy()) {
+                    if (nodeRightClicked) randomPanel.GetComponent<RandomPanel>().AddTarget(nodeRightClicked);
+                    else if (armyRightClicked) randomPanel.GetComponent<RandomPanel>().AddTarget(armyRightClicked.GetComponent<Army>().currentNode);
+                    
                 }
+                //Add rightClickedNode to Randomizer
             }
         }
-        else if (selectedArmy && Input.GetMouseButtonDown(0)) {
-            //print("clicked on anything else, deselecting");
-            selectedArmy.GetComponent<Army>().Deselect();
-        }
-
-        //Right click
-        if (Input.GetMouseButtonDown(1)) {
-            if (!nodeMenu.GetComponent<NodeMenu>().open && menuOpen == 0) {
-                if (nodeClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeClicked);
-                if (armyRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
-            }
-            else if (menuOpen == 1) {
-                nodeMenu.GetComponent<NodeMenu>().ExitMenu();
-            }
+        else if (menuOpen == 1 && Input.GetMouseButtonDown(1)) {
+            nodeMenu.GetComponent<NodeMenu>().ExitMenu();
         }
 
         armyLeftClicked = null;
         armyRightClicked = null;
-        nodeClicked = null;
+        nodeLeftClicked = null;
+        nodeRightClicked = null;
     }
 
     public void attackNode(GameObject army, GameObject node) {
@@ -221,6 +249,7 @@ public class Player : MonoBehaviour
         zeal += GetZealIncome();
         RestUnits();
         UpdateNodes();
+        raceTraits.StartTurn(gameObject);
         //print("Number 6 = " + raceTraits.UnitFunction(3));
     }
 

@@ -58,11 +58,14 @@ public class Node : MonoBehaviour
     }
 
     private void OnMouseDown() {
-        Player.nodeClicked = gameObject;
+        //Player.nodeClicked = gameObject;
     }
     private void OnMouseOver() {
-        if (Input.GetMouseButtonDown(1)) {
-            Player.nodeClicked = gameObject;
+        if (Input.GetMouseButtonDown(0)) {
+            Player.nodeLeftClicked = gameObject;
+        }
+        else if (Input.GetMouseButtonDown(1)) {
+            Player.nodeRightClicked = gameObject;
         }
     }
     public GameObject GetOccupant() {

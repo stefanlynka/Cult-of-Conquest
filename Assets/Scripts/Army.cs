@@ -185,6 +185,35 @@ public class Army : MonoBehaviour
         }
         return new UnitPos(0, true);
     }
+
+    public bool Isolated() {
+        List<GameObject> nodes = GetConnectedNodes();
+        for (int i = 0; i < nodes.Count; i++) {
+            GameObject node = nodes[i];
+            if (node.GetComponent<Node>().occupied && node.GetComponent<Node>().occupant != gameObject) return false;
+        }
+
+        return true;
+    }
+    public List<GameObject> GetConnectedNodes() {
+        List<GameObject> nodes = new List<GameObject>();
+        List<GameObject> frontier = new List<GameObject>();
+        GameObject origin = currentNode;
+        frontier.Add(origin);
+        while (frontier.Count > 0) {
+            GameObject currentNode = frontier[0];
+
+            for (int i = 0; i < currentNode.GetComponent<Node>().neighbours.Count; i++) {
+                GameObject neighbour = currentNode.GetComponent<Node>().neighbours[i];
+                if (neighbour.GetComponent<Node>().owner == race && !nodes.Contains(neighbour) && !frontier.Contains(neighbour)) {
+                    frontier.Add(neighbour);
+                }
+            }
+            nodes.Add(frontier[0]);
+            frontier.RemoveAt(0);
+        }
+        return nodes;
+    }
 }
 
 
