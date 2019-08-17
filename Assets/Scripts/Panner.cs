@@ -7,9 +7,13 @@ public class Panner : MonoBehaviour
     Vector3 target;
     int panSpeed = 20;
 
+    private void Awake() {
+        target = transform.position;
+    }
+
     // Start is called before the first frame update
     void Start(){
-        target = transform.position;
+        
     }
 
     // Update is called once per frame

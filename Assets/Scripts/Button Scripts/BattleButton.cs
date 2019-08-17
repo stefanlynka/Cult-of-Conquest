@@ -18,13 +18,13 @@ public class BattleButton : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        if (buttonType == "simulation" && !battleMenu.GetComponent<BattleMenu>().inSimulation) {
+        if (buttonType == "simulation" && !battleMenu.GetComponent<BattleMenu>().inSimulation && !battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
             battleMenu.GetComponent<BattleMenu>().StartSimulation();
         }
-        else if (buttonType == "instant") {
+        else if (buttonType == "instant" && !battleMenu.GetComponent<BattleMenu>().inSimulation && !battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
             battleMenu.GetComponent<BattleMenu>().InstantBattle();
         }
-        else if (buttonType == "retreat") {
+        else if (buttonType == "retreat" && !battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
             battleMenu.GetComponent<BattleMenu>().Retreat();
         }
         else if (buttonType == "back" && battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
