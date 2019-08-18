@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class TurnButton : MonoBehaviour{
 
+    GameObject turnManager;
+
     // Start is called before the first frame update
     void Start(){
+        turnManager = GameObject.Find("/Turn Manager");
     }
 
     // Update is called once per frame
@@ -14,7 +17,6 @@ public class TurnButton : MonoBehaviour{
 
     private void OnMouseDown() {
         if (Player.menuOpen == 0) {
-            GameObject turnManager = GameObject.Find("/Turn Manager");
             turnManager.GetComponent<TurnManager>().NextTurn();
         }
     }

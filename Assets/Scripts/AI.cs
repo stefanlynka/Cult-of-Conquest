@@ -9,7 +9,7 @@ public class AI : MonoBehaviour{
     public List<Intent> intentQueue = new List<Intent>();
     GameObject unitShop;
 
-    Race race;
+    Faction faction;
     public int turnStage = 9;
     public bool readyToExecute = true;
 
@@ -40,7 +40,7 @@ public class AI : MonoBehaviour{
     void CollectInformation() {
         armies = GetComponent<Player>().armies;
         ownedNodes = GetComponent<Player>().ownedNodes;
-        race = GetComponent<Player>().race;
+        faction = GetComponent<Player>().faction;
         //unitShop = GameObject.Find("")
         turnStage = 9;
     }
@@ -227,7 +227,7 @@ public class AI : MonoBehaviour{
             List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
             for (int i = 0; i < neighbours.Count; i++) {
                 GameObject neighbour = neighbours[i];
-                if (neighbour.GetComponent<Node>().owner == race && !neighbour.GetComponent<Node>().occupied) GetNodesInRange(nodes, neighbour, range - 1);
+                if (neighbour.GetComponent<Node>().faction == faction && !neighbour.GetComponent<Node>().occupied) GetNodesInRange(nodes, neighbour, range - 1);
             }
         }
         return nodes;
@@ -238,7 +238,7 @@ public class AI : MonoBehaviour{
         List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
-            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().owner != race) {
+            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction) {
                 threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
             }
         }
@@ -279,7 +279,7 @@ public class AI : MonoBehaviour{
         if (range > 0) {
             for (int i = 0; i < startNode.GetComponent<Node>().neighbours.Count; i++) {
                 GameObject neighbour = startNode.GetComponent<Node>().neighbours[i];
-                if (neighbour.GetComponent<Node>().owner == race) {
+                if (neighbour.GetComponent<Node>().faction == faction) {
 
                 }
             }

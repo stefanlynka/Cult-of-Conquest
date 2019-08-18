@@ -184,7 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armies: []
   ownedNodes: []
-  race: 1
+  faction: 4
   money: 20
   zeal: 0
   isArmySelected: 0
@@ -334,7 +334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selected: 0
-  race: 5
+  faction: 0
   currentNode: {fileID: 1971950615}
   map: {fileID: 0}
   owner: {fileID: 0}
@@ -342,6 +342,7 @@ MonoBehaviour:
   maxMoves: 1
   movesLeft: 1
   marredBattle: 0
+  precombatPower: 0
 --- !u!212 &47433033
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1444,6 +1445,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Node 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -2633,7 +2639,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armies: []
   ownedNodes: []
-  race: 5
+  faction: 0
   money: 100
   zeal: 0
   isArmySelected: 0
@@ -3954,17 +3960,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Temple Sprite
       objectReference: {fileID: 0}
-    - target: {fileID: 4092759228951591920, guid: b4f2ffedc3d687e43bf87b85558ee165,
-        type: 3}
-      propertyPath: m_Name
-      value: Temple Portrait
-      objectReference: {fileID: 0}
     - target: {fileID: 4092759229259388947, guid: b4f2ffedc3d687e43bf87b85558ee165,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: f3c6af9539faed440b88d55affab38c8,
         type: 3}
+    - target: {fileID: 4092759228951591920, guid: b4f2ffedc3d687e43bf87b85558ee165,
+        type: 3}
+      propertyPath: m_Name
+      value: Temple Portrait
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4f2ffedc3d687e43bf87b85558ee165, type: 3}
 --- !u!1 &509467492
@@ -5309,7 +5315,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 681039997}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.318706, y: 3.301291, z: -33.85547}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -5431,7 +5437,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armies: []
   ownedNodes: []
-  race: 6
+  faction: 0
   money: 20
   zeal: 0
   isArmySelected: 0
@@ -5841,17 +5847,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Temple Sprite
       objectReference: {fileID: 0}
-    - target: {fileID: 4092759228951591920, guid: b4f2ffedc3d687e43bf87b85558ee165,
-        type: 3}
-      propertyPath: m_Name
-      value: Temple Portrait
-      objectReference: {fileID: 0}
     - target: {fileID: 4092759229259388947, guid: b4f2ffedc3d687e43bf87b85558ee165,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: f3c6af9539faed440b88d55affab38c8,
         type: 3}
+    - target: {fileID: 4092759228951591920, guid: b4f2ffedc3d687e43bf87b85558ee165,
+        type: 3}
+      propertyPath: m_Name
+      value: Temple Portrait
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4f2ffedc3d687e43bf87b85558ee165, type: 3}
 --- !u!1 &755607910
@@ -6858,17 +6864,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Temple Sprite
       objectReference: {fileID: 0}
-    - target: {fileID: 4092759228951591920, guid: b4f2ffedc3d687e43bf87b85558ee165,
-        type: 3}
-      propertyPath: m_Name
-      value: Temple Portrait
-      objectReference: {fileID: 0}
     - target: {fileID: 4092759229259388947, guid: b4f2ffedc3d687e43bf87b85558ee165,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: f3c6af9539faed440b88d55affab38c8,
         type: 3}
+    - target: {fileID: 4092759228951591920, guid: b4f2ffedc3d687e43bf87b85558ee165,
+        type: 3}
+      propertyPath: m_Name
+      value: Temple Portrait
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4f2ffedc3d687e43bf87b85558ee165, type: 3}
 --- !u!4 &866448323 stripped
@@ -10955,7 +10961,7 @@ GameObject:
   - component: {fileID: 1455658875}
   - component: {fileID: 1455658874}
   m_Layer: 0
-  m_Name: Race Manager
+  m_Name: Faction Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15632,17 +15638,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Temple Sprite
       objectReference: {fileID: 0}
-    - target: {fileID: 4092759228951591920, guid: b4f2ffedc3d687e43bf87b85558ee165,
-        type: 3}
-      propertyPath: m_Name
-      value: Temple Portrait
-      objectReference: {fileID: 0}
     - target: {fileID: 4092759229259388947, guid: b4f2ffedc3d687e43bf87b85558ee165,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: f3c6af9539faed440b88d55affab38c8,
         type: 3}
+    - target: {fileID: 4092759228951591920, guid: b4f2ffedc3d687e43bf87b85558ee165,
+        type: 3}
+      propertyPath: m_Name
+      value: Temple Portrait
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4f2ffedc3d687e43bf87b85558ee165, type: 3}
 --- !u!1 &2121613165 stripped
@@ -16232,6 +16238,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Node 1 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -16519,6 +16530,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Node 1 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -16618,6 +16634,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Node 4 (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -17030,6 +17051,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Node 5
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -17088,12 +17114,12 @@ PrefabInstance:
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.151
+      value: 0.135
       objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.151
+      value: 0.135
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -19284,6 +19310,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Node 3 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -20267,6 +20298,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Node 7 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -24125,6 +24161,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Node 4 (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}

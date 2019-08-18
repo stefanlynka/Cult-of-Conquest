@@ -5,14 +5,12 @@ using UnityEngine;
 public class AltarShopManager : MonoBehaviour{
 
     GameObject altarSpace;
-    Race currentRace;
+    Faction currentFaction;
     GameObject[] altarBuySpaces = new GameObject[4];
 
     // Start is called before the first frame update
     void Start(){
-        InitializeMembers();
 
-        MakeAltars(currentRace);
     }
 
     // Update is called once per frame
@@ -20,10 +18,16 @@ public class AltarShopManager : MonoBehaviour{
         
     }
 
+    public void Setup() {
+        InitializeMembers();
+
+        MakeAltars(currentFaction);
+    }
+
     void InitializeMembers() {
         altarSpace = AltarSpace.currentAltarSpace;
-        currentRace = TurnManager.human.GetComponent<Player>().race;
-            //NodeMenu.currentNode.GetComponent<Node>().owner;
+        currentFaction = Player.human.GetComponent<Player>().faction;
+            //NodeMenu.currentNode.GetComponent<Node>().faction;
         GameObject buyingSpaces = Tools.GetChildNamed(gameObject, "Altar Buying Spaces");
         for (int i = 0; i < 4; i++) {
             GameObject buyingSpace = Tools.GetChildNamed(buyingSpaces, "Altar Buying Space " + i);
@@ -41,24 +45,24 @@ public class AltarShopManager : MonoBehaviour{
         Player.menuOpen = 1;
     }
 
-    void MakeAltars(Race race) {
-        switch (race) {
-            case Race.Noumenon:
+    void MakeAltars(Faction faction) {
+        switch (faction) {
+            case Faction.Noumenon:
                 MakeAltar();
                 break;
-            case Race.Dukkha:
+            case Faction.Dukkha:
                 MakeAltar();
                 break;
-            case Race.Paratrophs:
+            case Faction.Paratrophs:
                 MakeAltar();
                 break;
-            case Race.Unmar:
+            case Faction.Unmar:
                 MakeAltar();
                 break;
-            case Race.Eidalons:
+            case Faction.Samata:
                 MakeAltar();
                 break;
-            case Race.Carnot:
+            case Faction.Carnot:
                 MakeAltar();
                 break;
         }

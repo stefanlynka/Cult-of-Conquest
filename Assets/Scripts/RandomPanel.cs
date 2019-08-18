@@ -23,7 +23,7 @@ public class RandomPanel : MonoBehaviour{
         }
     }
     public void Setup() {
-        if (Player.human.GetComponent<Player>().race != Race.Carnot) gameObject.SetActive(false);
+        if (Player.human.GetComponent<Player>().faction != Faction.Carnot) gameObject.GetComponent<Panner>().SetTarget(new Vector3(20, 0, 0));
     }
 
     public void AddTarget(GameObject node) {

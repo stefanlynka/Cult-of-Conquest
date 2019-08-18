@@ -13,7 +13,7 @@ public class UnitShopSpace : MonoBehaviour
     GameObject nodeMenu;
     GameObject unitShop;
     GameObject human;
-    Race currentRace;
+    //Faction currentFaction;
     int unitNumber;
 
     public MapUnit unit;
@@ -51,7 +51,7 @@ public class UnitShopSpace : MonoBehaviour
 
     public void AddUnit(MapUnit newUnit) {
         unit = newUnit;
-        portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Races/" + unit.race + "/Portrait/" + unit.name);
+        portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + unit.faction + "/Portrait/" + unit.name);
         moneyCost.GetComponent<TextMesh>().text = unit.moneyCost.ToString();
         zealCost.GetComponent<TextMesh>().text = unit.zealCost.ToString();
         unitName.GetComponent<TextMesh>().text = unit.name;

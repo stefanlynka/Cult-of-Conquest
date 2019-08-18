@@ -5,14 +5,12 @@ using UnityEngine;
 public class TempleShopManager : MonoBehaviour{
 
     GameObject templeSpace;
-    Race currentRace;
+    Faction currentFaction;
     GameObject[] templeBuySpaces = new GameObject[4];
 
     // Start is called before the first frame update
     void Start() {
-        InitializeMembers();
 
-        MakeTemples(currentRace);
     }
 
     // Update is called once per frame
@@ -20,10 +18,16 @@ public class TempleShopManager : MonoBehaviour{
 
     }
 
+    public void Setup() {
+        InitializeMembers();
+
+        MakeTemples(currentFaction);
+    }
+
     void InitializeMembers() {
         templeSpace = TempleSpace.currentTempleSpace;
-        currentRace = TurnManager.human.GetComponent<Player>().race;
-        //NodeMenu.currentNode.GetComponent<Node>().owner;
+        currentFaction = Player.human.GetComponent<Player>().faction;
+        //NodeMenu.currentNode.GetComponent<Node>().faction;
         GameObject buyingSpaces = Tools.GetChildNamed(gameObject, "Temple Buying Spaces");
         for (int i = 0; i < 4; i++) {
             GameObject buyingSpace = Tools.GetChildNamed(buyingSpaces, "Temple Buying Space " + i);
@@ -41,24 +45,24 @@ public class TempleShopManager : MonoBehaviour{
         Player.menuOpen = 1;
     }
 
-    void MakeTemples(Race race) {
-        switch (race) {
-            case Race.Noumenon:
+    void MakeTemples(Faction faction) {
+        switch (faction) {
+            case Faction.Noumenon:
                 MakeTemple();
                 break;
-            case Race.Dukkha:
+            case Faction.Dukkha:
                 MakeTemple();
                 break;
-            case Race.Paratrophs:
+            case Faction.Paratrophs:
                 MakeTemple();
                 break;
-            case Race.Unmar:
+            case Faction.Unmar:
                 MakeTemple();
                 break;
-            case Race.Eidalons:
+            case Faction.Samata:
                 MakeTemple();
                 break;
-            case Race.Carnot:
+            case Faction.Carnot:
                 MakeTemple();
                 break;
         }

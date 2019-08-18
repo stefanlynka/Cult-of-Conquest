@@ -6,7 +6,7 @@ public class Node : MonoBehaviour
 {
     public string locationName;
     public int difficulty = 1;
-    public Race homeBase = Race.None;
+    public Faction homeBase = Faction.None;
 
     public List<GameObject> neighbours = new List<GameObject>();
     public GameObject neighbourUpLeft;
@@ -22,7 +22,7 @@ public class Node : MonoBehaviour
     public int zealIncome = 0;
     public string nodeAttribute = "";
     public List<string> tempBonus = new List<string>();
-    public Race owner = Race.Independent;
+    public Faction faction = Faction.Independent;
     public GameObject occupant;
     public bool occupied = false;
     public bool occupiable = true;
@@ -77,7 +77,7 @@ public class Node : MonoBehaviour
     public List<GameObject> GetPathTo(GameObject node) {
         List<GameObject> path = new List<GameObject>();
         int depth = 1;
-        Race player = owner;
+        Faction player = faction;
         bool solved = false;
         while (solved == false) {
             List<GameObject> goodPath = new List<GameObject>();
@@ -92,7 +92,7 @@ public class Node : MonoBehaviour
         return null;
     }
     // Recursive path search used in GetPathTo()
-    List<GameObject> ExtendPathToNeighbours(GameObject targetNode, List<GameObject> visited, int currentDepth, Race player) {
+    List<GameObject> ExtendPathToNeighbours(GameObject targetNode, List<GameObject> visited, int currentDepth, Faction player) {
         visited.Add(gameObject);
         if (gameObject == targetNode) {
             //print("found the one");
@@ -103,7 +103,7 @@ public class Node : MonoBehaviour
             for (int i = 0; i < neighbours.Count; i++) {
                 GameObject neighbour = neighbours[i];
                 List<GameObject> goodPath = new List<GameObject>();
-                if (neighbour.GetComponent<Node>().owner == player && !visited.Contains(neighbour)) {
+                if (neighbour.GetComponent<Node>().faction == player && !visited.Contains(neighbour)) {
                     List<GameObject> deepCopyVisited = Tools.DeepCopyGameObjectList(visited);
                     goodPath = neighbour.GetComponent<Node>().ExtendPathToNeighbours(targetNode, deepCopyVisited, currentDepth, player);
                     if (goodPath != null) {
@@ -140,13 +140,13 @@ public class Node : MonoBehaviour
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
 
-            // If the neighbouring node is occupied, is owned by another race, and is the new biggest threat
-            if (neighbour.GetComponent<Node>().owner != owner && threat < neighbour.GetComponent<Node>().GetPower()) {
+            // If the neighbouring node is occupied, is owned by another faction, and is the new biggest threat
+            if (neighbour.GetComponent<Node>().faction != faction && threat < neighbour.GetComponent<Node>().GetPower()) {
                 biggestThreat = neighbour;
                 threat = Mathf.Max(threat, neighbour.GetComponent<Node>().GetPower());
             }
             /*
-            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().owner != owner && neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower() > threat) {
+            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction && neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower() > threat) {
                 biggestThreat = neighbour;
                 threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
             }
@@ -172,25 +172,25 @@ public class Node : MonoBehaviour
 
     public void UpdateSprite() {
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        if (homeBase == Race.None) {
+        if (homeBase == Faction.None) {
             Sprite newSprite = renderer.sprite;
-            switch (owner) {
-                case Race.Carnot:
+            switch (faction) {
+                case Faction.Carnot:
                     newSprite = Resources.Load<Sprite>("Nodes/CarnotNode");
                     break;
-                case Race.Dukkha:
+                case Faction.Dukkha:
                     newSprite = Resources.Load<Sprite>("Nodes/DukkhaNode");
                     break;
-                case Race.Eidalons:
-                    newSprite = Resources.Load<Sprite>("Nodes/EidalonNode");
+                case Faction.Samata:
+                    newSprite = Resources.Load<Sprite>("Nodes/SamataNode");
                     break;
-                case Race.Noumenon:
+                case Faction.Noumenon:
                     newSprite = Resources.Load<Sprite>("Nodes/NoumenonNode");
                     break;
-                case Race.Paratrophs:
+                case Faction.Paratrophs:
                     newSprite = Resources.Load<Sprite>("Nodes/ParatrophNode");
                     break;
-                case Race.Unmar:
+                case Faction.Unmar:
                     newSprite = Resources.Load<Sprite>("Nodes/UnmarNode");
                     break;
             }
@@ -199,13 +199,13 @@ public class Node : MonoBehaviour
     }
 
     private void Setup() {
-        if (homeBase != Race.None) {
+        if (homeBase != Faction.None) {
             difficulty = 4;
         }
-        else if (owner == Race.Independent) {
+        else if (faction == Faction.Independent) {
             GameObject army = new GameObject();
             army.AddComponent<Army>();
-            army.GetComponent<Army>().race = Race.Independent;
+            army.GetComponent<Army>().faction = Faction.Independent;
             army.GetComponent<Army>().currentNode = gameObject;
             army.GetComponent<Army>().owner = GameObject.Find("/Neutral Player");
             army.transform.position = transform.position;
@@ -268,10 +268,10 @@ public class Node : MonoBehaviour
     }
 
     MapUnit MakeNeutralUnit(string unitType) {
-        MapUnit unit = new MapUnit(unitType, Race.Independent, unitType);
+        MapUnit unit = new MapUnit(unitType, Faction.Independent, unitType);
         if (unitType == "peon") {
             unit.SetHealth(50);
-            unit.damage = 10;
+            unit.maxDamage = 10;
             unit.attackRange = 1;
             unit.attackSpeed = 60;
             unit.moneyCost = 5;
@@ -280,7 +280,7 @@ public class Node : MonoBehaviour
         }
         if (unitType == "acolyte") {
             unit.SetHealth(100);
-            unit.damage = 20;
+            unit.maxDamage = 20;
             unit.attackRange = 1;
             unit.attackSpeed = 100;
             unit.moneyCost = 10;
@@ -289,7 +289,7 @@ public class Node : MonoBehaviour
         }
         if (unitType == "shaman") {
             unit.SetHealth(100);
-            unit.damage = 10;
+            unit.maxDamage = 10;
             unit.attackRange = 3;
             unit.attackSpeed = 120;
             unit.moneyCost = 10;
@@ -298,7 +298,7 @@ public class Node : MonoBehaviour
         }
         if (unitType == "prelate") {
             unit.SetHealth(200);
-            unit.damage = 40;
+            unit.maxDamage = 40;
             unit.attackRange = 2;
             unit.attackSpeed = 120;
             unit.moneyCost = 20;
@@ -313,11 +313,21 @@ public class Node : MonoBehaviour
         int threat = 0;
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
-            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().owner != owner) {
+            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction) {
                 threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
             }
         }
         return threat;
+    }
+
+    public float GetSafety() {
+        float friendlyNeighbours = 0;
+        for(int i =0; i< neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            if (neighbour.GetComponent<Node>().faction == faction) friendlyNeighbours++;
+        }
+        float safety = friendlyNeighbours / 6;
+        return safety;
     }
 
     public int GetPower() {
@@ -332,8 +342,8 @@ public class Node : MonoBehaviour
 }
 
 /*
-switch (race) {
-case Race.Noumenon:
+switch (faction) {
+case Faction.Noumenon:
     MakeNoumenon();
     break;
 */

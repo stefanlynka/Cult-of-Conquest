@@ -18,7 +18,7 @@ public class BuyFakeButton : MonoBehaviour{
     }
     public void InitializeMembers() {
         unit = transform.parent.GetComponent<UnitShopSpace>().unit.DeepCopy();
-        unit.damage = 0;
+        unit.maxDamage = 0;
         unit.moneyCost = int.Parse(transform.GetChild(0).GetComponent<TextMesh>().text);
         unit.zealCost = 0;
         unit.name += "Fake";

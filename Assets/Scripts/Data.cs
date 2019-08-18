@@ -14,12 +14,12 @@ public class Data{
     }
 }
 
-public enum Race {
+public enum Faction {
     Noumenon,
     Dukkha,
     Paratrophs,
     Unmar,
-    Eidalons,
+    Samata,
     Carnot,
     Independent,
     None

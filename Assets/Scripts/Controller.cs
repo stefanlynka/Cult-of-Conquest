@@ -5,11 +5,14 @@ using UnityEngine;
 public class Controller : MonoBehaviour{
 
     public static List<GameObject> players = new List<GameObject>();
-    GameObject nodeManager, playerMenu, unitShopManager, ritualManager, randomPanel;
+    GameObject nodeManager, playerMenu, unitShopManager, ritualManager, randomPanel, altarShopManager, templeShopManager;
 
+
+    private void Awake() {
+        FindMembers();
+    }
     // Start is called before the first frame update
     void Start(){
-        FindMembers();
         CallStartupFunctions();
     }
 
@@ -28,6 +31,8 @@ public class Controller : MonoBehaviour{
         unitShopManager = GameObject.Find("/Unit Buying Menu/Unit Spaces");
         ritualManager = GameObject.Find("/Ritual Menu");
         randomPanel = GameObject.Find("/Random Panel");
+        altarShopManager = GameObject.Find("/Altar Buying Menu");
+        templeShopManager = GameObject.Find("/Temple Buying Menu");
     }
     void CallStartupFunctions() {
         nodeManager.GetComponent<NodeManager>().Startup();
@@ -45,5 +50,7 @@ public class Controller : MonoBehaviour{
         }
         unitShopManager.GetComponent<UnitShopManager>().SetupUnitShopSpaces();
         randomPanel.GetComponent<RandomPanel>().Setup();
+        altarShopManager.GetComponent<AltarShopManager>().Setup();
+        templeShopManager.GetComponent<TempleShopManager>().Setup();
     }
 }

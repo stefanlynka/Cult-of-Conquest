@@ -7,7 +7,7 @@ public class Army : MonoBehaviour
     public bool selected = false;
     public static GameObject highlightFog;
 
-    public Race race;
+    public Faction faction;
     public GameObject currentNode;
     public GameObject map;
     public GameObject owner;
@@ -20,6 +20,7 @@ public class Army : MonoBehaviour
     public MapUnit[] backRow = new MapUnit[4];
     public MapUnit[] frontRow = new MapUnit[4];
     public List<MapUnit> defeatedEnemies = new List<MapUnit>();
+    public int precombatPower;
 
     // Start is called before the first frame update
     void Start(){
@@ -42,10 +43,10 @@ public class Army : MonoBehaviour
         mouseOverArmy = false;
     }
     private void OnMouseOver() {
-        if (Input.GetMouseButtonDown(0) && TurnManager.currentPlayer.GetComponent<Player>().race==race) {
+        if (Input.GetMouseButtonDown(0) && TurnManager.currentPlayer.GetComponent<Player>().faction==faction) {
             Player.armyLeftClicked = gameObject;
         }
-        if (Input.GetMouseButtonDown(1) && TurnManager.currentPlayer.GetComponent<Player>().race == race) {
+        if (Input.GetMouseButtonDown(1) && TurnManager.currentPlayer.GetComponent<Player>().faction == faction) {
             Player.armyRightClicked = gameObject;
         }
     }
@@ -57,13 +58,20 @@ public class Army : MonoBehaviour
         AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[2]);
     }
 
+    public void SetPrecombatPower() {
+        precombatPower = 0;
+        for(int i = 0; i < units.Length; i++) {
+            if (units[i] != null) precombatPower += units[i].power;
+        }
+    }
+
     public void HighlightNodes(GameObject node, int distance) {
         List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
             if (neighbour.GetComponent<Node>().occupiable) {
                 neighbour.GetComponent<Node>().Highlight();
-                if (distance > 1 && neighbour.GetComponent<Node>().owner == race) {
+                if (distance > 1 && neighbour.GetComponent<Node>().faction == faction) {
                     HighlightNodes(neighbour, distance - 1);
                 }
             }
@@ -90,7 +98,7 @@ public class Army : MonoBehaviour
         currentNode.GetComponent<Node>().occupant = null;
         transform.position = new Vector3(destination.transform.position.x, destination.transform.position.y, transform.position.z);
         currentNode = destination;
-        destination.GetComponent<Node>().owner = race;
+        destination.GetComponent<Node>().faction = faction;
         destination.GetComponent<Node>().occupied = true;
         destination.GetComponent<Node>().occupant = gameObject;
         destination.GetComponent<Node>().UpdateSprite();
@@ -104,11 +112,23 @@ public class Army : MonoBehaviour
         if (unit.moneyCost <= owner.GetComponent<Player>().money && unit.zealCost <= owner.GetComponent<Player>().zeal) {
             owner.GetComponent<Player>().money -= unit.moneyCost;
             owner.GetComponent<Player>().zeal -= unit.zealCost;
-            owner.GetComponent<Player>().raceTraits.NewUnit(unit);
+            owner.GetComponent<Player>().factionTraits.NewUnit(unit);
             print("new shield = "+unit.maxShield);
             AddUnit(unitPos.position, unitPos.frontRow, unit);
         }
         else print("not enough money");
+    }
+    public void BuyFakeUnit(UnitPos unitPos, MapUnit unit) {
+        unit.maxDamage = 0;
+        unit.moneyCost = Mathf.RoundToInt(unit.moneyCost * 0.4f);
+        unit.zealCost = 0;
+        unit.name += "Fake";
+        unit.portraitName += "Fake";
+        BuyUnit(unitPos, unit);
+    }
+    public void DissectUnit(MapUnit unit) {
+        RemoveUnit(unit);
+        owner.GetComponent<Player>().zeal++;
     }
 
     public void AddUnit(int index, bool fRow, MapUnit unit) {
@@ -155,8 +175,7 @@ public class Army : MonoBehaviour
         int power = 0;
         for(int i = 0; i < units.Length; i++) {
             if (units[i] != null) {
-                MapUnit unit = units[i];
-                power += unit.power;
+                power += units[i].power;
                 //print("found some power: " + unit.power);
             }
         }
@@ -205,7 +224,7 @@ public class Army : MonoBehaviour
 
             for (int i = 0; i < currentNode.GetComponent<Node>().neighbours.Count; i++) {
                 GameObject neighbour = currentNode.GetComponent<Node>().neighbours[i];
-                if (neighbour.GetComponent<Node>().owner == race && !nodes.Contains(neighbour) && !frontier.Contains(neighbour)) {
+                if (neighbour.GetComponent<Node>().faction == faction && !nodes.Contains(neighbour) && !frontier.Contains(neighbour)) {
                     frontier.Add(neighbour);
                 }
             }
@@ -213,6 +232,18 @@ public class Army : MonoBehaviour
             frontier.RemoveAt(0);
         }
         return nodes;
+    }
+    public void ResetArmy() {
+        for (int i =0; i < units.Length; i++) {
+            MapUnit unit = units[i];
+            if (unit != null) {
+                unit.Reset();
+            }
+        }
+    }
+    public void PrebattleSetup() {
+        SetPrecombatPower();
+        ResetArmy();
     }
 }
 

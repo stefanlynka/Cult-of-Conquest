@@ -5,7 +5,7 @@ using UnityEngine;
 public class UnitShopManager : MonoBehaviour {
 
     GameObject army, nodeMenu, unitShop, dissectButton;
-    Race currentRace;
+    //Faction currentFaction;
     int unitSpaceCount = 4;
     GameObject[] unitSpaces;
 
@@ -31,7 +31,7 @@ public class UnitShopManager : MonoBehaviour {
             if (unitSpace) unitSpaces[i] = unitSpace;
         }
 
-        currentRace = TurnManager.human.GetComponent<Player>().race;
+        //currentFaction = TurnManager.human.GetComponent<Player>().faction;
 
         transform.parent.gameObject.GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
 
@@ -40,11 +40,11 @@ public class UnitShopManager : MonoBehaviour {
         dissectButton = Tools.GetChildNamed(gameObject, "Dissect Button");
 
         //army = NodeMenu.currentArmy;
-        //if (army) currentRace = army.GetComponent<Army>().race;
+        //if (army) currentFaction = army.GetComponent<Army>().faction;
         List<GameObject> players = Controller.players;
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
-            MakeUnits(player.GetComponent<Player>().race, player);
+            MakeUnits(player.GetComponent<Player>().faction, player);
             if (!player.GetComponent<AI>()) {
                 AssignUnits(player);
                 //SetupUnitShopSpaces();
@@ -56,7 +56,7 @@ public class UnitShopManager : MonoBehaviour {
         for (int i = 0; i < transform.childCount; i++) {
             GameObject child = transform.GetChild(i).gameObject;
             if (child.name.Contains("Buy Unit Space")) {
-                if (Player.human.GetComponent<Player>().race == Race.Noumenon) Tools.GetChildNamed(child, "Fake").GetComponent<BuyFakeButton>().InitializeMembers();
+                if (Player.human.GetComponent<Player>().faction == Faction.Noumenon) Tools.GetChildNamed(child, "Fake").GetComponent<BuyFakeButton>().InitializeMembers();
                 else Tools.GetChildNamed(child, "Fake").SetActive(false);
             }
         }
@@ -74,7 +74,7 @@ public class UnitShopManager : MonoBehaviour {
         }
 
         GameObject hideButton = Tools.GetChildNamed(gameObject, "Hide Button");
-        if (Player.human.GetComponent<Player>().race != Race.Noumenon) {
+        if (Player.human.GetComponent<Player>().faction != Faction.Noumenon) {
             hideButton.SetActive(false);
         }
         else {
@@ -84,9 +84,9 @@ public class UnitShopManager : MonoBehaviour {
         }
     }
     bool Dissectable(MapUnit unit) {
-        if (Player.human.GetComponent<Player>().race == Race.Paratrophs) {
+        if (Player.human.GetComponent<Player>().faction == Faction.Paratrophs) {
             if (unit != null) {
-                if (unit.race != Player.human.GetComponent<Player>().race) {
+                if (unit.faction != Player.human.GetComponent<Player>().faction) {
                     return true;
                 }
             }
@@ -100,24 +100,24 @@ public class UnitShopManager : MonoBehaviour {
         Player.menuOpen = 1;
     }
 
-    public void MakeUnits(Race race, GameObject player) {
-        switch (race) {
-            case Race.Noumenon:
+    public void MakeUnits(Faction faction, GameObject player) {
+        switch (faction) {
+            case Faction.Noumenon:
                 MakeNoumenon(player);
                 break;
-            case Race.Dukkha:
+            case Faction.Dukkha:
                 MakeDukkha(player);
                 break;
-            case Race.Paratrophs:
+            case Faction.Paratrophs:
                 MakeParatrophs(player);
                 break;
-            case Race.Unmar:
+            case Faction.Unmar:
                 MakeUnmar(player);
                 break;
-            case Race.Eidalons:
-                MakeEidalons(player);
+            case Faction.Samata:
+                MakeSamata(player);
                 break;
-            case Race.Carnot:
+            case Faction.Carnot:
                 MakeCarnot(player);
                 break;
         }
@@ -131,9 +131,9 @@ public class UnitShopManager : MonoBehaviour {
     }
 
     private void MakeNoumenon(GameObject player) {
-        MapUnit peon = new MapUnit("peon", Race.Noumenon, "peon");
+        MapUnit peon = new MapUnit("peon", Faction.Noumenon, "peon");
         peon.SetHealth(50);
-        peon.damage = 10;
+        peon.maxDamage = 10;
         peon.attackRange = 1;
         peon.attackSpeed = 60;
         peon.moneyCost = 5;
@@ -142,9 +142,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(peon.DeepCopy());
         //unitSpaces[0].GetComponent<UnitShopSpace>().AddUnit(peon);
 
-        MapUnit acolyte = new MapUnit("acolyte", Race.Noumenon, "acolyte");
+        MapUnit acolyte = new MapUnit("acolyte", Faction.Noumenon, "acolyte");
         acolyte.SetHealth(100);
-        acolyte.damage = 20;
+        acolyte.maxDamage = 20;
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
@@ -153,9 +153,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(acolyte.DeepCopy());
         //unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
-        MapUnit shaman = new MapUnit("shaman", Race.Noumenon, "shaman");
+        MapUnit shaman = new MapUnit("shaman", Faction.Noumenon, "shaman");
         shaman.SetHealth(100);
-        shaman.damage = 10;
+        shaman.maxDamage = 10;
         shaman.attackRange = 3;
         shaman.attackSpeed = 120;
         shaman.moneyCost = 10;
@@ -164,9 +164,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(shaman.DeepCopy());
         //unitSpaces[2].GetComponent<UnitShopSpace>().AddUnit(shaman);
 
-        MapUnit prelate = new MapUnit("prelate", Race.Noumenon, "prelate");
+        MapUnit prelate = new MapUnit("prelate", Faction.Noumenon, "prelate");
         prelate.SetHealth(200);
-        prelate.damage = 40;
+        prelate.maxDamage = 40;
         prelate.attackRange = 2;
         prelate.attackSpeed = 120;
         prelate.moneyCost = 20;
@@ -177,9 +177,9 @@ public class UnitShopManager : MonoBehaviour {
     }
 
     private void MakeDukkha(GameObject player) {
-        MapUnit peon = new MapUnit("peon", Race.Dukkha, "peon");
+        MapUnit peon = new MapUnit("peon", Faction.Dukkha, "peon");
         peon.SetHealth(50);
-        peon.damage = 10;
+        peon.maxDamage = 10;
         peon.attackRange = 1;
         peon.attackSpeed = 60;
         peon.moneyCost = 5;
@@ -188,9 +188,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(peon.DeepCopy());
         //unitSpaces[0].GetComponent<UnitShopSpace>().AddUnit(peon);
 
-        MapUnit acolyte = new MapUnit("acolyte", Race.Dukkha, "acolyte");
+        MapUnit acolyte = new MapUnit("acolyte", Faction.Dukkha, "acolyte");
         acolyte.SetHealth(100);
-        acolyte.damage = 20;
+        acolyte.maxDamage = 20;
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
@@ -199,9 +199,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(acolyte.DeepCopy());
         //unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
-        MapUnit shaman = new MapUnit("shaman", Race.Dukkha, "shaman");
+        MapUnit shaman = new MapUnit("shaman", Faction.Dukkha, "shaman");
         shaman.SetHealth(100);
-        shaman.damage = 10;
+        shaman.maxDamage = 10;
         shaman.attackRange = 3;
         shaman.attackSpeed = 120;
         shaman.moneyCost = 10;
@@ -210,9 +210,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(shaman.DeepCopy());
         //unitSpaces[2].GetComponent<UnitShopSpace>().AddUnit(shaman);
 
-        MapUnit prelate = new MapUnit("prelate", Race.Dukkha, "prelate");
+        MapUnit prelate = new MapUnit("prelate", Faction.Dukkha, "prelate");
         prelate.SetHealth(200);
-        prelate.damage = 40;
+        prelate.maxDamage = 40;
         prelate.attackRange = 2;
         prelate.attackSpeed = 120;
         prelate.moneyCost = 20;
@@ -223,9 +223,9 @@ public class UnitShopManager : MonoBehaviour {
     }
 
     private void MakeParatrophs(GameObject player) {
-        MapUnit peon = new MapUnit("peon", Race.Paratrophs, "peon");
-        peon.SetHealth(50);
-        peon.damage = 10;
+        MapUnit peon = new MapUnit("peon", Faction.Paratrophs, "peon");
+        peon.SetHealth(30);
+        peon.maxDamage = 10;
         peon.attackRange = 1;
         peon.attackSpeed = 60;
         peon.moneyCost = 5;
@@ -234,9 +234,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(peon.DeepCopy());
         //unitSpaces[0].GetComponent<UnitShopSpace>().AddUnit(peon);
 
-        MapUnit acolyte = new MapUnit("acolyte", Race.Paratrophs, "acolyte");
-        acolyte.SetHealth(100);
-        acolyte.damage = 20;
+        MapUnit acolyte = new MapUnit("acolyte", Faction.Paratrophs, "acolyte");
+        acolyte.SetHealth(60);
+        acolyte.maxDamage = 20;
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
@@ -245,9 +245,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(acolyte.DeepCopy());
         //unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
-        MapUnit shaman = new MapUnit("shaman", Race.Paratrophs, "shaman");
-        shaman.SetHealth(100);
-        shaman.damage = 10;
+        MapUnit shaman = new MapUnit("shaman", Faction.Paratrophs, "shaman");
+        shaman.SetHealth(60);
+        shaman.maxDamage = 10;
         shaman.attackRange = 3;
         shaman.attackSpeed = 120;
         shaman.moneyCost = 10;
@@ -256,9 +256,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(shaman.DeepCopy());
         //unitSpaces[2].GetComponent<UnitShopSpace>().AddUnit(shaman);
 
-        MapUnit prelate = new MapUnit("prelate", Race.Paratrophs, "prelate");
-        prelate.SetHealth(200);
-        prelate.damage = 40;
+        MapUnit prelate = new MapUnit("prelate", Faction.Paratrophs, "prelate");
+        prelate.SetHealth(140);
+        prelate.maxDamage = 40;
         prelate.attackRange = 2;
         prelate.attackSpeed = 120;
         prelate.moneyCost = 20;
@@ -269,9 +269,9 @@ public class UnitShopManager : MonoBehaviour {
     }
 
     private void MakeUnmar(GameObject player) {
-        MapUnit peon = new MapUnit("peon", Race.Unmar, "peon");
+        MapUnit peon = new MapUnit("peon", Faction.Unmar, "peon");
         peon.SetHealth(50);
-        peon.damage = 10;
+        peon.maxDamage = 10;
         peon.attackRange = 1;
         peon.attackSpeed = 60;
         peon.moneyCost = 5;
@@ -280,9 +280,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(peon.DeepCopy());
         //unitSpaces[0].GetComponent<UnitShopSpace>().AddUnit(peon);
 
-        MapUnit acolyte = new MapUnit("acolyte", Race.Unmar, "acolyte");
+        MapUnit acolyte = new MapUnit("acolyte", Faction.Unmar, "acolyte");
         acolyte.SetHealth(100);
-        acolyte.damage = 20;
+        acolyte.maxDamage = 20;
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
@@ -291,9 +291,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(acolyte.DeepCopy());
         //unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
-        MapUnit shaman = new MapUnit("shaman", Race.Unmar, "shaman");
+        MapUnit shaman = new MapUnit("shaman", Faction.Unmar, "shaman");
         shaman.SetHealth(100);
-        shaman.damage = 10;
+        shaman.maxDamage = 10;
         shaman.attackRange = 3;
         shaman.attackSpeed = 120;
         shaman.moneyCost = 10;
@@ -302,9 +302,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(shaman.DeepCopy());
         //unitSpaces[2].GetComponent<UnitShopSpace>().AddUnit(shaman);
 
-        MapUnit prelate = new MapUnit("prelate", Race.Unmar, "prelate");
+        MapUnit prelate = new MapUnit("prelate", Faction.Unmar, "prelate");
         prelate.SetHealth(200);
-        prelate.damage = 40;
+        prelate.maxDamage = 40;
         prelate.attackRange = 2;
         prelate.attackSpeed = 120;
         prelate.moneyCost = 20;
@@ -314,10 +314,10 @@ public class UnitShopManager : MonoBehaviour {
         //unitSpaces[3].GetComponent<UnitShopSpace>().AddUnit(prelate);
     }
 
-    private void MakeEidalons(GameObject player) {
-        MapUnit peon = new MapUnit("peon", Race.Eidalons, "peon");
+    private void MakeSamata(GameObject player) {
+        MapUnit peon = new MapUnit("peon", Faction.Samata, "peon");
         peon.SetHealth(50);
-        peon.damage = 10;
+        peon.maxDamage = 10;
         peon.attackRange = 1;
         peon.attackSpeed = 60;
         peon.moneyCost = 5;
@@ -326,9 +326,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(peon.DeepCopy());
         //unitSpaces[0].GetComponent<UnitShopSpace>().AddUnit(peon);
 
-        MapUnit acolyte = new MapUnit("acolyte", Race.Eidalons, "acolyte");
+        MapUnit acolyte = new MapUnit("acolyte", Faction.Samata, "acolyte");
         acolyte.SetHealth(100);
-        acolyte.damage = 20;
+        acolyte.maxDamage = 20;
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
@@ -337,9 +337,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(acolyte.DeepCopy());
         //unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
-        MapUnit shaman = new MapUnit("shaman", Race.Eidalons, "shaman");
+        MapUnit shaman = new MapUnit("shaman", Faction.Samata, "shaman");
         shaman.SetHealth(100);
-        shaman.damage = 10;
+        shaman.maxDamage = 10;
         shaman.attackRange = 3;
         shaman.attackSpeed = 120;
         shaman.moneyCost = 10;
@@ -348,9 +348,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(shaman.DeepCopy());
         //unitSpaces[2].GetComponent<UnitShopSpace>().AddUnit(shaman);
 
-        MapUnit prelate = new MapUnit("prelate", Race.Eidalons, "prelate");
+        MapUnit prelate = new MapUnit("prelate", Faction.Samata, "prelate");
         prelate.SetHealth(200);
-        prelate.damage = 40;
+        prelate.maxDamage = 40;
         prelate.attackRange = 2;
         prelate.attackSpeed = 120;
         prelate.moneyCost = 20;
@@ -361,9 +361,9 @@ public class UnitShopManager : MonoBehaviour {
     }
 
     private void MakeCarnot(GameObject player) {
-        MapUnit peon = new MapUnit("peon", Race.Carnot, "peon");
+        MapUnit peon = new MapUnit("peon", Faction.Carnot, "peon");
         peon.SetHealth(50);
-        peon.damage = 10;
+        peon.maxDamage = 10;
         peon.attackRange = 1;
         peon.attackSpeed = 60;
         peon.moneyCost = 5;
@@ -372,9 +372,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(peon.DeepCopy());
         //unitSpaces[0].GetComponent<UnitShopSpace>().AddUnit(peon);
 
-        MapUnit acolyte = new MapUnit("acolyte", Race.Carnot, "acolyte");
+        MapUnit acolyte = new MapUnit("acolyte", Faction.Carnot, "acolyte");
         acolyte.SetHealth(100);
-        acolyte.damage = 20;
+        acolyte.maxDamage = 20;
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
         acolyte.moneyCost = 10;
@@ -383,9 +383,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(acolyte.DeepCopy());
         //unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
-        MapUnit shaman = new MapUnit("shaman", Race.Carnot, "shaman");
+        MapUnit shaman = new MapUnit("shaman", Faction.Carnot, "shaman");
         shaman.SetHealth(100);
-        shaman.damage = 10;
+        shaman.maxDamage = 10;
         shaman.attackRange = 3;
         shaman.attackSpeed = 120;
         shaman.moneyCost = 10;
@@ -394,9 +394,9 @@ public class UnitShopManager : MonoBehaviour {
         player.GetComponent<Player>().unitBlueprints.Add(shaman.DeepCopy());
         //unitSpaces[2].GetComponent<UnitShopSpace>().AddUnit(shaman);
 
-        MapUnit prelate = new MapUnit("prelate", Race.Carnot, "prelate");
+        MapUnit prelate = new MapUnit("prelate", Faction.Carnot, "prelate");
         prelate.SetHealth(200);
-        prelate.damage = 40;
+        prelate.maxDamage = 40;
         prelate.attackRange = 2;
         prelate.attackSpeed = 120;
         prelate.moneyCost = 20;

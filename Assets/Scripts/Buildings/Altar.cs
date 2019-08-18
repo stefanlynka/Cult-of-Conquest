@@ -16,10 +16,10 @@ public class Altar{
         name = newName;
         cost = newCost;
         portrait = newName.ToString();
-        unit = new MapUnit("altar", Race.None, "");
+        unit = new MapUnit("altar", Faction.None, "");
         unit.maxHealth = 100;
         unit.currentHealth = 100;
-        unit.damage = 10;
+        unit.maxDamage = 10;
         unit.attackSpeed = 20;
     }
 

@@ -19,8 +19,8 @@ public class Player : MonoBehaviour
     public static GameObject battleMenu;
     public static int menuOpen = 0;
 
-    public RaceTraits raceTraits;
-    public Race race = Race.Noumenon;
+    public FactionTraits factionTraits;
+    public Faction faction = Faction.Noumenon;
     public int money = 20;
     public int zeal = 0;
     public bool isArmySelected = false;
@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
 
     // Start is called before the first frame update
     void Start(){
-        SetupRaceTraits();
+        SetupFactionTraits();
     }
 
     // Update is called once per frame
@@ -66,13 +66,13 @@ public class Player : MonoBehaviour
 
         for (int i = 0; i < NodeManager.nodes.Count; i++) {
             GameObject node = NodeManager.nodes[i];
-            if (node.GetComponent<Node>().owner == race) ownedNodes.Add(node);
+            if (node.GetComponent<Node>().faction == faction) ownedNodes.Add(node);
         }
-        //SetupRaceTraits();
+        //SetupFactionTraits();
     }
 
-    void SetupRaceTraits() {
-        raceTraits = GameObject.Find("/Race Manager").GetComponent<RaceManager>().GetRaceTraits(race);
+    void SetupFactionTraits() {
+        factionTraits = GameObject.Find("/Faction Manager").GetComponent<FactionManager>().GetFactionTraits(faction);
     }
 
     void CheckSelected() {
@@ -192,7 +192,7 @@ public class Player : MonoBehaviour
                 else {
                     print("node occupied");
                     GameObject otherArmy = finalNode.GetComponent<Node>().occupant;
-                    if (army.GetComponent<Army>().race != otherArmy.GetComponent<Army>().race) {
+                    if (army.GetComponent<Army>().faction != otherArmy.GetComponent<Army>().faction) {
                         Invade(army, otherArmy);
                         //print("attack!");
                     }
@@ -249,8 +249,8 @@ public class Player : MonoBehaviour
         zeal += GetZealIncome();
         RestUnits();
         UpdateNodes();
-        raceTraits.StartTurn(gameObject);
-        //print("Number 6 = " + raceTraits.UnitFunction(3));
+        factionTraits.StartTurn(gameObject);
+        //print("Number 6 = " + factionTraits.UnitFunction(3));
     }
 
     void UpdateNodes() {
@@ -278,6 +278,10 @@ public class Player : MonoBehaviour
         return income;
     }
 
+    public int GetNodeCount() {
+        return ownedNodes.Count;
+    }
+
     private void RestUnits() {
         for (int i = 0; i < armies.Count; i++) {
             GameObject army = armies[i];
@@ -292,4 +296,22 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void HideUnit(MapUnit unit) {
+        unit.visiblePower = 0;
+        unit.hidden = true;
+        money -= Mathf.RoundToInt(unit.moneyCost / 4);
+    }
+
+    public void SelectArmy(GameObject army) {
+        Player.selectedArmy = army;
+    }
+
+    public void AddTarget(GameObject node) {
+        GameObject randomPanel = GameObject.Find("/Random Panel");
+        randomPanel.GetComponent<RandomPanel>().AddTarget(node);
+    }
+    public void AttackRandomTargets() {
+        GameObject randomPanel = GameObject.Find("/Random Panel");
+        randomPanel.GetComponent<RandomPanel>().Attack();
+    }
 }

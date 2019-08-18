@@ -36,23 +36,23 @@ public class RitualManager : MonoBehaviour {
     void SetupRituals() {
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
-            switch (player.GetComponent<Player>().race) {
-                case Race.Noumenon:
+            switch (player.GetComponent<Player>().faction) {
+                case Faction.Noumenon:
                     NoumenonRituals(player);
                     break;
-                case Race.Dukkha:
+                case Faction.Dukkha:
                     DukkhaRituals(player);
                     break;
-                case Race.Paratrophs:
+                case Faction.Paratrophs:
                     ParatrophRituals(player);
                     break;
-                case Race.Unmar:
+                case Faction.Unmar:
                     UnmarRituals(player);
                     break;
-                case Race.Eidalons:
-                    EidalonRituals(player);
+                case Faction.Samata:
+                    SamataRituals(player);
                     break;
-                case Race.Carnot:
+                case Faction.Carnot:
                     CarnotRituals(player);
                     break;
             }
@@ -95,7 +95,7 @@ public class RitualManager : MonoBehaviour {
         Ritual ritual2 = new Ritual("Devastation", 4, 7, "Double unit\ndamage for\none round");
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
-    void EidalonRituals(GameObject player) {
+    void SamataRituals(GameObject player) {
         Ritual ritual1 = new Ritual("Restoration", 3, 2, "Heal all\nunits to\nfull HP");
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
         Ritual ritual2 = new Ritual("Devastation", 4, 7, "Double unit\ndamage for\none round");

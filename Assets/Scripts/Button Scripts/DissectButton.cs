@@ -21,8 +21,8 @@ public class DissectButton : MonoBehaviour{
         MapUnit unit = army.GetComponent<Army>().GetUnit(position);
         if (unit != null) {
             print("unit not null");
-            if (unit.race != Player.human.GetComponent<Player>().race) {
-                print("unit of a different race");
+            if (unit.faction != Player.human.GetComponent<Player>().faction) {
+                print("unit of a different faction");
                 return true;
             }
         }
@@ -31,8 +31,7 @@ public class DissectButton : MonoBehaviour{
 
     void DissectUnit(GameObject army, MapUnit unit) {
         print("dissect!");
-        army.GetComponent<Army>().RemoveUnit(unit);
-        army.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
+        army.GetComponent<Army>().DissectUnit(unit);
         transform.parent.GetComponent<UnitShopManager>().LeaveMenu();
     }
 

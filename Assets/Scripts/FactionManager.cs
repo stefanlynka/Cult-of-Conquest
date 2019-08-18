@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RaceManager : MonoBehaviour{
+public class FactionManager : MonoBehaviour{
 
-    //RaceTraits traits = new RaceTraits();
+    //FactionTraits traits = new FactionTraits();
 
     // Start is called before the first frame update
     void Start(){
@@ -15,36 +15,37 @@ public class RaceManager : MonoBehaviour{
         
     }
 
-    public RaceTraits GetRaceTraits(Race race) {
-        RaceTraits traits = new RaceTraits();
-        switch (race) {
-            case Race.Noumenon:
+    public FactionTraits GetFactionTraits(Faction faction) {
+        FactionTraits traits = new FactionTraits();
+        switch (faction) {
+            case Faction.Noumenon:
                 MakeNoumenon(traits);
                 break;
-            case Race.Dukkha:
+            case Faction.Dukkha:
                 MakeDukkha(traits);
                 break;
-            case Race.Paratrophs:
+            case Faction.Paratrophs:
                 MakeParatrophs(traits);
                 break;
-            case Race.Unmar:
+            case Faction.Unmar:
                 MakeUnmar(traits);
                 break;
-            case Race.Eidalons:
-                MakeEidalons(traits);
+            case Faction.Samata:
+                MakeSamata(traits);
                 break;
-            case Race.Carnot:
+            case Faction.Carnot:
                 MakeCarnot(traits);
                 break;
-            case Race.Independent:
+            case Faction.Independent:
                 MakeIndependent(traits);
                 break;
         }
         return traits;
     }
 
-    void MakeNoumenon(RaceTraits traits) {
+    void MakeNoumenon(FactionTraits traits) {
         traits.NewUnit = Empty;
+        traits.Precombat = PunishDisadvantage;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -52,9 +53,11 @@ public class RaceManager : MonoBehaviour{
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
         traits.StartTurn = Empty;
+        traits.EndTurn = Empty;
     }
-    void MakeDukkha(RaceTraits traits) {
+    void MakeDukkha(FactionTraits traits) {
         traits.NewUnit = Empty;
+        traits.Precombat = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -62,9 +65,11 @@ public class RaceManager : MonoBehaviour{
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
         traits.StartTurn = Empty;
+        traits.EndTurn = Empty;
     }
-    void MakeParatrophs(RaceTraits traits) {
+    void MakeParatrophs(FactionTraits traits) {
         traits.NewUnit = Empty;
+        traits.Precombat = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = StoreEnemy;
@@ -72,30 +77,35 @@ public class RaceManager : MonoBehaviour{
         traits.BattleOver = ReassembleEnemies;
         traits.WonBattle = Empty;
         traits.StartTurn = Empty;
+        traits.EndTurn = Empty;
     }
-    void MakeUnmar(RaceTraits traits) {
-
+    void MakeUnmar(FactionTraits traits) { 
         traits.NewUnit = GiveShield;
+        traits.Precombat = Empty;
         traits.TakeDamage = UnitBecomeMarred;
         traits.ArmyLostUnit = ArmyBecomeMarred;
         traits.KilledEnemy = Empty;
         traits.EnemyRetreated = Empty;
         traits.BattleOver = Empty;
         traits.WonBattle = WinUnmarred;
-        traits.StartTurn = Empty;
+        traits.StartTurn = MarredCheck;
+        traits.EndTurn = Empty;
     }
-    void MakeEidalons(RaceTraits traits) {
+    void MakeSamata(FactionTraits traits) {
         traits.NewUnit = Empty;
+        traits.Precombat = BalanceAdvantage;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
         traits.EnemyRetreated = Empty;
-        traits.BattleOver = Empty;
+        traits.BattleOver = RewardsForFairness;
         traits.WonBattle = Empty;
         traits.StartTurn = Empty;
+        traits.EndTurn = BalanceCheck;
     }
-    void MakeCarnot(RaceTraits traits) {
+    void MakeCarnot(FactionTraits traits) {
         traits.NewUnit = Empty;
+        traits.Precombat = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -103,9 +113,11 @@ public class RaceManager : MonoBehaviour{
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
         traits.StartTurn = IsolationCheck;
+        traits.EndTurn = Empty;
     }
-    void MakeIndependent(RaceTraits traits) {
+    void MakeIndependent(FactionTraits traits) {
         traits.NewUnit = Empty;
+        traits.Precombat = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -113,6 +125,7 @@ public class RaceManager : MonoBehaviour{
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
         traits.StartTurn = Empty;
+        traits.EndTurn = Empty;
     }
 
 
@@ -124,7 +137,9 @@ public class RaceManager : MonoBehaviour{
     public void UnitBecomeMarred(MapUnit unit){
         if (unit.marred == false) {
             unit.marred = true;
-            unit.damage = Mathf.RoundToInt(unit.damage * 0.8f);
+            unit.marredCountdown = 2;
+            unit.maxDamage = Mathf.RoundToInt(unit.maxDamage * 0.8f);
+            unit.currentDamage = Mathf.RoundToInt(unit.currentDamage * 0.8f);
         }
     }
     public void ArmyBecomeMarred(GameObject army) {
@@ -138,7 +153,6 @@ public class RaceManager : MonoBehaviour{
         }
         else army.GetComponent<Army>().marredBattle = false;
     }
-
     public void StoreEnemy(GameObject army, MapUnit unit) {
         MapUnit newUnit = unit.DeepCopy();
         newUnit.currentHealth = newUnit.maxHealth/4;
@@ -168,22 +182,95 @@ public class RaceManager : MonoBehaviour{
         }
         player.GetComponent<Player>().zeal += numIsolated;
     }
+    public void BalanceCheck(GameObject player) {
+        List<int> nodeCounts = new List<int>();
+        int totalNodes = 0;
+        for(int i =0; i< TurnManager.players.Count; i++) {
+            GameObject currentPlayer = TurnManager.players[i];
+            int newNodeCount = currentPlayer.GetComponent<Player>().GetNodeCount();
+            nodeCounts.Add(newNodeCount);
+            totalNodes += newNodeCount;
+        }
+        int averageNodes = totalNodes / TurnManager.players.Count;
+        int score = 0;
+        for(int i =0; i < nodeCounts.Count; i++) {
+            if (Mathf.Abs(averageNodes - nodeCounts[i]) < 1) score += 2;
+            else if (Mathf.Abs(averageNodes - nodeCounts[i]) < 2) score += 1;
+        }
+        player.GetComponent<Player>().zeal += score;
+    }
+    public void RewardsForFairness(GameObject army) {
+        int allyLostPower = army.GetComponent<Army>().precombatPower - army.GetComponent<Army>().GetPower();
+        List<MapUnit> defeatedEnemies = army.GetComponent<Army>().defeatedEnemies;
+        int enemyLostPower = 0;
+        for (int i = 0; i < defeatedEnemies.Count; i++) {
+            enemyLostPower += defeatedEnemies[i].power;
+        }
+        int minLostPower = Mathf.Min(allyLostPower,enemyLostPower);
+        int rewardMoney = minLostPower / 2;
+        army.GetComponent<Army>().owner.GetComponent<Player>().money += rewardMoney;
+    }
+    public void BalanceAdvantage(GameObject samataArmy, GameObject otherArmy) {
+        float vulnerability = 1.0f;
+        float overPoweredRatio = (samataArmy.GetComponent<Army>().GetPower() / otherArmy.GetComponent<Army>().GetPower()) - 1;
+        if (overPoweredRatio > 0) {
+            vulnerability += overPoweredRatio * 0.75f;
+        }
+        for (int i = 0; i < samataArmy.GetComponent<Army>().units.Length; i++) {
+            if (samataArmy.GetComponent<Army>().units[i] != null) samataArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+        }
+    }
+    public void PunishDisadvantage(GameObject noumenonArmy, GameObject otherArmy) {
+        float vulnerability = 1.0f;
+        float overPoweredRatio = (otherArmy.GetComponent<Army>().GetPower() / noumenonArmy.GetComponent<Army>().GetPower()) - 1;
+        if (overPoweredRatio > 0) {
+            vulnerability += overPoweredRatio * 0.75f;
+        }
+        for (int i = 0; i < noumenonArmy.GetComponent<Army>().units.Length; i++) {
+            if (noumenonArmy.GetComponent<Army>().units[i] != null) noumenonArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+        }
+    }
+    public void PunishSafety(GameObject carnotArmy, GameObject otherArmy) {
+        float safetyRatio = carnotArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetSafety();
+        float vulnerability = 1.0f + (safetyRatio / 2);
+        for (int i = 0; i < carnotArmy.GetComponent<Army>().units.Length; i++) {
+            if (carnotArmy.GetComponent<Army>().units[i] != null) carnotArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+        }
+    }
+    public void MarredCheck(GameObject player) {
+        List<GameObject> armies = player.GetComponent<Player>().armies;
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
+            for (int j = 0; j < army.GetComponent<Army>().units.Length; j++) {
+                MapUnit unit = army.GetComponent<Army>().units[j];
+                if (unit != null) {
+                    if (unit.marred) {
+                        unit.marredCountdown--;
+                        if (unit.marredCountdown <= 0) army.GetComponent<Army>().RemoveUnit(unit);
+                    }
+                }
+            }
+        }
+    }
+
 
     public void Empty(MapUnit unit) {}
     public void Empty() {}
     public void Empty(GameObject nothing) {}
     public void Empty(GameObject nothing, MapUnit noone) { }
+    public void Empty(GameObject nothing1, GameObject nothing2) { }
 
     public int TestFunction(int number) {
         return number * 2;
     }
 }
 
-public class RaceTraits {
-    public Race race;
+public class FactionTraits {
+    public Faction faction;
     public delegate int DelegateTest(int number);
     public delegate void DelegateVoid();
     public delegate void DelegateGameObject(GameObject target);
+    public delegate void DelegateGameObject2(GameObject target1, GameObject target2);
     public delegate void DelegateUnit(MapUnit unit);
     public delegate void DelegateObjectUnit(GameObject target, MapUnit unit);
     public DelegateUnit NewUnit;
@@ -195,4 +282,6 @@ public class RaceTraits {
     public DelegateGameObject WonBattle;
     public DelegateGameObject BattleOver;
     public DelegateGameObject StartTurn;
+    public DelegateGameObject EndTurn;
+    public DelegateGameObject2 Precombat;
 }

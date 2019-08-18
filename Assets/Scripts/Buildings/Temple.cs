@@ -16,10 +16,10 @@ public class Temple {
         name = newName;
         cost = newCost;
         portrait = newName.ToString();
-        unit = new MapUnit("Temple", Race.None, "");
+        unit = new MapUnit("Temple", Faction.None, "");
         unit.maxHealth = 200;
         unit.currentHealth = 200;
-        unit.damage = 50;
+        unit.maxDamage = 50;
         unit.attackSpeed = 100;
     }
 

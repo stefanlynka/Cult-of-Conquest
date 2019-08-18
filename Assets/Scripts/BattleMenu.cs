@@ -104,6 +104,10 @@ public class BattleMenu : MonoBehaviour{
             defenders.Add(altar.unit);
             defendersBuildings.Add(altar.unit);
         }
+        attackArmy.GetComponent<Army>().PrebattleSetup();
+        defendArmy.GetComponent<Army>().PrebattleSetup();
+        attackArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.Precombat(attackArmy, defendArmy);
+        defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.Precombat(defendArmy, attackArmy);
     }
 
     public void SetupBattle(GameObject attackingArmy, GameObject defendingArmy, GameObject node) {
@@ -190,14 +194,14 @@ public class BattleMenu : MonoBehaviour{
         if (target != null) {
             if (target.currentShield > 0) target.currentShield--;
             else {
-                target.currentHealth -= attacker.damage;
+                target.currentHealth -= attacker.currentDamage;
                 // If the unit dealing damage is on the attacking side, the defending army triggers "Take Damage"
-                defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.TakeDamage(target);
+                defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.TakeDamage(target);
             }
 
             if (target.currentHealth <= 0) {
-                defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.ArmyLostUnit(defendingUnitArmy);
-                attackingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.KilledEnemy(attackingUnitArmy, target);
+                defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.ArmyLostUnit(defendingUnitArmy);
+                attackingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.KilledEnemy(attackingUnitArmy, target);
                 RemoveTargetFromCooldowns(target);
                 RemoveUnitFromLists(target);
                 defendingUnitArmy.GetComponent<Army>().RemoveUnit(target);
@@ -219,7 +223,7 @@ public class BattleMenu : MonoBehaviour{
 
     public void Retreat() {
         if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
-        defendArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.EnemyRetreated(defendArmy);
+        defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
         if (inSimulation) {
             RemoveAttackCooldowns();
             retreating = true;
@@ -239,17 +243,17 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void BattleOver() {
-        attackArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.BattleOver(attackArmy);
-        defendArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.BattleOver(defendArmy);
+        attackArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.BattleOver(attackArmy);
+        defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
         GameObject winningArmy = defendArmy;
         if (defenders.Count == 0) winningArmy = attackArmy;
-        winningArmy.GetComponent<Army>().owner.GetComponent<Player>().raceTraits.WonBattle(winningArmy);
+        winningArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.WonBattle(winningArmy);
 
         if (attackers.Count == 0) {
             attackArmy.GetComponent<Army>().Defeated();
         }
         else if (defenders.Count == 0) {
-            if (defendArmy.GetComponent<Army>().race != Race.Independent){
+            if (defendArmy.GetComponent<Army>().faction != Faction.Independent){
                 defendArmy.GetComponent<Army>().owner.GetComponent<Player>().RemoveNode(battleNode);
                 defendArmy.GetComponent<Army>().Defeated();
             }
