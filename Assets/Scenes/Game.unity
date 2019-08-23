@@ -336,7 +336,7 @@ MonoBehaviour:
   selected: 0
   faction: 0
   currentNode: {fileID: 1971950615}
-  map: {fileID: 0}
+  nodeManager: {fileID: 0}
   owner: {fileID: 0}
   mouseOverArmy: 0
   maxMoves: 1
@@ -2641,7 +2641,7 @@ MonoBehaviour:
   ownedNodes: []
   faction: 0
   money: 100
-  zeal: 0
+  zeal: 50
   isArmySelected: 0
   randomPanel: {fileID: 0}
 --- !u!4 &362486964
@@ -4448,7 +4448,7 @@ PrefabInstance:
     - target: {fileID: 528278849333287494, guid: d2c89193f86c6fd47965ae5396400759,
         type: 3}
       propertyPath: m_Name
-      value: Dukha Army One
+      value: Samata Army One
       objectReference: {fileID: 0}
     - target: {fileID: 528278849333287515, guid: d2c89193f86c6fd47965ae5396400759,
         type: 3}
@@ -5876,7 +5876,7 @@ GameObject:
   - component: {fileID: 755607914}
   - component: {fileID: 755607913}
   m_Layer: 0
-  m_Name: Ritual Sprite
+  m_Name: Ritual Label Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11971,7 +11971,7 @@ GameObject:
   - component: {fileID: 1583278445}
   - component: {fileID: 1583278446}
   m_Layer: 0
-  m_Name: Ritual Sprite (1)
+  m_Name: Ritual Indicator Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14432,7 +14432,7 @@ PrefabInstance:
     - target: {fileID: 528278849333287494, guid: d2c89193f86c6fd47965ae5396400759,
         type: 3}
       propertyPath: m_Name
-      value: Dukha Army Two
+      value: Samata Army Two
       objectReference: {fileID: 0}
     - target: {fileID: 528278849333287515, guid: d2c89193f86c6fd47965ae5396400759,
         type: 3}
@@ -15616,6 +15616,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98e367af27a30545b43ae53af905ecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedNodes: []
 --- !u!1001 &2121523212
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18467,7 +18468,7 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: homeBase
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -18483,6 +18484,11 @@ PrefabInstance:
         type: 3}
       propertyPath: owner
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}

@@ -20,7 +20,6 @@ public class RitualSlot : MonoBehaviour{
     private void OnMouseDown() {
         if (Player.menuOpen == 2) {
             if (human.GetComponent<Player>().BuyRitual(ritualBlueprint)) {
-                print("return true");
                 transform.parent.GetComponent<RitualMenu>().ExitMenu();
             }
         }

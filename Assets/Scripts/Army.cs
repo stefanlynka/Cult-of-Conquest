@@ -9,7 +9,7 @@ public class Army : MonoBehaviour
 
     public Faction faction;
     public GameObject currentNode;
-    public GameObject map;
+    public GameObject nodeManager;
     public GameObject owner;
     public bool mouseOverArmy = false;
     public int maxMoves = 2;
@@ -24,7 +24,7 @@ public class Army : MonoBehaviour
 
     // Start is called before the first frame update
     void Start(){
-        map = GameObject.Find("/Node Manager");
+        nodeManager = GameObject.Find("/Node Manager");
     }
 
     // Update is called once per frame
@@ -66,20 +66,11 @@ public class Army : MonoBehaviour
     }
 
     public void HighlightNodes(GameObject node, int distance) {
-        List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
-        for (int i = 0; i < neighbours.Count; i++) {
-            GameObject neighbour = neighbours[i];
-            if (neighbour.GetComponent<Node>().occupiable) {
-                neighbour.GetComponent<Node>().Highlight();
-                if (distance > 1 && neighbour.GetComponent<Node>().faction == faction) {
-                    HighlightNodes(neighbour, distance - 1);
-                }
-            }
-        }
+        nodeManager.GetComponent<NodeManager>().HighlightAttackableNodes(node, distance, faction);
     }
 
     public void UnhighlightNodes() {
-        map.GetComponent<NodeManager>().UnhighlightNodes();
+        nodeManager.GetComponent<NodeManager>().UnhighlightNodes();
     }
     public void Select() {
         selected = true;

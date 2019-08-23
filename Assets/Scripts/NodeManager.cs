@@ -85,7 +85,38 @@ public class NodeManager : MonoBehaviour
         }
     }
 
+    public void HighlightAttackableNodes(GameObject node, int distance, Faction faction) {
+        highlightFog.SetActive(true);
+
+        List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            if (neighbour.GetComponent<Node>().occupiable) {
+                neighbour.GetComponent<Node>().Highlight();
+                if (distance > 1 && neighbour.GetComponent<Node>().faction == faction) {
+                    HighlightAttackableNodes(neighbour, distance - 1, faction);
+                }
+            }
+        }
+    }
+
+    public void HighlightNodes(GameObject node, int distance) {
+        highlightFog.SetActive(true);
+
+        print("Highlighting Nodes");
+        List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            neighbour.GetComponent<Node>().Highlight();
+            if (distance > 1) {
+                HighlightNodes(neighbour, distance - 1);
+            }
+        }
+    }
+
     public void UnhighlightNodes() {
+        highlightFog.SetActive(false);
+
         for (int i = 0; i  < nodes.Count; i++) {
             GameObject node = nodes[i];
             node.GetComponent<Node>().Unhighlight();

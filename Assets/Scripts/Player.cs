@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     public static int menuOpen = 0;
 
     public FactionTraits factionTraits;
-    public Faction faction = Faction.Noumenon;
+    public Faction faction;
     public int money = 20;
     public int zeal = 0;
     public bool isArmySelected = false;
@@ -28,10 +28,12 @@ public class Player : MonoBehaviour
 
     public void Awake() {
         if (name == "Human") human = gameObject;
+        print("faction = " + faction);
     }
 
     // Start is called before the first frame update
     void Start(){
+        print("faction = " + faction);
         SetupFactionTraits();
     }
 
@@ -88,7 +90,7 @@ public class Player : MonoBehaviour
         }
         if (!isArmySelected) selectedArmy = null;
 
-        NodeManager.highlightFog.SetActive(isArmySelected);
+        //NodeManager.highlightFog.SetActive(isArmySelected);
     }
 
     bool LeftClickedOnNearbyEnemy() {
@@ -236,8 +238,10 @@ public class Player : MonoBehaviour
 
     public bool BuyRitual(Ritual ritual) {
         if (zeal >= ritual.zealCost) {
+            print("Ritual Purchased");
             zeal -= ritual.zealCost;
-            NodeMenu.currentNode.GetComponent<Node>().plannedRitual = Tools.DeepCopyRitual(ritual);
+            NodeMenu.currentNode.GetComponent<Node>().ritual = Tools.DeepCopyRitual(ritual);
+            print("ritual name = " + NodeMenu.currentNode.GetComponent<Node>().ritual.name);
             return true;
         }
         return false;

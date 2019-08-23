@@ -27,10 +27,7 @@ public class Node : MonoBehaviour
     public bool occupied = false;
     public bool occupiable = true;
     public bool highlighted = false;
-    public Ritual plannedRitual;
-    public Ritual activeRitual;
-
-
+    public Ritual ritual;
 
     public string effigy = "";
     public Temple temple;
@@ -58,6 +55,7 @@ public class Node : MonoBehaviour
     }
 
     private void OnMouseDown() {
+        if (RitualManager.ritualSelected && highlighted) GameObject.Find("/Ritual Menu").GetComponent<RitualManager>().SelectNode(gameObject);
         //Player.nodeClicked = gameObject;
     }
     private void OnMouseOver() {
@@ -156,16 +154,12 @@ public class Node : MonoBehaviour
     }
 
     public void UpdateRitual() {
-        if (plannedRitual.name != null) {
-            plannedRitual.prepTime--;
-            if (plannedRitual.prepTime == 0) {
-                print("RITUAL ACTIVATED!!!!!!!");
-                activeRitual = plannedRitual;
+        if (ritual.name != null) {
+            ritual.prepTime--;
+            if (ritual.prepTime == 0) {
+                print("RITUAL READY!!!!!!!");
             }
-            if (plannedRitual.prepTime < 0) {
-                print("RITUAL ENDED!");
-                plannedRitual.name = "";
-                activeRitual.name = "";
+            if (ritual.prepTime < 0) {
             }
         }
     }
@@ -201,6 +195,7 @@ public class Node : MonoBehaviour
     private void Setup() {
         if (homeBase != Faction.None) {
             difficulty = 4;
+            faction = homeBase;
         }
         else if (faction == Faction.Independent) {
             GameObject army = new GameObject();

@@ -55,7 +55,7 @@ public class Tools {
     }
 
     public static Ritual DeepCopyRitual(Ritual ritual) {
-        Ritual copy = new Ritual(ritual.name, ritual.zealCost, ritual.prepTime, ritual.description);
+        Ritual copy = new Ritual(ritual.name, ritual.zealCost, ritual.prepTime, ritual.description, ritual.range, ritual.numTargets, ritual.Activate);
         return copy;
     }
 }

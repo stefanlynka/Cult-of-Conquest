@@ -30,13 +30,37 @@ public struct Ritual {
     public int prepTime;
     public string name;
     public string description;
-    public Ritual(string newName, int cost, int time, string desc) {
+    public int range;
+    public int numTargets;
+    public delegate void ListGameObject(List<GameObject> targets);
+    public ListGameObject Activate;
+    public Ritual(string newName, int cost, int time, string desc, int newRange, int newTargets, ListGameObject ability) {
         zealCost = cost;
         prepTime = time;
         name = newName;
         description = desc;
+        range = newRange;
+        numTargets = newTargets;
+        Activate = ability;
+    }
+    public void Clear() {
+        zealCost = 0;
+        prepTime = 0;
+        name = "";
+        description = "";
+        range = 0;
+        numTargets = 0;
+    }
+    public bool IsEmpty() {
+        if (name == null || name == "") return true;
+        return false;
+    }
+    public bool IsReady() {
+        if (name != null && name != "" && prepTime <= 0) return true;
+        return false;
     }
 }
+
 
 // For Option
 public struct Option {
