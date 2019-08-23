@@ -24,6 +24,7 @@ public class Node : MonoBehaviour
     public List<string> tempBonus = new List<string>();
     public Faction faction = Faction.Independent;
     public GameObject occupant;
+    public GameObject owner;
     public bool occupied = false;
     public bool occupiable = true;
     public bool highlighted = false;
@@ -241,6 +242,9 @@ public class Node : MonoBehaviour
                     break;
             }
             occupant.transform.parent = GameObject.Find("/Neutral Armies").transform;
+        }
+        else if (faction != Faction.Independent && occupant != null) {
+            //owner = occupant.GetComponent<Army>().owner;
         }
         UpdateSprite();
     }

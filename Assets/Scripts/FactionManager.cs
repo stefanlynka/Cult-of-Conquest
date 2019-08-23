@@ -52,7 +52,7 @@ public class FactionManager : MonoBehaviour{
         traits.EnemyRetreated = InducedVictory;
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
-        traits.StartTurn = Empty;
+        traits.StartTurn = ResetVision;
         traits.EndTurn = Empty;
     }
     void MakeDukkha(FactionTraits traits) {
@@ -76,7 +76,7 @@ public class FactionManager : MonoBehaviour{
         traits.EnemyRetreated = Empty;
         traits.BattleOver = ReassembleEnemies;
         traits.WonBattle = Empty;
-        traits.StartTurn = Empty;
+        traits.StartTurn = ResetBlueprints;
         traits.EndTurn = Empty;
     }
     void MakeUnmar(FactionTraits traits) { 
@@ -170,6 +170,13 @@ public class FactionManager : MonoBehaviour{
         }
         army.GetComponent<Army>().defeatedEnemies.Clear();
     }
+    public void ResetBlueprints(GameObject player) {
+        if (player.GetComponent<Player>().ritualBackup.Count > 0) {
+            player.GetComponent<Player>().ritualBlueprints = Tools.DeepCopyRitualList(player.GetComponent<Player>().ritualBackup);
+        }
+        player.GetComponent<Player>().ritualBackup.Clear();
+        GameObject.Find("Ritual Menu").GetComponent<RitualManager>().LoadPlayerRituals();
+    }
     public void InducedVictory(GameObject army) {
         army.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
     }
@@ -251,6 +258,13 @@ public class FactionManager : MonoBehaviour{
                 }
             }
         }
+    }
+    public void ResetVision(GameObject player) {
+        List<GameObject> nodes = NodeManager.nodes;
+        for (int i = 0; i < nodes.Count; i++) {
+            nodes[i].GetComponent<Node>().concealment = 1;
+        }
+        TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
     }
 
 

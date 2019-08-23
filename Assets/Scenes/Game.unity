@@ -334,7 +334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selected: 0
-  faction: 0
+  faction: 2
   currentNode: {fileID: 1971950615}
   nodeManager: {fileID: 0}
   owner: {fileID: 0}
@@ -2640,7 +2640,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armies: []
   ownedNodes: []
-  faction: 0
+  faction: 2
   money: 100
   zeal: 50
   isArmySelected: 0
@@ -16222,6 +16222,11 @@ PrefabInstance:
       propertyPath: race
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 528278849333287513, guid: d2c89193f86c6fd47965ae5396400759,
+        type: 3}
+      propertyPath: faction
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2c89193f86c6fd47965ae5396400759, type: 3}
 --- !u!1001 &666437624218211276
@@ -17579,6 +17584,11 @@ PrefabInstance:
       propertyPath: owner
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -18469,7 +18479,7 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: homeBase
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -18489,7 +18499,7 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: faction
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -20190,8 +20200,8 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: owner
-      value: 1
-      objectReference: {fileID: 0}
+      value: 
+      objectReference: {fileID: 11888192}
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: faction
@@ -21414,8 +21424,8 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: owner
-      value: 1
-      objectReference: {fileID: 0}
+      value: 
+      objectReference: {fileID: 11888192}
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: occupied

@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public List<GameObject> ownedNodes = new List<GameObject>();
     public List<MapUnit> unitBlueprints = new List<MapUnit>();
     public List<Ritual> ritualBlueprints = new List<Ritual>();
+    public List<Ritual> ritualBackup = new List<Ritual>();
 
     public static GameObject human;
     public static GameObject selectedArmy;
@@ -221,7 +222,7 @@ public class Player : MonoBehaviour
         if (zeal >= ritual.zealCost) {
             print("Ritual Purchased");
             zeal -= ritual.zealCost;
-            NodeMenu.currentNode.GetComponent<Node>().ritual = Tools.DeepCopyRitual(ritual);
+            NodeMenu.currentNode.GetComponent<Node>().ritual = ritual.DeepCopy();
             print("ritual name = " + NodeMenu.currentNode.GetComponent<Node>().ritual.name);
             return true;
         }

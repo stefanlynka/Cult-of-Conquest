@@ -101,10 +101,15 @@ public class RitualManager : MonoBehaviour {
             }
         }
         //GameObject ritualMenu = GameObject.Find("/Ritual Menu");
+        LoadPlayerRituals();
+
+    }
+
+    public void LoadPlayerRituals() {
         for (int j = 0; j < human.GetComponent<Player>().ritualBlueprints.Count; j++) {
             GameObject ritualSlot = Tools.GetChildNamed(gameObject, "Ritual Slot " + j.ToString());
             print(ritualSlot.name);
-            if (ritualSlot != null){
+            if (ritualSlot != null) {
                 print("found the slot");
                 Ritual blueprint = human.GetComponent<Player>().ritualBlueprints[j];
                 ritualSlot.GetComponent<RitualSlot>().ritualBlueprint = blueprint;
@@ -114,24 +119,24 @@ public class RitualManager : MonoBehaviour {
                 Tools.GetChildNamed(ritualSlot, "Ritual Description Text").GetComponent<TextMesh>().text = blueprint.description;
             }
         }
-
     }
+
     void NoumenonRituals(GameObject player) {
-        Ritual ritual1 = new Ritual("Restoration", 3, 2, "Heal all\nunits to\nfull HP", 3, 1, DealDamage);
+        Ritual ritual1 = new Ritual("Hide Area", 2, 1, "Hide target\nnode and\nits neighbours", 2, 1, HideArea);
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
-        Ritual ritual2 = new Ritual("Devastation", 4, 7, "Double unit\ndamage for\none round", 3, 1, DealDamage);
+        Ritual ritual2 = new Ritual("Hide Map", 5, 3, "Cover the\nmap in\nfog of war", 1, 1, HideMap);
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void DukkhaRituals(GameObject player) {
         Ritual ritual1 = new Ritual("Restoration", 3, 2, "Heal all\nunits to\nfull HP", 3, 1, DealDamage);
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
-        Ritual ritual2 = new Ritual("Devastation", 4, 7, "Double unit\ndamage for\none round", 3, 1, DealDamage);
+        Ritual ritual2 = new Ritual("Devastation", 4, 7, "\n \n", 2, 1, DealDamage);
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void ParatrophRituals(GameObject player) {
         Ritual ritual1 = new Ritual("Prior Ritual", 3, 2, "Use the\nlast ritual\nused", 6, 1, PriorRitual);
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
-        Ritual ritual2 = new Ritual("Devastation", 4, 7, "Double unit\ndamage for\none round", 3, 1, DealDamage);
+        Ritual ritual2 = new Ritual("Borrow Rituals", 2, 1, "Buy rituals from\nneighbour faction\nfor one round", 2, 1, BorrowRituals);
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void UnmarRituals(GameObject player) {
@@ -141,7 +146,7 @@ public class RitualManager : MonoBehaviour {
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void SamataRituals(GameObject player) {
-        Ritual ritual1 = new Ritual("Balance Health", 3, 2, "Average health of\armies adjacent\nto target", 3, 1, BalanceHealth);
+        Ritual ritual1 = new Ritual("Balance Health", 3, 2, "Average health of\narmies adjacent\nto target", 3, 1, BalanceHealth);
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
         Ritual ritual2 = new Ritual("Perfect Match", 8, 4, "Army1 becomes\na copy of\nArmy2", 5, 2, PerfectMatch);
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
@@ -162,11 +167,35 @@ public class RitualManager : MonoBehaviour {
             }
         }
     }
-
+    void HideArea(List<GameObject> targets) {
+        GameObject targetArmy = targets[0].GetComponent<Node>().occupant;
+        GameObject targetNode = targets[0];
+        targetNode.GetComponent<Node>().concealment = 5;
+        for (int i = 0; i < targetNode.GetComponent<Node>().neighbours.Count; i++) {
+            targetNode.GetComponent<Node>().neighbours[i].GetComponent<Node>().concealment = 5;
+        }
+        TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
+    }
+    void HideMap(List<GameObject> targets) {
+        List<GameObject> nodes = NodeManager.nodes;
+        for (int i = 0; i< nodes.Count; i++) {
+            nodes[i].GetComponent<Node>().concealment = 5;
+        }
+        TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
+    }
     void PriorRitual(List<GameObject> targets) {
         GameObject targetArmy = targets[0].GetComponent<Node>().occupant;
         if (targetArmy != null) {
 
+        }
+    }
+    void BorrowRituals(List<GameObject> targets) {
+        if (targets[0].GetComponent<Node>().owner != null) {
+            GameObject neighbouringPlayer = targets[0].GetComponent<Node>().owner;//occupant.GetComponent<Army>().owner;
+            GameObject ritualUser = TurnManager.currentPlayer;
+            ritualUser.GetComponent<Player>().ritualBackup = Tools.DeepCopyRitualList(ritualUser.GetComponent<Player>().ritualBlueprints);
+            ritualUser.GetComponent<Player>().ritualBlueprints = Tools.DeepCopyRitualList(neighbouringPlayer.GetComponent<Player>().ritualBlueprints);
+            LoadPlayerRituals();
         }
     }
     void Sacrifice(List<GameObject> targets) {

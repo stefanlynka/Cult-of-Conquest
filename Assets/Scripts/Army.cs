@@ -126,6 +126,7 @@ public class Army : MonoBehaviour
         destination.GetComponent<Node>().faction = faction;
         destination.GetComponent<Node>().occupied = true;
         destination.GetComponent<Node>().occupant = gameObject;
+        destination.GetComponent<Node>().owner = owner;
         destination.GetComponent<Node>().UpdateSprite();
         if (owner.GetComponent<AI>()) {
             owner.GetComponent<AI>().readyToExecute = true;
