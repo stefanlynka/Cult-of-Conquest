@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     public static GameObject nodeRightClicked;
     public static GameObject armyLeftClicked;
     public static GameObject armyRightClicked;
-    public static GameObject nodeMenu;
+    public static GameObject nodeMenu, nodeManager;
     public static GameObject battleMenu;
     public static int menuOpen = 0;
 
@@ -63,6 +63,7 @@ public class Player : MonoBehaviour
         //armies.Add(GameObject.Find("/Army Blue"));
         //armies.Add(GameObject.Find("/Army Red"));
         nodeMenu = GameObject.Find("/Node Menu");
+        nodeManager = GameObject.Find("/Node Manager");
         battleMenu = GameObject.Find("/Battle Menu");
         randomPanel = GameObject.Find("/Random Panel");
 
@@ -186,27 +187,12 @@ public class Player : MonoBehaviour
         // If army is next to target, go there        
         if (army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(finalNode)) {
             //print("adjacent to target");
-            if (finalNode.GetComponent<Node>().occupiable) {
-                if (!finalNode.GetComponent<Node>().occupied) {
-                    //print("moving in freely");
-                    army.GetComponent<Army>().MoveToNode(finalNode);
-                }
-                else {
-                    print("node occupied");
-                    GameObject otherArmy = finalNode.GetComponent<Node>().occupant;
-                    if (army.GetComponent<Army>().faction != otherArmy.GetComponent<Army>().faction) {
-                        Invade(army, otherArmy);
-                        //print("attack!");
-                    }
-                    else {
-                        //print("change places");
-                        SwitchNodes(army, army.GetComponent<Army>().currentNode, otherArmy, finalNode);
-                    }
-                }
-            }
+            army.GetComponent<Army>().EnterNode(finalNode);
             //army.GetComponent<Army>().movesLeft -= 1;
         }
     }
+
+
 
     public void Invade(GameObject attackingArmy, GameObject defendingArmy) {
         menuOpen = 1;
@@ -222,12 +208,7 @@ public class Player : MonoBehaviour
         defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingArmy);
     }
 
-    public void SwitchNodes(GameObject army1, GameObject node1, GameObject army2, GameObject node2) {
-        army1.GetComponent<Army>().MoveToNode(node2);
-        army2.GetComponent<Army>().MoveToNode(node1);
-        node2.GetComponent<Node>().occupied = true;
-        node2.GetComponent<Node>().occupant = army1;
-    }
+
 
     public void RemoveNode(GameObject node) {
         ownedNodes.Remove(node);
@@ -254,6 +235,7 @@ public class Player : MonoBehaviour
         RestUnits();
         UpdateNodes();
         factionTraits.StartTurn(gameObject);
+        DisplayFog();
         //print("Number 6 = " + factionTraits.UnitFunction(3));
     }
 
@@ -317,5 +299,18 @@ public class Player : MonoBehaviour
     public void AttackRandomTargets() {
         GameObject randomPanel = GameObject.Find("/Random Panel");
         randomPanel.GetComponent<RandomPanel>().Attack();
+    }
+    public void DisplayFog() {
+        print("displaying fog");
+        nodeManager.GetComponent<NodeManager>().SetNodesToHidden();
+        for(int i = 0; i < ownedNodes.Count; i++) {
+            GameObject node = ownedNodes[i];
+            node.GetComponent<Node>().RevealNode(node.GetComponent<Node>().sight);
+        }
+        for(int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
+            army.GetComponent<Army>().currentNode.GetComponent<Node>().RevealNode(army.GetComponent<Army>().sight);
+        }
+        nodeManager.GetComponent<NodeManager>().HideStillHiddenNodes();
     }
 }

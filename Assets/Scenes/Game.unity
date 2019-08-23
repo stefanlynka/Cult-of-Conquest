@@ -341,6 +341,7 @@ MonoBehaviour:
   mouseOverArmy: 0
   maxMoves: 1
   movesLeft: 1
+  sight: 2
   marredBattle: 0
   precombatPower: 0
 --- !u!212 &47433033
@@ -18706,6 +18707,21 @@ PrefabInstance:
       propertyPath: m_Radius
       value: 2.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1267866628424163435, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1267866628424163435, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614036474243166763, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d3583cd02f4db1e4680d295f82adc930, type: 3}
 --- !u!1001 &4092759230679283632
@@ -20196,6 +20212,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Radius
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1267866628424163435, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614036474243166763, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d3583cd02f4db1e4680d295f82adc930, type: 3}

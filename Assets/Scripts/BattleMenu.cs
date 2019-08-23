@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BattleMenu : MonoBehaviour{
 
+    public static bool retreatAllowed = true;
+
     public bool inMenu = false;
     public List<Cooldown> cooldowns;
     public bool inSimulation = false;
@@ -116,8 +118,6 @@ public class BattleMenu : MonoBehaviour{
         battleNode = node;
     }
 
-
-
     void StartingCooldowns() {
         cooldowns = new List<Cooldown>();
         for (int i = 0; i < attackers.Count; i++) {
@@ -177,7 +177,6 @@ public class BattleMenu : MonoBehaviour{
         defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendArmy);
         timer = 0;
     }
-    
     bool NextAttack(bool retreating) {
         MapUnit attacker = cooldowns[0].unit;
         MapUnit target = GetRandomEnemy(cooldowns[0]);
@@ -220,16 +219,17 @@ public class BattleMenu : MonoBehaviour{
         return false;
     }
 
-
     public void Retreat() {
-        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
-        defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
-        if (inSimulation) {
-            RemoveAttackCooldowns();
-            retreating = true;
-        }
-        else {
-            ExitMenu();
+        if (retreatAllowed) {
+            if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+            defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
+            if (inSimulation) {
+                RemoveAttackCooldowns();
+                retreating = true;
+            }
+            else {
+                ExitMenu();
+            }
         }
     }
 
@@ -267,6 +267,8 @@ public class BattleMenu : MonoBehaviour{
         inSimulation = false;
         if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
         print("Action Complete, readyToExecute");
+        retreatAllowed = true;
+        TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
     }
 
     public MapUnit GetRandomEnemy(Cooldown cooldown) {

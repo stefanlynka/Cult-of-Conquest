@@ -32,8 +32,9 @@ public struct Ritual {
     public string description;
     public int range;
     public int numTargets;
-    public delegate void ListGameObject(List<GameObject> targets);
     public ListGameObject Activate;
+    public delegate void ListGameObject(List<GameObject> targets);
+
     public Ritual(string newName, int cost, int time, string desc, int newRange, int newTargets, ListGameObject ability) {
         zealCost = cost;
         prepTime = time;
@@ -58,6 +59,17 @@ public struct Ritual {
     public bool IsReady() {
         if (name != null && name != "" && prepTime <= 0) return true;
         return false;
+    }
+    public Ritual DeepCopy() {
+        Ritual newRitual = new Ritual();
+        newRitual.zealCost = zealCost;
+        newRitual.prepTime = prepTime;
+        newRitual.name = name;
+        newRitual.description = description;
+        newRitual.range = range;
+        newRitual.numTargets = numTargets;
+        newRitual.Activate = Activate;
+        return newRitual;
     }
 }
 

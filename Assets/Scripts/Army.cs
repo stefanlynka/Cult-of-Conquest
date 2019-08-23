@@ -14,6 +14,7 @@ public class Army : MonoBehaviour
     public bool mouseOverArmy = false;
     public int maxMoves = 2;
     public int movesLeft = 2;
+    public int sight = 2;
     public bool marredBattle = false;
 
     public MapUnit[] units = new MapUnit[8];
@@ -84,6 +85,39 @@ public class Army : MonoBehaviour
         //transform.position = new Vector3(transform.position.x, transform.position.y, -1);
         UnhighlightNodes();
     }
+
+    public void EnterNode(GameObject targetNode) {
+        if (targetNode.GetComponent<Node>().occupiable) {
+            if (!targetNode.GetComponent<Node>().occupied) {
+                //print("moving in freely");
+                MoveToNode(targetNode);
+            }
+            else {
+                GameObject otherArmy = targetNode.GetComponent<Node>().occupant;
+                if (faction != otherArmy.GetComponent<Army>().faction) {
+                    owner.GetComponent<Player>().Invade(gameObject, otherArmy);
+                    //print("attack!");
+                }
+                else {
+                    //print("change places");
+                    SwitchNodes(currentNode, otherArmy, targetNode);
+                }
+            }
+        }
+    }
+
+    public void SwitchNodes(GameObject node1, GameObject army2, GameObject node2) {
+        MoveToNode(node2);
+        army2.GetComponent<Army>().MoveToNode(node1);
+        node2.GetComponent<Node>().occupied = true;
+        node2.GetComponent<Node>().occupant = gameObject;
+    }
+
+    public void NoRetreatEnterNode(GameObject targetNode) {
+        BattleMenu.retreatAllowed = false;
+        EnterNode(targetNode);
+    }
+
     public void MoveToNode(GameObject destination) {
         currentNode.GetComponent<Node>().occupied = false;
         currentNode.GetComponent<Node>().occupant = null;
@@ -97,6 +131,7 @@ public class Army : MonoBehaviour
             owner.GetComponent<AI>().readyToExecute = true;
         }
     }
+
 
     public void BuyUnit(UnitPos unitPos, MapUnit unit) {
         print("trying to buy unit");
@@ -235,6 +270,14 @@ public class Army : MonoBehaviour
     public void PrebattleSetup() {
         SetPrecombatPower();
         ResetArmy();
+    }
+
+    public bool IsPure() {
+        for (int i = 0; i < units.Length; i++) {
+            MapUnit unit = units[i];
+            if (unit != null && unit.marred) return false;
+        }
+        return true;
     }
 }
 

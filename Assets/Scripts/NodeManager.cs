@@ -122,5 +122,23 @@ public class NodeManager : MonoBehaviour
             node.GetComponent<Node>().Unhighlight();
         }
     }
+    public GameObject GetRandomNode() {
+        int randInt = Random.Range(0, nodes.Count);
+        GameObject node = nodes[randInt];
+        return node;
+    }
+
+    public void SetNodesToHidden() {
+        for(int i = 0; i < nodes.Count; i++) {
+            GameObject node = nodes[i];
+            node.GetComponent<Node>().hidden = true;
+        }
+    }
+    public void HideStillHiddenNodes() {
+        for (int i = 0; i < nodes.Count; i++) {
+            GameObject node = nodes[i];
+            node.GetComponent<Node>().SetFog();
+        }
+    }
 
 }

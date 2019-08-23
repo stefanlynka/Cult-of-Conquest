@@ -51,6 +51,9 @@ public class MapUnit
         maxHealth = newHealth;
         currentHealth = maxHealth;
     }
+    public void TrySetHealth(int newHealth) {
+        currentHealth = Mathf.Min(maxHealth, newHealth);
+    }
 
     public void Reset() {
         currentShield = maxShield;

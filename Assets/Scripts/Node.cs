@@ -27,6 +27,9 @@ public class Node : MonoBehaviour
     public bool occupied = false;
     public bool occupiable = true;
     public bool highlighted = false;
+    public bool hidden = false;
+    public int sight = 1;
+    public int concealment = 1;
     public Ritual ritual;
 
     public string effigy = "";
@@ -332,6 +335,19 @@ public class Node : MonoBehaviour
         if (temple != null && temple.name == TempleName.Protection) power += 50;
 
         return power;
+    }
+
+    public void RevealNode(int sight) {
+        hidden = false;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            if (sight >= neighbour.GetComponent<Node>().concealment) {
+                neighbour.GetComponent<Node>().RevealNode(sight - neighbour.GetComponent<Node>().concealment);
+            }
+        }
+    }
+    public void SetFog() {
+        Tools.GetChildNamed(gameObject, "Fog Node").SetActive(hidden);
     }
 
 }
