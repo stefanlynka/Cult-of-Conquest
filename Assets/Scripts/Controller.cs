@@ -5,7 +5,7 @@ using UnityEngine;
 public class Controller : MonoBehaviour{
 
     public static List<GameObject> players = new List<GameObject>();
-    GameObject nodeManager, playerMenu, unitShopManager, ritualManager, randomPanel, altarShopManager, templeShopManager;
+    GameObject nodeManager, playerMenu, unitShopManager, ritualManager, randomPanel, altarShopManager, templeShopManager, upgradeManager;
 
 
     private void Awake() {
@@ -33,6 +33,7 @@ public class Controller : MonoBehaviour{
         randomPanel = GameObject.Find("/Random Panel");
         altarShopManager = GameObject.Find("/Altar Buying Menu");
         templeShopManager = GameObject.Find("/Temple Buying Menu");
+        upgradeManager = GameObject.Find("/Upgrade Menu");
     }
     void CallStartupFunctions() {
         nodeManager.GetComponent<NodeManager>().Startup();
@@ -52,5 +53,6 @@ public class Controller : MonoBehaviour{
         randomPanel.GetComponent<RandomPanel>().Setup();
         altarShopManager.GetComponent<AltarShopManager>().Setup();
         templeShopManager.GetComponent<TempleShopManager>().Setup();
+        upgradeManager.GetComponent<UpgradeManager>().Startup();
     }
 }

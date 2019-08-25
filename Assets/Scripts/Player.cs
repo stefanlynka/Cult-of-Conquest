@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public List<MapUnit> unitBlueprints = new List<MapUnit>();
     public List<Ritual> ritualBlueprints = new List<Ritual>();
     public List<Ritual> ritualBackup = new List<Ritual>();
+    public Dictionary<string, Upgrade> upgrades = new Dictionary<string, Upgrade>();
 
     public static GameObject human;
     public static GameObject selectedArmy;
@@ -224,6 +225,21 @@ public class Player : MonoBehaviour
             zeal -= ritual.zealCost;
             NodeMenu.currentNode.GetComponent<Node>().ritual = ritual.DeepCopy();
             print("ritual name = " + NodeMenu.currentNode.GetComponent<Node>().ritual.name);
+            return true;
+        }
+        return false;
+    }
+
+    public bool BuyUpgrade(Upgrade upgrade) {
+        print("upgrade name " + upgrade.name);
+        print("upgrade level " + upgrade.currentLevel);
+        print("upgrade max " + upgrade.maxLevel);
+        print("upgradeDict name " + upgrades[upgrade.name].name);
+        print("upgradeDict level " + upgrades[upgrade.name].currentLevel);
+        print("upgradeDict max " + upgrades[upgrade.name].maxLevel);
+        if (zeal >= upgrade.zealCost && upgrades.ContainsKey(upgrade.name) && upgrade.currentLevel < upgrade.maxLevel) {
+            zeal -= upgrade.zealCost;
+            upgrades[upgrade.name].currentLevel++;
             return true;
         }
         return false;

@@ -16,6 +16,7 @@ public class Data{
 
 public enum Faction {
     Noumenon,
+    Zenteel,
     Dukkha,
     Paratrophs,
     Unmar,
@@ -73,6 +74,27 @@ public struct Ritual {
     }
 }
 
+public class Upgrade {
+    public string name;
+    public string description;
+    public int maxLevel;
+    public int currentLevel;
+    public int zealCost;
+
+    public Upgrade(string newName, int cost, int levelCap, string desc) {
+        name = newName;
+        description = desc;
+        maxLevel = levelCap;
+        currentLevel = 0;
+        zealCost = cost;
+    }
+    public Upgrade DeepCopy() {
+        Upgrade newUpgrade = new Upgrade(name, zealCost, maxLevel, description);
+        return newUpgrade;
+    }
+}
+
+
 
 // For Option
 public struct Option {
@@ -124,7 +146,6 @@ public struct UnitPos {
 
 
 // For Node
-
 public enum TempleName {
     Protection,
     Armaments,
