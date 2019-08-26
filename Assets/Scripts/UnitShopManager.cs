@@ -278,6 +278,8 @@ public class UnitShopManager : MonoBehaviour {
         peon.moneyCost = 5;
         peon.zealCost = 0;
         peon.power = 10;
+        peon.maxShield = 1;
+        peon.currentShield = peon.maxShield;
         player.GetComponent<Player>().unitBlueprints.Add(peon.DeepCopy());
         //unitSpaces[0].GetComponent<UnitShopSpace>().AddUnit(peon);
 
@@ -289,6 +291,8 @@ public class UnitShopManager : MonoBehaviour {
         acolyte.moneyCost = 10;
         acolyte.zealCost = 0;
         acolyte.power = 15;
+        acolyte.maxShield = 2;
+        acolyte.currentShield = acolyte.maxShield;
         player.GetComponent<Player>().unitBlueprints.Add(acolyte.DeepCopy());
         //unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
@@ -300,6 +304,8 @@ public class UnitShopManager : MonoBehaviour {
         shaman.moneyCost = 10;
         shaman.zealCost = 1;
         shaman.power = 15;
+        shaman.maxShield = 2;
+        shaman.currentShield = shaman.maxShield;
         player.GetComponent<Player>().unitBlueprints.Add(shaman.DeepCopy());
         //unitSpaces[2].GetComponent<UnitShopSpace>().AddUnit(shaman);
 
@@ -311,6 +317,8 @@ public class UnitShopManager : MonoBehaviour {
         prelate.moneyCost = 20;
         prelate.zealCost = 0;
         prelate.power = 25;
+        prelate.maxShield = 3;
+        prelate.currentShield = prelate.maxShield;
         player.GetComponent<Player>().unitBlueprints.Add(prelate.DeepCopy());
         //unitSpaces[3].GetComponent<UnitShopSpace>().AddUnit(prelate);
     }

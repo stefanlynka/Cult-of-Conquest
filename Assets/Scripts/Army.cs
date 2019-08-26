@@ -272,8 +272,8 @@ public class Army : MonoBehaviour
         }
     }
     public void PrebattleSetup() {
-        SetPrecombatPower();
         ResetArmy();
+        SetPrecombatPower();
     }
 
     public bool IsPure() {

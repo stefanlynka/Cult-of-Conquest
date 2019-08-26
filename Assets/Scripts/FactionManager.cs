@@ -84,7 +84,7 @@ public class FactionManager : MonoBehaviour{
     }
     void MakeUnmar(FactionTraits traits) { 
         traits.NewUnit = GiveShield;
-        traits.Precombat = Empty;
+        traits.Precombat = BoostMarred;
         traits.PrecombatAttacker = Empty;
         traits.TakeDamage = UnitBecomeMarred;
         traits.ArmyLostUnit = ArmyBecomeMarred;
@@ -141,12 +141,11 @@ public class FactionManager : MonoBehaviour{
         unit.maxShield = 1;
         unit.currentShield = 1;
     }
-    public void UnitBecomeMarred(MapUnit unit){
+    public void UnitBecomeMarred(GameObject player, MapUnit unit){
         if (unit.marred == false) {
             unit.marred = true;
             unit.marredCountdown = 2;
-            unit.maxDamage = Mathf.RoundToInt(unit.maxDamage * 0.8f);
-            unit.currentDamage = Mathf.RoundToInt(unit.currentDamage * 0.8f);
+            unit.damageMod += player.GetComponent<Player>().upgrades["Doomed Power"].currentLevel * 0.15f;
         }
     }
     public void ArmyBecomeMarred(GameObject army) {
@@ -298,6 +297,21 @@ public class FactionManager : MonoBehaviour{
             lastUnit.currentDamage = lastUnit.currentDamage + (int)(lastUnit.currentDamage * 0.1f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Last One Standing"].currentLevel);
         }
     }
+    public void BoostMarred(GameObject unmarArmy, GameObject otherArmy) {
+        for(int i = 0; i< unmarArmy.GetComponent<Army>().units.Count;i++) {
+            MapUnit unit = unmarArmy.GetComponent<Army>().units[i];
+            if (unit.marred) unit.damageMod += unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Doomed Power"].currentLevel * 0.15f;
+        }
+    }
+    public void BoostDefense(GameObject unmarArmy, GameObject otherArmy) {
+        for (int i = 0; i < unmarArmy.GetComponent<Army>().units.Count; i++) {
+            MapUnit unit = unmarArmy.GetComponent<Army>().units[i];
+            if (unit.name == "Altar" || unit.name == "Temple") {
+                unit.damageMod += unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Fortification"].currentLevel * 0.2f;
+                unit.currentHealth += (int)(unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Fortification"].currentLevel * 0.2f);
+            }
+        }
+    }
 
 
     public void Empty(MapUnit unit) {}
@@ -321,7 +335,7 @@ public class FactionTraits {
     public delegate void DelegateObjectUnit(GameObject target, MapUnit unit);
     public DelegateUnit NewUnit;
     //public DelegateUnit KilledEnemy;
-    public DelegateUnit TakeDamage;
+    public DelegateObjectUnit TakeDamage;
     public DelegateObjectUnit KilledEnemy;
     public DelegateGameObject ArmyLostUnit;
     public DelegateGameObject EnemyRetreated;

@@ -196,7 +196,7 @@ public class BattleMenu : MonoBehaviour{
             else {
                 target.currentHealth -= (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
                 // If the unit dealing damage is on the attacking side, the defending army triggers "Take Damage"
-                defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.TakeDamage(target);
+                defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.TakeDamage(defendingUnitArmy, target);
             }
 
             if (target.currentHealth <= 0) {
@@ -244,6 +244,8 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void BattleOver() {
+        attackArmy.GetComponent<Army>().ResetArmy();
+        defendArmy.GetComponent<Army>().ResetArmy();
         attackArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.BattleOver(attackArmy);
         defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
         RefreshBuildings();

@@ -116,13 +116,14 @@ public class UpgradeManager : MonoBehaviour{
         LoadPlayerUpgrade(2, upgrade3, player);
     }
     void UnmarUpgrades(GameObject player) {
-        Upgrade upgrade1 = new Upgrade("u1", 5, 3, "harder");
+        Upgrade upgrade1 = new Upgrade("Fortification", 5, 3, "Increase damage\nand health\n of protective buildings");
         player.GetComponent<Player>().upgrades.Add(upgrade1.name, upgrade1);
         LoadPlayerUpgrade(0, upgrade1, player);
-        Upgrade upgrade2 = new Upgrade("u2", 5, 3, "faster");
+        Upgrade upgrade2 = new Upgrade("Doomed Power", 5, 3, "Increase damage\nof marred units\n");
         player.GetComponent<Player>().upgrades.Add(upgrade2.name, upgrade2);
         LoadPlayerUpgrade(1, upgrade2, player);
-        Upgrade upgrade3 = new Upgrade("u3", 5, 3, "stronger");
+        Upgrade upgrade3 = new Upgrade("Protect the Pure", 5, 3, "Trade some\nunit health\nfor shields");
+        TradeHealthForShields(player);
         player.GetComponent<Player>().upgrades.Add(upgrade3.name, upgrade3);
         LoadPlayerUpgrade(2, upgrade3, player);
     }
@@ -149,6 +150,13 @@ public class UpgradeManager : MonoBehaviour{
         LoadPlayerUpgrade(2, upgrade3, player);
     }
 
-
+    void TradeHealthForShields(GameObject player) {
+        for(int i= 0; i< player.GetComponent<Player>().unitBlueprints.Count; i++) {
+            MapUnit unit = player.GetComponent<Player>().unitBlueprints[i];
+            unit.maxShield += 2;
+            unit.currentShield += 2;
+            unit.maxHealth -= (int)(unit.maxHealth * 0.2f);
+        }
+    }
 
 }
