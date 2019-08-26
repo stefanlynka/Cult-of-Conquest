@@ -45,46 +45,46 @@ public class TempleShopManager : MonoBehaviour{
         Player.menuOpen = 1;
     }
 
-    void MakeTemples(Faction faction) {
+    public void MakeTemples(Faction faction) {
         switch (faction) {
             case Faction.Noumenon:
-                MakeTemple();
+                MakeTemple(faction);
                 break;
-            case Faction.Dukkha:
-                MakeTemple();
+            case Faction.Zenteel:
+                MakeTemple(faction);
                 break;
             case Faction.Paratrophs:
-                MakeTemple();
+                MakeTemple(faction);
                 break;
             case Faction.Unmar:
-                MakeTemple();
+                MakeTemple(faction);
                 break;
             case Faction.Samata:
-                MakeTemple();
+                MakeTemple(faction);
                 break;
             case Faction.Carnot:
-                MakeTemple();
+                MakeTemple(faction);
                 break;
         }
     }
 
-    void MakeTemple() {
-        Temple armamentsTemple = new Temple(TempleName.Armaments, 40);
+    void MakeTemple(Faction faction) {
+        Temple armamentsTemple = new Temple(TempleName.Armaments, 40, faction);
         armamentsTemple.ability = "";
         armamentsTemple.description = "Decrease unit\ncost by 40%";
         templeBuySpaces[0].GetComponent<TempleShopSpace>().SetTemple(armamentsTemple);
 
-        Temple traditionTemple = new Temple(TempleName.Tradition, 50);
+        Temple traditionTemple = new Temple(TempleName.Tradition, 50, faction);
         traditionTemple.ability = "";
         traditionTemple.description = "Decrease ritual\npreparation time";
         templeBuySpaces[1].GetComponent<TempleShopSpace>().SetTemple(traditionTemple);
 
-        Temple protectionTemple = new Temple(TempleName.Protection, 60);
+        Temple protectionTemple = new Temple(TempleName.Protection, 60, faction);
         protectionTemple.ability = "";
         protectionTemple.description = "Increase this hex's\ndefense by 20%";
         templeBuySpaces[2].GetComponent<TempleShopSpace>().SetTemple(protectionTemple);
 
-        Temple originTemple = new Temple(TempleName.Origin, 70);
+        Temple originTemple = new Temple(TempleName.Origin, 70, faction);
         originTemple.ability = "";
         originTemple.description = "Allow creation\nof Prophets";
         templeBuySpaces[3].GetComponent<TempleShopSpace>().SetTemple(originTemple);

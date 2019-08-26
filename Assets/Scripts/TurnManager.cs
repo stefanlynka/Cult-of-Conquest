@@ -50,7 +50,6 @@ public class TurnManager : MonoBehaviour{
         currentPlayer = players[index];
         GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().AssignUnits(currentPlayer);
         //GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().MakeUnits(currentPlayer.GetComponent<Player>().faction);
-        print("Next Turn");
         currentPlayer.GetComponent<Player>().StartTurn();
     }
 

@@ -127,6 +127,7 @@ public class UnitShopManager : MonoBehaviour {
         for (int i =0 ; i < unitSpaces.Length; i++) {
             MapUnit unit = player.GetComponent<Player>().unitBlueprints[i];
             unitSpaces[i].GetComponent<UnitShopSpace>().AddUnit(unit);
+            print("assigning new unit: "+unit.faction);
         }
     }
 
@@ -316,7 +317,7 @@ public class UnitShopManager : MonoBehaviour {
 
     private void MakeSamata(GameObject player) {
         MapUnit peon = new MapUnit("peon", Faction.Samata, "peon");
-        peon.SetHealth(50);
+        peon.SetHealth(70);
         peon.maxDamage = 10;
         peon.attackRange = 1;
         peon.attackSpeed = 60;
@@ -327,7 +328,7 @@ public class UnitShopManager : MonoBehaviour {
         //unitSpaces[0].GetComponent<UnitShopSpace>().AddUnit(peon);
 
         MapUnit acolyte = new MapUnit("acolyte", Faction.Samata, "acolyte");
-        acolyte.SetHealth(100);
+        acolyte.SetHealth(70);
         acolyte.maxDamage = 20;
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 100;
@@ -338,7 +339,7 @@ public class UnitShopManager : MonoBehaviour {
         //unitSpaces[1].GetComponent<UnitShopSpace>().AddUnit(acolyte);
 
         MapUnit shaman = new MapUnit("shaman", Faction.Samata, "shaman");
-        shaman.SetHealth(100);
+        shaman.SetHealth(70);
         shaman.maxDamage = 10;
         shaman.attackRange = 3;
         shaman.attackSpeed = 120;
@@ -349,7 +350,7 @@ public class UnitShopManager : MonoBehaviour {
         //unitSpaces[2].GetComponent<UnitShopSpace>().AddUnit(shaman);
 
         MapUnit prelate = new MapUnit("prelate", Faction.Samata, "prelate");
-        prelate.SetHealth(200);
+        prelate.SetHealth(70);
         prelate.maxDamage = 40;
         prelate.attackRange = 2;
         prelate.attackSpeed = 120;

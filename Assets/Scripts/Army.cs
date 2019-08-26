@@ -17,10 +17,12 @@ public class Army : MonoBehaviour
     public int sight = 2;
     public bool marredBattle = false;
 
-    public MapUnit[] units = new MapUnit[8];
+    public List<MapUnit> units = new List<MapUnit>();
     public MapUnit[] backRow = new MapUnit[4];
     public MapUnit[] frontRow = new MapUnit[4];
     public List<MapUnit> defeatedEnemies = new List<MapUnit>();
+    public Temple conqueredTemple;
+    public Altar conqueredAltar;
     public int precombatPower;
 
     // Start is called before the first frame update
@@ -61,8 +63,15 @@ public class Army : MonoBehaviour
 
     public void SetPrecombatPower() {
         precombatPower = 0;
-        for(int i = 0; i < units.Length; i++) {
-            if (units[i] != null) precombatPower += units[i].power;
+        for(int i = 0; i < units.Count; i++) {
+            precombatPower += units[i].power;
+        }
+    }
+    public void AddToDamageMod(float modifier) {
+        for (int i = 0; i < units.Count; i++) {
+            MapUnit unit = units[i];
+            unit.damageMod += modifier;
+            print("new modifier = " + unit.damageMod);
         }
     }
 
@@ -156,6 +165,7 @@ public class Army : MonoBehaviour
     public void DissectUnit(MapUnit unit) {
         RemoveUnit(unit);
         owner.GetComponent<Player>().zeal++;
+        owner.GetComponent<Player>().dissections[unit.faction]++;
     }
 
     public void AddUnit(int index, bool fRow, MapUnit unit) {
@@ -164,7 +174,7 @@ public class Army : MonoBehaviour
         if (fRow) frontRow[index] = newUnit;
         else backRow[index] = newUnit;
         if (fRow) index += 4;
-        units[index] = newUnit;
+        units.Add(newUnit);
     }
 
     public MapUnit GetUnit(UnitPos pos) {
@@ -172,7 +182,7 @@ public class Army : MonoBehaviour
         else return backRow[pos.position];
     }
     public void RemoveUnit(MapUnit unit) {
-        RemoveUnitFromArray(units, unit);
+        units.Remove(unit);
         RemoveUnitFromArray(frontRow, unit);
         RemoveUnitFromArray(backRow, unit);
         print("units removed");
@@ -200,20 +210,16 @@ public class Army : MonoBehaviour
 
     public int GetPower() {
         int power = 0;
-        for(int i = 0; i < units.Length; i++) {
-            if (units[i] != null) {
-                power += units[i].power;
-                //print("found some power: " + unit.power);
-            }
+        for(int i = 0; i < units.Count; i++) {
+            power += units[i].power;
+            //print("found some power: " + unit.power);
         }
 
         return power;
     }
 
     public bool HasOpenPosition() {
-        for (int i = 0 ; i < units.Length; i++) {
-            if (units[i] == null) return true;
-        }
+        if (units.Count < 8) return true;
         print("no openings");
         return false;
     }
@@ -261,11 +267,8 @@ public class Army : MonoBehaviour
         return nodes;
     }
     public void ResetArmy() {
-        for (int i =0; i < units.Length; i++) {
-            MapUnit unit = units[i];
-            if (unit != null) {
-                unit.Reset();
-            }
+        for (int i =0; i < units.Count; i++) {
+            units[i].Reset();
         }
     }
     public void PrebattleSetup() {
@@ -274,9 +277,8 @@ public class Army : MonoBehaviour
     }
 
     public bool IsPure() {
-        for (int i = 0; i < units.Length; i++) {
-            MapUnit unit = units[i];
-            if (unit != null && unit.marred) return false;
+        for (int i = 0; i < units.Count; i++) {
+            if(units[i].marred) return false;
         }
         return true;
     }

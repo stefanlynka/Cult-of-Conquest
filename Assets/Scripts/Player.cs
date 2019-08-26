@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public List<MapUnit> unitBlueprints = new List<MapUnit>();
     public List<Ritual> ritualBlueprints = new List<Ritual>();
     public List<Ritual> ritualBackup = new List<Ritual>();
+    public Dictionary<Faction, int> dissections = new Dictionary<Faction, int>();
     public Dictionary<string, Upgrade> upgrades = new Dictionary<string, Upgrade>();
 
     public static GameObject human;
@@ -30,12 +31,10 @@ public class Player : MonoBehaviour
 
     public void Awake() {
         if (name == "Human") human = gameObject;
-        print("faction = " + faction);
     }
 
     // Start is called before the first frame update
     void Start(){
-        print("faction = " + faction);
         SetupFactionTraits();
     }
 
@@ -74,10 +73,33 @@ public class Player : MonoBehaviour
             if (node.GetComponent<Node>().faction == faction) ownedNodes.Add(node);
         }
         //SetupFactionTraits();
+        SetFaction();
+        if (faction == Faction.Paratrophs) SetupDissections();
+    }
+
+    void SetFaction() {
+        for (int i = 0; i < transform.childCount; i++) {
+            GameObject army = transform.GetChild(i).gameObject;
+            army.GetComponent<Army>().faction = faction;
+            army.GetComponent<Army>().currentNode.GetComponent<Node>().faction = faction;
+        }
+        for (int i = 0; i < ownedNodes.Count; i++) {
+            GameObject node = ownedNodes[i];
+            node.GetComponent<Node>().faction = faction;
+        }
     }
 
     void SetupFactionTraits() {
         factionTraits = GameObject.Find("/Faction Manager").GetComponent<FactionManager>().GetFactionTraits(faction);
+    }
+
+    void SetupDissections() {
+        dissections.Add(Faction.Paratrophs, 10);
+        dissections.Add(Faction.Carnot, 0);
+        dissections.Add(Faction.Noumenon, 0);
+        dissections.Add(Faction.Samata, 0);
+        dissections.Add(Faction.Unmar, 0);
+        dissections.Add(Faction.Zenteel, 0);
     }
 
     void CheckSelected() {
@@ -195,7 +217,6 @@ public class Player : MonoBehaviour
     }
 
 
-
     public void Invade(GameObject attackingArmy, GameObject defendingArmy) {
         menuOpen = 1;
         battleMenu.GetComponent<BattleMenu>().EnterMenu();
@@ -209,7 +230,6 @@ public class Player : MonoBehaviour
         defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingArmy);
     }
-
 
 
     public void RemoveNode(GameObject node) {
@@ -289,7 +309,7 @@ public class Player : MonoBehaviour
         for (int i = 0; i < armies.Count; i++) {
             GameObject army = armies[i];
             army.GetComponent<Army>().Refresh();
-            for (int j = 0; j < army.GetComponent<Army>().units.Length; j++) {
+            for (int j = 0; j < army.GetComponent<Army>().units.Count; j++) {
                 if (army.GetComponent<Army>().units[j] != null) {
                     MapUnit unit = army.GetComponent<Army>().units[j];
                     unit.Refresh();
@@ -318,7 +338,6 @@ public class Player : MonoBehaviour
         randomPanel.GetComponent<RandomPanel>().Attack();
     }
     public void DisplayFog() {
-        print("displaying fog");
         nodeManager.GetComponent<NodeManager>().SetNodesToHidden();
         for(int i = 0; i < ownedNodes.Count; i++) {
             GameObject node = ownedNodes[i];
@@ -329,5 +348,13 @@ public class Player : MonoBehaviour
             army.GetComponent<Army>().currentNode.GetComponent<Node>().RevealNode(army.GetComponent<Army>().sight);
         }
         nodeManager.GetComponent<NodeManager>().HideStillHiddenNodes();
+    }
+
+    public List<Faction> GetDissectedFactions() {
+        List<Faction> factions = new List<Faction>();
+        foreach(KeyValuePair<Faction, int> entry in dissections) {
+            if (entry.Value >= 10) factions.Add(entry.Key);
+        }
+        return factions;
     }
 }

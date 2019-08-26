@@ -45,19 +45,19 @@ public class AltarShopManager : MonoBehaviour{
         Player.menuOpen = 1;
     }
 
-    void MakeAltars(Faction faction) {
+    public void MakeAltars(Faction faction) {
         switch (faction) {
             case Faction.Noumenon:
                 MakeAltar();
                 break;
-            case Faction.Dukkha:
+            case Faction.Zenteel:
                 MakeAltar();
                 break;
             case Faction.Paratrophs:
                 MakeAltar();
                 break;
             case Faction.Unmar:
-                MakeAltar();
+                MakeAltarUnmar();
                 break;
             case Faction.Samata:
                 MakeAltar();
@@ -85,6 +85,28 @@ public class AltarShopManager : MonoBehaviour{
         altarBuySpaces[2].GetComponent<AltarShopSpace>().SetAltar(conflictAltar);
 
         Altar fateAltar = new Altar(AltarName.Fate, 70);
+        fateAltar.ability = "";
+        fateAltar.description = "Increase influence in\ndetermining Oracle";
+        altarBuySpaces[3].GetComponent<AltarShopSpace>().SetAltar(fateAltar);
+    }
+
+    void MakeAltarUnmar() {
+        Altar harvestAltar = new Altar(AltarName.Harvest, 99);
+        harvestAltar.ability = "";
+        harvestAltar.description = "Increase this hex's\nincome by 99%";
+        altarBuySpaces[0].GetComponent<AltarShopSpace>().SetAltar(harvestAltar);
+
+        Altar devotionAltar = new Altar(AltarName.Devotion, 99);
+        devotionAltar.ability = "";
+        devotionAltar.description = "Generate 1 zeal\neach turn";
+        altarBuySpaces[1].GetComponent<AltarShopSpace>().SetAltar(devotionAltar);
+
+        Altar conflictAltar = new Altar(AltarName.Conflict, 99);
+        conflictAltar.ability = "";
+        conflictAltar.description = "Increase this hex's\ndefense by 20%";
+        altarBuySpaces[2].GetComponent<AltarShopSpace>().SetAltar(conflictAltar);
+
+        Altar fateAltar = new Altar(AltarName.Fate, 99);
         fateAltar.ability = "";
         fateAltar.description = "Increase influence in\ndetermining Oracle";
         altarBuySpaces[3].GetComponent<AltarShopSpace>().SetAltar(fateAltar);

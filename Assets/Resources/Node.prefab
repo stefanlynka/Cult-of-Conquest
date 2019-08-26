@@ -96,7 +96,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   locationName: 
   difficulty: 0
-  homeBase: 7
+  homeBase: 8
   neighbours: []
   neighbourUpLeft: {fileID: 0}
   neighbourUp: {fileID: 0}
@@ -108,8 +108,9 @@ MonoBehaviour:
   zealIncome: 0
   nodeAttribute: 
   tempBonus: []
-  faction: 6
+  faction: 7
   occupant: {fileID: 0}
+  owner: {fileID: 0}
   occupied: 0
   occupiable: 1
   highlighted: 0

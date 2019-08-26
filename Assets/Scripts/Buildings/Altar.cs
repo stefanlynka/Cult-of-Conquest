@@ -16,7 +16,7 @@ public class Altar{
         name = newName;
         cost = newCost;
         portrait = newName.ToString();
-        unit = new MapUnit("altar", Faction.None, "");
+        unit = new MapUnit("Altar", Faction.None, "");
         unit.maxHealth = 100;
         unit.currentHealth = 100;
         unit.maxDamage = 10;
@@ -29,5 +29,13 @@ public class Altar{
         copy.description = description;
         copy.ability = ability;
         return copy;
+    }
+
+    public void ResetUnit() {
+        unit = new MapUnit("Altar", Faction.None, "");
+        unit.maxHealth = 100;
+        unit.currentHealth = 100;
+        unit.maxDamage = 10;
+        unit.attackSpeed = 20;
     }
 }

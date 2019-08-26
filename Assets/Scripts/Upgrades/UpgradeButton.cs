@@ -22,7 +22,7 @@ public class UpgradeButton : MonoBehaviour{
         if (Player.menuOpen == 1) {
             if (human.GetComponent<Player>().BuyUpgrade(upgrade)) {
                 UpdateIndicator(upgrade);
-                transform.parent.transform.parent.GetComponent<UpgradeMenu>().ExitMenu();
+                //transform.parent.transform.parent.GetComponent<UpgradeMenu>().ExitMenu();
             }
         }
     }
@@ -30,7 +30,6 @@ public class UpgradeButton : MonoBehaviour{
         for (int i = 0; i < upgrade.currentLevel; i++) {
             GameObject indicator = Tools.GetChildNamed(indicators, "Unupgraded Indicator " + i.ToString());
             indicator.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Upgraded Indicator");
-            print("well we're getting to the end");
         }
     }
 }

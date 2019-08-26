@@ -65,4 +65,21 @@ public class Tools {
         Ritual copy = new Ritual(ritual.name, ritual.zealCost, ritual.prepTime, ritual.description, ritual.range, ritual.numTargets, ritual.Activate);
         return copy;
     }
+    public static int StrongestFactionNodeCount() {
+        GameObject playerList = GameObject.Find("/Players");
+        int mostNodesOwned = -1;
+        for(int i = 0; i < playerList.transform.childCount; i++) {
+            GameObject player = playerList.transform.GetChild(i).gameObject;
+            int nodeCount = player.GetComponent<Player>().ownedNodes.Count;
+            mostNodesOwned = Mathf.Max(nodeCount, mostNodesOwned);
+        }
+        return mostNodesOwned;
+    }
+
+    public static Faction StringToFaction(string name) {
+        foreach (Faction faction in Faction.GetValues(typeof(Faction))){
+            if (name.Contains(faction.ToString())) return faction;
+        }
+        return Faction.None;
+    }
 }

@@ -108,9 +108,7 @@ public class RitualManager : MonoBehaviour {
     public void LoadPlayerRituals() {
         for (int j = 0; j < human.GetComponent<Player>().ritualBlueprints.Count; j++) {
             GameObject ritualSlot = Tools.GetChildNamed(gameObject, "Ritual Slot " + j.ToString());
-            print(ritualSlot.name);
             if (ritualSlot != null) {
-                print("found the slot");
                 Ritual blueprint = human.GetComponent<Player>().ritualBlueprints[j];
                 ritualSlot.GetComponent<RitualSlot>().ritualBlueprint = blueprint;
                 Tools.GetChildNamed(ritualSlot, "Ritual Name Text").GetComponent<TextMesh>().text = "Ritual of " + blueprint.name;
@@ -161,9 +159,8 @@ public class RitualManager : MonoBehaviour {
     void DealDamage(List<GameObject> targets) {
         GameObject targetArmy = targets[0].GetComponent<Node>().occupant;
         if (targetArmy != null) {
-            for (int i = 0; i < targetArmy.GetComponent<Army>().units.Length; i++) {
-                MapUnit unit = targetArmy.GetComponent<Army>().units[i];
-                if (unit != null) unit.currentHealth /= 2;
+            for (int i = 0; i < targetArmy.GetComponent<Army>().units.Count; i++) {
+                targetArmy.GetComponent<Army>().units[i].currentHealth /= 2;
             }
         }
     }
@@ -201,7 +198,7 @@ public class RitualManager : MonoBehaviour {
     void Sacrifice(List<GameObject> targets) {
         GameObject targetArmy = targets[0].GetComponent<Node>().occupant;
         if (targetArmy != null) {
-            for (int i = 0; i < targetArmy.GetComponent<Army>().units.Length; i++) {
+            for (int i = 0; i < targetArmy.GetComponent<Army>().units.Count; i++) {
                 MapUnit unit = targetArmy.GetComponent<Army>().units[i];
                 if (unit.marred) {
                     targetArmy.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
@@ -213,13 +210,11 @@ public class RitualManager : MonoBehaviour {
     void RewardPurity(List<GameObject> targets) {
         GameObject targetArmy = targets[0].GetComponent<Node>().occupant;
         if (targetArmy != null && targetArmy.GetComponent<Army>().IsPure()) {
-            for (int i = 0; i < targetArmy.GetComponent<Army>().units.Length; i++) {
+            for (int i = 0; i < targetArmy.GetComponent<Army>().units.Count; i++) {
                 MapUnit unit = targetArmy.GetComponent<Army>().units[i];
-                if (unit != null) {
-                    unit.maxHealth = (int)(unit.maxHealth * 1.2);
-                    unit.currentHealth = unit.maxHealth;
-                    unit.maxDamage = (int)(unit.maxDamage * 1.2);
-                }
+                unit.maxHealth = (int)(unit.maxHealth * 1.2);
+                unit.currentHealth = unit.maxHealth;
+                unit.maxDamage = (int)(unit.maxDamage * 1.2);
             }
         }
     }
@@ -231,12 +226,9 @@ public class RitualManager : MonoBehaviour {
             for(int i = 0; i < targets[0].GetComponent<Node>().neighbours.Count; i++) {
                 GameObject neighbour = targets[0].GetComponent<Node>().neighbours[i];
                 if (neighbour.GetComponent<Node>().occupant) {
-                    for(int j = 0; j < neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units.Length; j++) {
-                        MapUnit unit = neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units[j];
-                        if (unit != null) {
-                            totalHealth += unit.currentHealth;
-                            totalUnits++;
-                        }
+                    for(int j = 0; j < neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units.Count; j++) {
+                        totalHealth += neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units[j].currentHealth;
+                        totalUnits++;
                     }
                 }
             }
@@ -244,11 +236,8 @@ public class RitualManager : MonoBehaviour {
             for (int i = 0; i < targets[0].GetComponent<Node>().neighbours.Count; i++) {
                 GameObject neighbour = targets[0].GetComponent<Node>().neighbours[i];
                 if (neighbour.GetComponent<Node>().occupant) {
-                    for (int j = 0; j < neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units.Length; j++) {
-                        MapUnit unit = neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units[j];
-                        if (unit != null) {
-                            unit.TrySetHealth(averageHealth);
-                        }
+                    for (int j = 0; j < neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units.Count; j++) {
+                        neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units[j].TrySetHealth(averageHealth);
                     }
                 }
             }

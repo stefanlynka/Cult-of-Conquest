@@ -46,6 +46,7 @@ public class FactionManager : MonoBehaviour{
     void MakeNoumenon(FactionTraits traits) {
         traits.NewUnit = Empty;
         traits.Precombat = PunishDisadvantage;
+        traits.PrecombatAttacker = BoostAttacker;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -53,11 +54,12 @@ public class FactionManager : MonoBehaviour{
         traits.BattleOver = Empty;
         traits.WonBattle = Empty;
         traits.StartTurn = ResetVision;
-        traits.EndTurn = Empty;
+        traits.EndTurn = IncreaseFog;
     }
     void MakeDukkha(FactionTraits traits) {
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
+        traits.PrecombatAttacker = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -70,6 +72,7 @@ public class FactionManager : MonoBehaviour{
     void MakeParatrophs(FactionTraits traits) {
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
+        traits.PrecombatAttacker = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = StoreEnemy;
@@ -82,6 +85,7 @@ public class FactionManager : MonoBehaviour{
     void MakeUnmar(FactionTraits traits) { 
         traits.NewUnit = GiveShield;
         traits.Precombat = Empty;
+        traits.PrecombatAttacker = Empty;
         traits.TakeDamage = UnitBecomeMarred;
         traits.ArmyLostUnit = ArmyBecomeMarred;
         traits.KilledEnemy = Empty;
@@ -94,8 +98,9 @@ public class FactionManager : MonoBehaviour{
     void MakeSamata(FactionTraits traits) {
         traits.NewUnit = Empty;
         traits.Precombat = BalanceAdvantage;
+        traits.PrecombatAttacker = AgainstStrongest;
         traits.TakeDamage = Empty;
-        traits.ArmyLostUnit = Empty;
+        traits.ArmyLostUnit = DownToOneCheck;
         traits.KilledEnemy = Empty;
         traits.EnemyRetreated = Empty;
         traits.BattleOver = RewardsForFairness;
@@ -106,6 +111,7 @@ public class FactionManager : MonoBehaviour{
     void MakeCarnot(FactionTraits traits) {
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
+        traits.PrecombatAttacker = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -118,6 +124,7 @@ public class FactionManager : MonoBehaviour{
     void MakeIndependent(FactionTraits traits) {
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
+        traits.PrecombatAttacker = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -165,6 +172,7 @@ public class FactionManager : MonoBehaviour{
         while (army.GetComponent<Army>().HasOpenPosition() && deadUnits.Count>0) {
             MapUnit nextUnit = deadUnits[deadUnits.Count - 1];
             deadUnits.Remove(nextUnit);
+            //If nextUnit.name.Contains("Altar")
             UnitPos position = army.GetComponent<Army>().GetOpenPosition();
             army.GetComponent<Army>().AddUnit(position.position, position.frontRow, nextUnit);
         }
@@ -215,6 +223,7 @@ public class FactionManager : MonoBehaviour{
         }
         int minLostPower = Mathf.Min(allyLostPower,enemyLostPower);
         int rewardMoney = minLostPower / 2;
+        rewardMoney *= (int)(1 + (0.15f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Reap Just Rewards"].currentLevel));
         army.GetComponent<Army>().owner.GetComponent<Player>().money += rewardMoney;
     }
     public void BalanceAdvantage(GameObject samataArmy, GameObject otherArmy) {
@@ -223,8 +232,8 @@ public class FactionManager : MonoBehaviour{
         if (overPoweredRatio > 0) {
             vulnerability += overPoweredRatio * 0.75f;
         }
-        for (int i = 0; i < samataArmy.GetComponent<Army>().units.Length; i++) {
-            if (samataArmy.GetComponent<Army>().units[i] != null) samataArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+        for (int i = 0; i < samataArmy.GetComponent<Army>().units.Count; i++) {
+            samataArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
         }
     }
     public void PunishDisadvantage(GameObject noumenonArmy, GameObject otherArmy) {
@@ -233,28 +242,26 @@ public class FactionManager : MonoBehaviour{
         if (overPoweredRatio > 0) {
             vulnerability += overPoweredRatio * 0.75f;
         }
-        for (int i = 0; i < noumenonArmy.GetComponent<Army>().units.Length; i++) {
-            if (noumenonArmy.GetComponent<Army>().units[i] != null) noumenonArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+        for (int i = 0; i < noumenonArmy.GetComponent<Army>().units.Count; i++) {
+            noumenonArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
         }
     }
     public void PunishSafety(GameObject carnotArmy, GameObject otherArmy) {
         float safetyRatio = carnotArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetSafety();
         float vulnerability = 1.0f + (safetyRatio / 2);
-        for (int i = 0; i < carnotArmy.GetComponent<Army>().units.Length; i++) {
-            if (carnotArmy.GetComponent<Army>().units[i] != null) carnotArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+        for (int i = 0; i < carnotArmy.GetComponent<Army>().units.Count; i++) {
+            carnotArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
         }
     }
     public void MarredCheck(GameObject player) {
         List<GameObject> armies = player.GetComponent<Player>().armies;
         for (int i = 0; i < armies.Count; i++) {
             GameObject army = armies[i];
-            for (int j = 0; j < army.GetComponent<Army>().units.Length; j++) {
+            for (int j = 0; j < army.GetComponent<Army>().units.Count; j++) {
                 MapUnit unit = army.GetComponent<Army>().units[j];
-                if (unit != null) {
-                    if (unit.marred) {
-                        unit.marredCountdown--;
-                        if (unit.marredCountdown <= 0) army.GetComponent<Army>().RemoveUnit(unit);
-                    }
+                if (unit.marred) {
+                    unit.marredCountdown--;
+                    if (unit.marredCountdown <= 0) army.GetComponent<Army>().RemoveUnit(unit);
                 }
             }
         }
@@ -265,6 +272,31 @@ public class FactionManager : MonoBehaviour{
             nodes[i].GetComponent<Node>().concealment = 1;
         }
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
+    }
+    public void BoostAttacker(GameObject noumenonArmy, GameObject defendingArmy) {
+        Upgrade attackUpgrade = noumenonArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Strike First"];
+        float damageMod = attackUpgrade.currentLevel * 0.2f;
+        noumenonArmy.GetComponent<Army>().AddToDamageMod(damageMod);
+    }
+    public void IncreaseFog(GameObject player) {
+        List<GameObject> nodes = player.GetComponent<Player>().ownedNodes;
+        for(int i = 0; i< nodes.Count; i++) {
+            GameObject node = nodes[i];
+            node.GetComponent<Node>().concealment = 1 + player.GetComponent<Player>().upgrades["Cover Your Tracks"].currentLevel;
+        }
+    }
+    public void AgainstStrongest(GameObject samataArmy, GameObject otherArmy) {
+        if (otherArmy.GetComponent<Army>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
+            samataArmy.GetComponent<Army>().AddToDamageMod(0.1f * samataArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Against Tyranny"].currentLevel);
+            print("against the strongest");
+        }
+    }
+    public void DownToOneCheck(GameObject army) {
+        if (army.GetComponent<Army>().units.Count == 1) {
+            MapUnit lastUnit = army.GetComponent<Army>().units[0];
+            lastUnit.currentHealth = lastUnit.maxHealth + (int)(lastUnit.maxHealth * 0.3f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Last One Standing"].currentLevel);
+            lastUnit.currentDamage = lastUnit.currentDamage + (int)(lastUnit.currentDamage * 0.1f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Last One Standing"].currentLevel);
+        }
     }
 
 
@@ -298,4 +330,5 @@ public class FactionTraits {
     public DelegateGameObject StartTurn;
     public DelegateGameObject EndTurn;
     public DelegateGameObject2 Precombat;
+    public DelegateGameObject2 PrecombatAttacker;
 }

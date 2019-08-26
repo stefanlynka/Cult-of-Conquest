@@ -9,13 +9,15 @@ public class Temple {
     public int cost;
     public string description;
     public string ability;
+    public Faction faction;
 
     public MapUnit unit;
 
-    public Temple(TempleName newName, int newCost) {
+    public Temple(TempleName newName, int newCost, Faction newFaction) {
         name = newName;
         cost = newCost;
         portrait = newName.ToString();
+        faction = newFaction;
         unit = new MapUnit("Temple", Faction.None, "");
         unit.maxHealth = 200;
         unit.currentHealth = 200;
@@ -24,10 +26,20 @@ public class Temple {
     }
 
     public Temple DeepCopy() {
-        Temple copy = new Temple(name, cost);
+        Temple copy = new Temple(name, cost, faction);
         copy.portrait = copy.name.ToString();
         copy.description = description;
         copy.ability = ability;
         return copy;
+    }
+
+    public void ResetUnit() {
+        if (unit == null) {
+            unit = new MapUnit("Temple", Faction.None, "");
+            unit.maxHealth = 200;
+            unit.currentHealth = unit.maxHealth / 2;
+            unit.maxDamage = 50;
+            unit.attackSpeed = 100;
+        }
     }
 }

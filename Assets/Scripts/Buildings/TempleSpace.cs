@@ -19,9 +19,14 @@ public class TempleSpace : MonoBehaviour{
 
     private void OnMouseDown() {
         if (Player.menuOpen == 1) {
-            templeBuyingMenu.GetComponent<TempleShopManager>().EnterMenu();
             currentTempleSpace = gameObject;
-            Player.menuOpen = 2;
+            if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assimilate") && Player.human.GetComponent<Player>().upgrades["Assimilate"].currentLevel >= 3) {
+                GameObject.Find("/Dissected Faction Menu").GetComponent<DissectedFactionMenu>().EnterMenu("Temple");
+            }
+            else {
+                templeBuyingMenu.GetComponent<TempleShopManager>().EnterMenu();
+                Player.menuOpen = 2;
+            }
         }
     }
 }

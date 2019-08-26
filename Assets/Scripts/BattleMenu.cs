@@ -110,6 +110,7 @@ public class BattleMenu : MonoBehaviour{
         defendArmy.GetComponent<Army>().PrebattleSetup();
         attackArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.Precombat(attackArmy, defendArmy);
         defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.Precombat(defendArmy, attackArmy);
+        attackArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.PrecombatAttacker(attackArmy, defendArmy);
     }
 
     public void SetupBattle(GameObject attackingArmy, GameObject defendingArmy, GameObject node) {
@@ -193,7 +194,7 @@ public class BattleMenu : MonoBehaviour{
         if (target != null) {
             if (target.currentShield > 0) target.currentShield--;
             else {
-                target.currentHealth -= attacker.currentDamage;
+                target.currentHealth -= (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
                 // If the unit dealing damage is on the attacking side, the defending army triggers "Take Damage"
                 defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.TakeDamage(target);
             }
@@ -245,6 +246,7 @@ public class BattleMenu : MonoBehaviour{
     public void BattleOver() {
         attackArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.BattleOver(attackArmy);
         defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
+        RefreshBuildings();
         GameObject winningArmy = defendArmy;
         if (defenders.Count == 0) winningArmy = attackArmy;
         winningArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.WonBattle(winningArmy);
@@ -253,12 +255,7 @@ public class BattleMenu : MonoBehaviour{
             attackArmy.GetComponent<Army>().Defeated();
         }
         else if (defenders.Count == 0) {
-            if (defendArmy.GetComponent<Army>().faction != Faction.Independent){
-                defendArmy.GetComponent<Army>().owner.GetComponent<Player>().RemoveNode(battleNode);
-                defendArmy.GetComponent<Army>().Defeated();
-            }
-            attackArmy.GetComponent<Army>().owner.GetComponent<Player>().AddNode(battleNode);
-            attackArmy.GetComponent<Army>().MoveToNode(battleNode); 
+            AttackerWins();
         }
         if (retreating) {
             ExitMenu();
@@ -269,6 +266,26 @@ public class BattleMenu : MonoBehaviour{
         print("Action Complete, readyToExecute");
         retreatAllowed = true;
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
+    }
+    public void AttackerWins() {
+        if (defendArmy.GetComponent<Army>().faction != Faction.Independent) {
+            defendArmy.GetComponent<Army>().owner.GetComponent<Player>().RemoveNode(battleNode);
+            defendArmy.GetComponent<Army>().Defeated();
+        }
+        attackArmy.GetComponent<Army>().owner.GetComponent<Player>().AddNode(battleNode);
+        attackArmy.GetComponent<Army>().MoveToNode(battleNode);
+        if (!AttackerCanAssimilate()) {
+            battleNode.GetComponent<Node>().temple = null;
+            battleNode.GetComponent<Node>().altar = null;
+        }
+    }
+    public void RefreshBuildings() {
+        if (battleNode.GetComponent<Node>().temple != null) battleNode.GetComponent<Node>().temple.ResetUnit();
+        if (battleNode.GetComponent<Node>().altar != null) battleNode.GetComponent<Node>().altar.ResetUnit();
+    }
+    public bool AttackerCanAssimilate() {
+        if (attackArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Assimilate") && attackArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Assimilate"].currentLevel >= 1) return true;
+        return false;
     }
 
     public MapUnit GetRandomEnemy(Cooldown cooldown) {

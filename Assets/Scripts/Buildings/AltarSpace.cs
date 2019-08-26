@@ -8,7 +8,7 @@ public class AltarSpace : MonoBehaviour{
     public static GameObject currentAltarSpace;
 
     // Start is called before the first frame update
-    void Start(){
+    void Start() {
         altarBuyingMenu = GameObject.Find("/Altar Buying Menu");
     }
 
@@ -18,10 +18,15 @@ public class AltarSpace : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        if (Player.menuOpen==1) {
-            altarBuyingMenu.GetComponent<AltarShopManager>().EnterMenu();
+        if (Player.menuOpen == 1) {
             currentAltarSpace = gameObject;
-            Player.menuOpen = 2;
+            if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assimilate") && Player.human.GetComponent<Player>().upgrades["Assimilate"].currentLevel >= 3) {
+                GameObject.Find("/Dissected Faction Menu").GetComponent<DissectedFactionMenu>().EnterMenu("Altar");
+            }
+            else {
+                altarBuyingMenu.GetComponent<AltarShopManager>().EnterMenu();
+                Player.menuOpen = 2;
+            }
         }
     }
 }
