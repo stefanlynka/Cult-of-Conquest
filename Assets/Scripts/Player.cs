@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public List<Ritual> ritualBackup = new List<Ritual>();
     public Dictionary<Faction, int> dissections = new Dictionary<Faction, int>();
     public Dictionary<string, Upgrade> upgrades = new Dictionary<string, Upgrade>();
+    public Dictionary<string, Upgrade> upgradesBackup = new Dictionary<string, Upgrade>();
 
     public static GameObject human;
     public static GameObject selectedArmy;
@@ -82,6 +83,7 @@ public class Player : MonoBehaviour
             GameObject army = transform.GetChild(i).gameObject;
             army.GetComponent<Army>().faction = faction;
             army.GetComponent<Army>().currentNode.GetComponent<Node>().faction = faction;
+            if (!ownedNodes.Contains(army.GetComponent<Army>().currentNode)) ownedNodes.Add(army.GetComponent<Army>().currentNode);
         }
         for (int i = 0; i < ownedNodes.Count; i++) {
             GameObject node = ownedNodes[i];
@@ -218,6 +220,12 @@ public class Player : MonoBehaviour
 
 
     public void Invade(GameObject attackingArmy, GameObject defendingArmy) {
+        if (defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Defensive Discord")) {
+            int randInt = Random.Range(1, 11); //1 to 10
+            if (randInt<= defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Defensive Discord"].currentLevel) {
+                defendingArmy = attackingArmy.GetComponent<Army>().GetRandomDifferentTarget(defendingArmy.GetComponent<Army>().currentNode);
+            }
+        }
         menuOpen = 1;
         battleMenu.GetComponent<BattleMenu>().EnterMenu();
         GameObject attackArmyMenu = Tools.GetChildNamed(battleMenu, "Attacking Army Menu");
@@ -254,9 +262,6 @@ public class Player : MonoBehaviour
         print("upgrade name " + upgrade.name);
         print("upgrade level " + upgrade.currentLevel);
         print("upgrade max " + upgrade.maxLevel);
-        print("upgradeDict name " + upgrades[upgrade.name].name);
-        print("upgradeDict level " + upgrades[upgrade.name].currentLevel);
-        print("upgradeDict max " + upgrades[upgrade.name].maxLevel);
         if (zeal >= upgrade.zealCost && upgrades.ContainsKey(upgrade.name) && upgrade.currentLevel < upgrade.maxLevel) {
             zeal -= upgrade.zealCost;
             upgrades[upgrade.name].currentLevel++;

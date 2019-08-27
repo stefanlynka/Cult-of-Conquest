@@ -426,7 +426,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selected: 0
   faction: 0
-  currentNode: {fileID: 1971950615}
+  currentNode: {fileID: 465954726}
   nodeManager: {fileID: 0}
   owner: {fileID: 0}
   mouseOverArmy: 0
@@ -491,7 +491,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 47433030}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.59, y: 2.89, z: -1}
+  m_LocalPosition: {x: 1.16, y: -4.16, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 362486964}
@@ -1800,6 +1800,21 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: occupant
+      value: 
+      objectReference: {fileID: 47433030}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: owner
+      value: 
+      objectReference: {fileID: 362486962}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -3330,6 +3345,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -4157,6 +4177,12 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &465954726 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
+    type: 3}
+  m_PrefabInstance: {fileID: 155345962}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &473322939
 GameObject:
   m_ObjectHideFlags: 0
@@ -11534,7 +11560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75f0836996b580046aaf979167af9bde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildingType: 
+  situation: 
 --- !u!114 &1333751489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16778,12 +16804,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1971950615 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 817657357121588924, guid: d3583cd02f4db1e4680d295f82adc930,
-    type: 3}
-  m_PrefabInstance: {fileID: 2176883776100385579}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1975854774 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7307685706538404740, guid: 439ce313d7c2aa24fa0cefec24c0474d,
@@ -19073,6 +19093,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -19178,6 +19203,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -19277,6 +19307,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -19470,6 +19505,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -19574,6 +19614,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -19781,6 +19826,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -19885,6 +19935,11 @@ PrefabInstance:
         type: 3}
       propertyPath: owner
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -20211,6 +20266,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -20324,13 +20384,13 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: homeBase
-      value: 3
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: occupant
       value: 
-      objectReference: {fileID: 47433030}
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: occupied
@@ -20344,13 +20404,13 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: faction
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 1561020fb4c76c9448ca2cd64545171f,
+      objectReference: {fileID: 21300000, guid: 6c9ed1a8687a3774ba347e9513a28c25,
         type: 3}
     - target: {fileID: 8914848798693966700, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -20936,6 +20996,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -21050,6 +21115,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -21236,7 +21306,7 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: homeBase
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -21256,13 +21326,13 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: faction
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 6c9ed1a8687a3774ba347e9513a28c25,
+      objectReference: {fileID: 21300000, guid: 61b1a1807c125ae41b9106b4dfeabc2f,
         type: 3}
     - target: {fileID: 8914848798693966700, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -21357,6 +21427,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -21698,6 +21773,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -21797,6 +21877,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -22280,6 +22365,11 @@ PrefabInstance:
       propertyPath: owner
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -22574,6 +22664,11 @@ PrefabInstance:
         type: 3}
       propertyPath: owner
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -23079,6 +23174,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -23476,6 +23576,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -23763,6 +23868,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -23877,7 +23987,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 61b1a1807c125ae41b9106b4dfeabc2f,
+      objectReference: {fileID: 21300000, guid: e0a0e391026d35548a1a8ce72b129a46,
         type: 3}
     - target: {fileID: 8914848798693966700, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -23972,6 +24082,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -24077,6 +24192,11 @@ PrefabInstance:
         type: 3}
       propertyPath: owner
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -24645,6 +24765,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -27116,6 +27241,11 @@ PrefabInstance:
       propertyPath: altar
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -27435,7 +27565,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: e0a0e391026d35548a1a8ce72b129a46,
+      objectReference: {fileID: 21300000, guid: 1561020fb4c76c9448ca2cd64545171f,
         type: 3}
     - target: {fileID: 8914848798693966700, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -27530,6 +27660,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -27804,6 +27939,26 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: occupant
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: occupied
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: owner
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -28089,6 +28244,11 @@ PrefabInstance:
         type: 3}
       propertyPath: altar
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -28395,6 +28555,11 @@ PrefabInstance:
       propertyPath: owner
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: faction
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: m_Sprite
@@ -28493,7 +28658,7 @@ PrefabInstance:
     - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
       propertyPath: homeBase
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}

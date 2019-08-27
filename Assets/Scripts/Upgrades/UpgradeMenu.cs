@@ -19,6 +19,9 @@ public class UpgradeMenu : MonoBehaviour{
         Player.menuOpen = 1;
     }
     public void ExitMenu() {
+        if (Player.human.GetComponent<Player>().upgradesBackup.Count != 0) {
+            print("Backups in use, Clear and reset");
+        }
         GetComponent<Panner>().SetTarget(new Vector3(0, -12, -15));
         Player.menuOpen = 0;
     }

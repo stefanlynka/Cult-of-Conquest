@@ -47,6 +47,7 @@ public class FactionManager : MonoBehaviour{
         traits.NewUnit = Empty;
         traits.Precombat = PunishDisadvantage;
         traits.PrecombatAttacker = BoostAttacker;
+        traits.PrecombatDefender = ShadowDefense;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -60,6 +61,7 @@ public class FactionManager : MonoBehaviour{
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
         traits.PrecombatAttacker = Empty;
+        traits.PrecombatDefender = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -73,6 +75,7 @@ public class FactionManager : MonoBehaviour{
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
         traits.PrecombatAttacker = Empty;
+        traits.PrecombatDefender = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = StoreEnemy;
@@ -86,6 +89,7 @@ public class FactionManager : MonoBehaviour{
         traits.NewUnit = GiveShield;
         traits.Precombat = BoostMarred;
         traits.PrecombatAttacker = Empty;
+        traits.PrecombatDefender = Empty;
         traits.TakeDamage = UnitBecomeMarred;
         traits.ArmyLostUnit = ArmyBecomeMarred;
         traits.KilledEnemy = Empty;
@@ -99,6 +103,7 @@ public class FactionManager : MonoBehaviour{
         traits.NewUnit = Empty;
         traits.Precombat = BalanceAdvantage;
         traits.PrecombatAttacker = AgainstStrongest;
+        traits.PrecombatDefender = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = DownToOneCheck;
         traits.KilledEnemy = Empty;
@@ -112,6 +117,7 @@ public class FactionManager : MonoBehaviour{
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
         traits.PrecombatAttacker = Empty;
+        traits.PrecombatDefender = ProtectExplorers;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -125,6 +131,7 @@ public class FactionManager : MonoBehaviour{
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
         traits.PrecombatAttacker = Empty;
+        traits.PrecombatDefender = Empty;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -312,6 +319,19 @@ public class FactionManager : MonoBehaviour{
             }
         }
     }
+    public void ShadowDefense(GameObject noumenonArmy, GameObject otherArmy) {
+        if (noumenonArmy.GetComponent<Army>().currentNode.GetComponent<Node>().concealment >= 3) {
+            if (noumenonArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Hide In Shadow"))
+                noumenonArmy.GetComponent<Army>().AddToDamageMod(0.1f * noumenonArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Hide In Shadow"].currentLevel);
+        }
+    }
+    public void ProtectExplorers(GameObject carnotArmy, GameObject otherArmy) {
+        Dictionary<string, Upgrade> upgrades = carnotArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades;
+        float exposure = carnotArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetExposure();
+        if (upgrades.ContainsKey("Entropic Explorer") && exposure > 0.5f) {
+            carnotArmy.GetComponent<Army>().AddToDamageMod(exposure * 0.2f * upgrades["Entropic Explorer"].currentLevel);
+        }
+    }
 
 
     public void Empty(MapUnit unit) {}
@@ -345,4 +365,5 @@ public class FactionTraits {
     public DelegateGameObject EndTurn;
     public DelegateGameObject2 Precombat;
     public DelegateGameObject2 PrecombatAttacker;
+    public DelegateGameObject2 PrecombatDefender;
 }

@@ -282,6 +282,16 @@ public class Army : MonoBehaviour
         }
         return true;
     }
+    public GameObject GetRandomDifferentTarget(GameObject oldNode) {
+        GameObject newNode;
+        int randInt = Random.Range(0, currentNode.GetComponent<Node>().neighbours.Count);
+        newNode = currentNode.GetComponent<Node>().neighbours[randInt];
+        if (newNode == oldNode) {
+            if (randInt == currentNode.GetComponent<Node>().neighbours.Count-1) newNode = currentNode.GetComponent<Node>().neighbours[randInt-1];
+            else newNode = currentNode.GetComponent<Node>().neighbours[randInt + 1];
+        }
+        return newNode;
+    }
 }
 
 

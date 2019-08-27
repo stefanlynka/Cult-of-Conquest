@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DissectedFactionMenu : MonoBehaviour{
 
-    public string buildingType;
+    public string situation;
 
     // Start is called before the first frame update
     void Start(){
@@ -16,8 +16,8 @@ public class DissectedFactionMenu : MonoBehaviour{
         
     }
 
-    public void EnterMenu(string building) {
-        buildingType = building;
+    public void EnterMenu(string topic) {
+        situation = topic;
         Player.menuOpen = 2;
         GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
     }

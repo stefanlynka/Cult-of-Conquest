@@ -258,7 +258,10 @@ public class Node : MonoBehaviour
     }
 
     public int GetNodeMoneyIncome() {
-        int income = difficulty * 5;
+        int income = difficulty * 4 + 2;
+        if (faction == Faction.Carnot) {
+            income = Mathf.RoundToInt(0.5f * income + income * GetExposure());
+        }
         if (altar != null && altar.name == AltarName.Harvest) income =  (int)Mathf.Round(income * 1.4f);
         return income;
     }
@@ -330,6 +333,15 @@ public class Node : MonoBehaviour
         }
         float safety = friendlyNeighbours / 6;
         return safety;
+    }
+
+    public float GetExposure() {
+        float friendlyNeighbours = 0;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            if (neighbour.GetComponent<Node>().faction == faction) friendlyNeighbours++;
+        }
+        return 1 - friendlyNeighbours / neighbours.Count;
     }
 
     public int GetPower() {

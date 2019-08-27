@@ -44,6 +44,11 @@ public class RandomPanel : MonoBehaviour{
     public void Attack() {
         int randInt = Random.Range(0, targets.Count);
         GameObject target = targets[randInt];
+
+        float bonusPerTarget = 0.02f;
+        if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assaulting Anarchy")) bonusPerTarget += 0.02f * Player.human.GetComponent<Player>().upgrades["Assaulting Anarchy"].currentLevel;
+        float modifier = targets.Count * bonusPerTarget;
+        Player.selectedArmy.GetComponent<Army>().AddToDamageMod(modifier);
         Player.human.GetComponent<Player>().attackNode(Player.selectedArmy, target);
     }
 

@@ -36,49 +36,30 @@ public class UpgradeManager : MonoBehaviour{
     void SetupUpgrades() {
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
-            switch (player.GetComponent<Player>().faction) {
-                case Faction.Noumenon:
-                    NoumenonUpgrades(player);
-                    break;
-                case Faction.Dukkha:
-                    ZenteelUpgrades(player);
-                    break;
-                case Faction.Paratrophs:
-                    ParatrophsUpgrades(player);
-                    break;
-                case Faction.Unmar:
-                    UnmarUpgrades(player);
-                    break;
-                case Faction.Samata:
-                    SamataUpgrades(player);
-                    break;
-                case Faction.Carnot:
-                    CarnotUpgrades(player);
-                    break;
-            }
+            SetPlayerUpgrades(player, player.GetComponent<Player>().faction);
         }
     }
 
-    public void LoadPlayerUpgrade(int index, Upgrade upgrade, GameObject player) {
-        if (player == Player.human) {
-            GameObject upgradeSlots = Tools.GetChildNamed(gameObject, "Upgrade Slots");
-            GameObject upgradeSlot = Tools.GetChildNamed(upgradeSlots, "Upgrade Slot " + index.ToString());
-            if (upgradeSlot != null) {
-                upgradeSlot.GetComponent<UpgradeButton>().upgrade = upgrade;
-                Tools.GetChildNamed(upgradeSlot, "Upgrade Name Text").GetComponent<TextMesh>().text = upgrade.name;
-                Tools.GetChildNamed(upgradeSlot, "Upgrade Cost Text").GetComponent<TextMesh>().text = upgrade.zealCost.ToString();
-                Tools.GetChildNamed(upgradeSlot, "Upgrade Description Text").GetComponent<TextMesh>().text = upgrade.description;
-                if (upgrade.maxLevel == 2) {
-                    GameObject indicators = Tools.GetChildNamed(upgradeSlot, "Upgrade Indicators");
-                    GameObject indicator3 = Tools.GetChildNamed(indicators, "Unupgraded Indicator 2");
-                    indicator3.SetActive(false);
-                }
-                if (upgrade.maxLevel == 1) {
-                    GameObject indicators = Tools.GetChildNamed(upgradeSlot, "Upgrade Indicators");
-                    GameObject indicator2 = Tools.GetChildNamed(indicators, "Unupgraded Indicator 1");
-                    indicator2.SetActive(false);
-                }
-            }
+    public void SetPlayerUpgrades(GameObject player, Faction faction) {
+        switch (faction) {
+            case Faction.Noumenon:
+                NoumenonUpgrades(player);
+                break;
+            case Faction.Dukkha:
+                ZenteelUpgrades(player);
+                break;
+            case Faction.Paratrophs:
+                ParatrophsUpgrades(player);
+                break;
+            case Faction.Unmar:
+                UnmarUpgrades(player);
+                break;
+            case Faction.Samata:
+                SamataUpgrades(player);
+                break;
+            case Faction.Carnot:
+                CarnotUpgrades(player);
+                break;
         }
     }
 
@@ -89,7 +70,7 @@ public class UpgradeManager : MonoBehaviour{
         Upgrade upgrade2 = new Upgrade("Cover Your Tracks", 8, 2, "Increase \nfog of war");
         player.GetComponent<Player>().upgrades.Add(upgrade2.name, upgrade2);
         LoadPlayerUpgrade(1, upgrade2, player);
-        Upgrade upgrade3 = new Upgrade("u3", 5, 3, "stronger");
+        Upgrade upgrade3 = new Upgrade("Hide In Shadow", 5, 3, "Increase defense\nof hidden\n tiles");
         player.GetComponent<Player>().upgrades.Add(upgrade3.name, upgrade3);
         LoadPlayerUpgrade(2, upgrade3, player);
     }
@@ -139,15 +120,64 @@ public class UpgradeManager : MonoBehaviour{
         LoadPlayerUpgrade(2, upgrade3, player);
     }
     void CarnotUpgrades(GameObject player) {
-        Upgrade upgrade1 = new Upgrade("u1", 5, 3, "harder");
+        Upgrade upgrade1 = new Upgrade("Entropic Explorer", 5, 3, "Increase defense\nbased on\nnode's exposure");
         player.GetComponent<Player>().upgrades.Add(upgrade1.name, upgrade1);
         LoadPlayerUpgrade(0, upgrade1, player);
-        Upgrade upgrade2 = new Upgrade("u2", 5, 3, "faster");
+        Upgrade upgrade2 = new Upgrade("Defensive Discord", 5, 3, "Enemies have\na chance to \nattack randomly");
         player.GetComponent<Player>().upgrades.Add(upgrade2.name, upgrade2);
         LoadPlayerUpgrade(1, upgrade2, player);
-        Upgrade upgrade3 = new Upgrade("u3", 5, 3, "stronger");
+        Upgrade upgrade3 = new Upgrade("Assaulting Anarchy", 5, 3, "Increase boost\nfrom randomly \ntargeted attacks");
         player.GetComponent<Player>().upgrades.Add(upgrade3.name, upgrade3);
         LoadPlayerUpgrade(2, upgrade3, player);
+    }
+
+    public void LoadHumanUpgrades(GameObject player) {
+        int index = 0;
+        foreach (KeyValuePair<string, Upgrade> upgrade in player.GetComponent<Player>().upgrades) {
+            GameObject upgradeSlots = Tools.GetChildNamed(gameObject, "Upgrade Slots");
+            GameObject upgradeSlot = Tools.GetChildNamed(upgradeSlots, "Upgrade Slot " + index.ToString());
+            if (upgradeSlot != null) {
+                upgradeSlot.GetComponent<UpgradeButton>().upgrade = upgrade.Value;
+                Tools.GetChildNamed(upgradeSlot, "Upgrade Name Text").GetComponent<TextMesh>().text = upgrade.Value.name; 
+                Tools.GetChildNamed(upgradeSlot, "Upgrade Cost Text").GetComponent<TextMesh>().text = upgrade.Value.zealCost.ToString();
+                Tools.GetChildNamed(upgradeSlot, "Upgrade Description Text").GetComponent<TextMesh>().text = upgrade.Value.description;
+                if (upgrade.Value.maxLevel == 2) {
+                    GameObject indicators = Tools.GetChildNamed(upgradeSlot, "Upgrade Indicators");
+                    GameObject indicator3 = Tools.GetChildNamed(indicators, "Unupgraded Indicator 2");
+                    indicator3.SetActive(false);
+                }
+                if (upgrade.Value.maxLevel == 1) {
+                    GameObject indicators = Tools.GetChildNamed(upgradeSlot, "Upgrade Indicators");
+                    GameObject indicator2 = Tools.GetChildNamed(indicators, "Unupgraded Indicator 1");
+                    indicator2.SetActive(false);
+                }
+            }
+            index++;
+            print(index);
+        }
+    }
+
+    public void LoadPlayerUpgrade(int index, Upgrade upgrade, GameObject player) {
+        if (player == Player.human) {
+            GameObject upgradeSlots = Tools.GetChildNamed(gameObject, "Upgrade Slots");
+            GameObject upgradeSlot = Tools.GetChildNamed(upgradeSlots, "Upgrade Slot " + index.ToString());
+            if (upgradeSlot != null) {
+                upgradeSlot.GetComponent<UpgradeButton>().upgrade = upgrade;
+                Tools.GetChildNamed(upgradeSlot, "Upgrade Name Text").GetComponent<TextMesh>().text = upgrade.name;
+                Tools.GetChildNamed(upgradeSlot, "Upgrade Cost Text").GetComponent<TextMesh>().text = upgrade.zealCost.ToString();
+                Tools.GetChildNamed(upgradeSlot, "Upgrade Description Text").GetComponent<TextMesh>().text = upgrade.description;
+                if (upgrade.maxLevel == 2) {
+                    GameObject indicators = Tools.GetChildNamed(upgradeSlot, "Upgrade Indicators");
+                    GameObject indicator3 = Tools.GetChildNamed(indicators, "Unupgraded Indicator 2");
+                    indicator3.SetActive(false);
+                }
+                if (upgrade.maxLevel == 1) {
+                    GameObject indicators = Tools.GetChildNamed(upgradeSlot, "Upgrade Indicators");
+                    GameObject indicator2 = Tools.GetChildNamed(indicators, "Unupgraded Indicator 1");
+                    indicator2.SetActive(false);
+                }
+            }
+        }
     }
 
     void TradeHealthForShields(GameObject player) {
