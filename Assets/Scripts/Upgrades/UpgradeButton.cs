@@ -21,23 +21,25 @@ public class UpgradeButton : MonoBehaviour{
 
     private void OnMouseDown() {
         if (Player.menuOpen == 1) {
-            if (human.GetComponent<Player>().upgradesBackup.Count != 0) {
-                if (human.GetComponent<Player>().upgradesBackup.ContainsKey("Adapt 1")) {
-                    human.GetComponent<Player>().upgradesBackup.Remove("Adapt 1");
-                    human.GetComponent<Player>().upgradesBackup.Add(upgrade.name, upgrade);
-                    print("New Upgrade Acquired 1");
+            if (human.GetComponent<Player>().upgradesBackup.Count != 0 ) {
+                if (!human.GetComponent<Player>().upgradesBackup.ContainsKey(upgrade.name)) {
+                    if (human.GetComponent<Player>().upgradesBackup.ContainsKey("Adapt 1")) {
+                        human.GetComponent<Player>().upgradesBackup.Remove("Adapt 1");
+                        human.GetComponent<Player>().upgradesBackup.Add(upgrade.name, upgrade);
+                        print("New Upgrade Acquired 1");
+                    }
+                    else if (human.GetComponent<Player>().upgradesBackup.ContainsKey("Adapt 2")) {
+                        human.GetComponent<Player>().upgradesBackup.Remove("Adapt 2");
+                        human.GetComponent<Player>().upgradesBackup.Add(upgrade.name, upgrade);
+                        print("New Upgrade Acquired 1");
+                    }
+                    Player.human.GetComponent<Player>().upgrades.Clear();
+                    Player.human.GetComponent<Player>().upgrades = new Dictionary<string, Upgrade>(Player.human.GetComponent<Player>().upgradesBackup);
+                    Player.human.GetComponent<Player>().upgradesBackup.Clear();
+                    transform.parent.transform.parent.GetComponent<UpgradeManager>().LoadHumanUpgrades(human);
+                    //transform.parent.transform.parent.GetComponent<UpgradeMenu>().ExitMenu();
+                    print("New Upgrade Acquired 2");
                 }
-                else if (human.GetComponent<Player>().upgradesBackup.ContainsKey("Adapt 2")) {
-                    human.GetComponent<Player>().upgradesBackup.Remove("Adapt 2");
-                    human.GetComponent<Player>().upgradesBackup.Add(upgrade.name, upgrade);
-                    print("New Upgrade Acquired 1");
-                }
-                Player.human.GetComponent<Player>().upgrades.Clear();
-                Player.human.GetComponent<Player>().upgrades = new Dictionary<string, Upgrade>(Player.human.GetComponent<Player>().upgradesBackup);
-                Player.human.GetComponent<Player>().upgradesBackup.Clear();
-                transform.parent.transform.parent.GetComponent<UpgradeManager>().LoadHumanUpgrades(human);
-                //transform.parent.transform.parent.GetComponent<UpgradeMenu>().ExitMenu();
-                print("New Upgrade Acquired 2");
             }
             else if (upgrade.name.Contains("Adapt")){
                 dissectedMenu.GetComponent<DissectedFactionMenu>().EnterMenu("Adapt");

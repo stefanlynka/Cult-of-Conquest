@@ -270,6 +270,32 @@ public class Player : MonoBehaviour
         return false;
     }
 
+    public bool BuyProphet(GameObject node) {
+        if (money>= 20) {
+            money -= 20;
+            GameObject newArmy = new GameObject();
+            newArmy.AddComponent<SpriteRenderer>();
+            newArmy.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + faction.ToString() + "/Prophets/Prophet");
+            newArmy.AddComponent<Army>();
+            newArmy.AddComponent<CircleCollider2D>();
+            newArmy.transform.position = new Vector3(node.transform.position.x, node.transform.position.y, -1);
+            newArmy.transform.parent = gameObject.transform;
+            newArmy.GetComponent<Army>().currentNode = node;
+            newArmy.GetComponent<Army>().owner = gameObject;
+            newArmy.GetComponent<Army>().faction = faction;
+            newArmy.name = "Army";
+            newArmy.GetComponent<Army>().AddUnit(0, true, unitBlueprints[2]);
+            newArmy.transform.localScale = new Vector3(0.075f, 0.075f, 1f);
+            armies.Add(newArmy);
+            node.GetComponent<Node>().occupied = true;
+            node.GetComponent<Node>().occupant = newArmy;
+            NodeMenu.currentArmy = newArmy;
+            nodeMenu.GetComponent<NodeMenu>().ProphetMenuCheck();
+            return true;
+        }
+        return false;
+    }
+
     public void StartTurn() {
         print("Start Turn!");
         money += GetMoneyIncome();

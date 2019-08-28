@@ -8,12 +8,15 @@ public class NodeMenu : MonoBehaviour
     public static GameObject currentArmy;
     GameObject[] backRowSpaces = new GameObject[5];
     GameObject[] frontRowSpaces = new GameObject[5];
+    GameObject prophetMenu, buyProphetButton;
 
     public bool open = false;
 
     // Start is called before the first frame update
     void Start(){
         FindUnitSpaces();
+        prophetMenu = Tools.GetChildNamed(gameObject, "Prophet Menu");
+        buyProphetButton = Tools.GetChildNamed(prophetMenu, "Buy Prophet Button");
     }
 
     // Update is called once per frame
@@ -31,6 +34,7 @@ public class NodeMenu : MonoBehaviour
         LoadAltar();
         LoadTemple();
         open = true;
+        ProphetMenuCheck();
         Player.menuOpen = 1;
     }
 
@@ -169,5 +173,19 @@ public class NodeMenu : MonoBehaviour
         templeSprite.GetComponent<SpriteRenderer>().sprite = null;
         descriptionText.GetComponent<TextMesh>().text = "Click to\nbuild Temple";
 
+    }
+
+    public void ProphetMenuCheck() {
+        if (currentArmy) {
+            prophetMenu.SetActive(false);
+            LoadArmy();
+        }
+        else {
+            prophetMenu.SetActive(true);
+            if (currentNode.GetComponent<Node>().temple != null && currentNode.GetComponent<Node>().temple.name == TempleName.Origin) {
+                buyProphetButton.GetComponent<BuyProphetButton>().SetTextByTemple(true);
+            }
+            else buyProphetButton.GetComponent<BuyProphetButton>().SetTextByTemple(false);
+        }
     }
 }

@@ -19,11 +19,11 @@ public class DissectedFactionMenu : MonoBehaviour{
     public void EnterMenu(string topic) {
         situation = topic;
         Player.menuOpen = 2;
-        GetComponent<Panner>().SetTarget(new Vector3(0, 0, -15));
+        GetComponent<Panner>().SetTarget(new Vector3(0, 0, -10));
     }
     public void ExitMenu() {
         Player.menuOpen = 1;
-        GetComponent<Panner>().SetTarget(new Vector3(0, -23, -15));
+        GetComponent<Panner>().SetTarget(new Vector3(0, -23, -10));
     }
 
 }

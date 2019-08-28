@@ -42,6 +42,7 @@ public class TempleShopManager : MonoBehaviour{
     }
     public void ExitMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(0, 15, -15));
+        GameObject.Find("/Node Menu").GetComponent<NodeMenu>().ProphetMenuCheck();
         Player.menuOpen = 1;
     }
 
