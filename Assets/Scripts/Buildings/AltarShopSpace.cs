@@ -9,7 +9,6 @@ public class AltarShopSpace : MonoBehaviour{
     GameObject portrait;
     GameObject description;
     GameObject nodeMenu;
-    GameObject human;
 
     GameObject altarShopManager;
 
@@ -20,9 +19,10 @@ public class AltarShopSpace : MonoBehaviour{
     }
 
     private void OnMouseDown() {
-        if (human.GetComponent<Player>().money >= altar.cost) {
+        if (Player.human.GetComponent<Player>().money >= altar.cost) {
             BuyAltar();
         }
+        else Tools.CreatePopup(gameObject, "Not Enough Money", 40, Color.yellow);
     }
 
     public void initializeMembers() {
@@ -32,7 +32,6 @@ public class AltarShopSpace : MonoBehaviour{
         description = Tools.GetChildNamed(gameObject, "Description Text");
         nodeMenu = GameObject.Find("Node Menu");
         altarShopManager = GameObject.Find("Altar Buying Menu");
-        human = Player.human;
     }
 
     public void SetAltar(Altar newAltar) {
@@ -45,7 +44,7 @@ public class AltarShopSpace : MonoBehaviour{
     }
 
     public void BuyAltar() {
-        human.GetComponent<Player>().money -= altar.cost;
+        Player.human.GetComponent<Player>().money -= altar.cost;
         NodeMenu.currentNode.GetComponent<Node>().BuildAltar(altar);
         nodeMenu.GetComponent<NodeMenu>().LoadAltar();
         altarShopManager.GetComponent<AltarShopManager>().ExitMenu();

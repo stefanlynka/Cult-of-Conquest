@@ -47,6 +47,7 @@ public class UnitShopSpace : MonoBehaviour
         if (human.GetComponent<Player>().money >= unit.moneyCost && human.GetComponent<Player>().zeal >= unit.zealCost) {
             BuyUnit(NodeMenu.currentArmy, UnitSpace.currentUnitPos);
         }
+        else Tools.CreatePopup(gameObject, "Not Enough Money", 40, Color.yellow);
     }
 
     public void AddUnit(MapUnit newUnit) {

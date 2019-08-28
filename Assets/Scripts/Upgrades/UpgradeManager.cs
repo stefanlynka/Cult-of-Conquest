@@ -34,6 +34,7 @@ public class UpgradeManager : MonoBehaviour{
 
 
     void SetupUpgrades() {
+        print("player count: " + players.Count);
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
             SetPlayerUpgrades(player, player.GetComponent<Player>().faction);

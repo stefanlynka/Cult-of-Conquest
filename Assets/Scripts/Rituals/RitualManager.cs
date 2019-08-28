@@ -56,6 +56,9 @@ public class RitualManager : MonoBehaviour {
             selectedNodes.Add(node);
             print("Selecting");
             if (selectedNodes.Count >= selectedRitual.numTargets) {
+                print("ritual name " + selectedRitual.name);
+                print("ritual faction " + Tools.GetRitualFaction(selectedRitual));
+                Tools.CreatePopup(node, "Ritual Cast: " + selectedRitual.name, 40, Tools.FactionToColor(Tools.GetRitualFaction(selectedRitual)));
                 selectedRitual.Activate(selectedNodes);
                 ritualNode.GetComponent<Node>().ritual.Clear();
                 LeaveRitualSelection();

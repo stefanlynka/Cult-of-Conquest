@@ -82,4 +82,36 @@ public class Tools {
         }
         return Faction.None;
     }
+
+    public static void CreatePopup(GameObject origin, string text, int textSize, Color colour) {
+        GameObject popup = new GameObject();
+        popup.AddComponent<Popup>();
+        popup.GetComponent<Popup>().Setup(origin, text, textSize, colour);
+    }
+    public static Faction GetRitualFaction(Ritual ritual) {
+        GameObject players = GameObject.Find("/Players");
+        for (int i = 0; i < players.transform.childCount; i++) {
+            GameObject player = players.transform.GetChild(i).gameObject;
+            List<string> ritualNames = new List<string>();
+
+            for (int j = 0; j < player.GetComponent<Player>().ritualBlueprints.Count; j++) {
+                Ritual playerRitual = player.GetComponent<Player>().ritualBlueprints[j];
+                ritualNames.Add(playerRitual.name);
+            }
+            if (ritualNames.Contains(ritual.name)) {
+                return player.GetComponent<Player>().faction;
+            }
+        }
+        return Faction.None;
+    }
+    public static Color FactionToColor(Faction faction) {
+        Color colour = Color.black;
+        if (faction == Faction.Carnot) colour = Color.magenta;
+        else if (faction == Faction.Noumenon) colour = Color.blue;
+        else if (faction == Faction.Paratrophs) colour = Color.green;
+        else if (faction == Faction.Samata) colour = Color.yellow;
+        else if (faction == Faction.Unmar) colour = Color.white;
+        else if (faction == Faction.Zenteel) colour = new Color(1.0f, 0.5f, 0f);
+        return colour;
+    }
 }

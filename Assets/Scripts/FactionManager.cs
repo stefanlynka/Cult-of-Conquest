@@ -148,11 +148,11 @@ public class FactionManager : MonoBehaviour{
         unit.maxShield = 1;
         unit.currentShield = 1;
     }
-    public void UnitBecomeMarred(GameObject player, MapUnit unit){
+    public void UnitBecomeMarred(GameObject army, MapUnit unit){
         if (unit.marred == false) {
             unit.marred = true;
             unit.marredCountdown = 2;
-            unit.damageMod += player.GetComponent<Player>().upgrades["Doomed Power"].currentLevel * 0.15f;
+            unit.damageMod += army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Doomed Power"].currentLevel * 0.15f;
         }
     }
     public void ArmyBecomeMarred(GameObject army) {

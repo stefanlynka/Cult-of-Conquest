@@ -22,6 +22,7 @@ public class TempleShopSpace : MonoBehaviour{
         if (Player.human.GetComponent<Player>().money >= temple.cost) {
             BuyTemple();
         }
+        else Tools.CreatePopup(gameObject, "Not Enough Money", 40, Color.yellow);
     }
 
     public void initializeMembers() {

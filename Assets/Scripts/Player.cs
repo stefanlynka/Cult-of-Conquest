@@ -44,8 +44,12 @@ public class Player : MonoBehaviour
         //print(TurnManager.currentPlayer);
         if (gameObject == TurnManager.currentPlayer) {
             CheckSelected();
+            if (Input.GetMouseButtonDown(1)) {
+                //Tools.CreatePopup(gameObject, "another check",50, Color.blue);
+            }
         }
     }
+
 
     private void LateUpdate() {
         if (gameObject == TurnManager.currentPlayer) {

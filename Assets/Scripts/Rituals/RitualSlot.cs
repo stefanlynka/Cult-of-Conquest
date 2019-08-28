@@ -22,6 +22,7 @@ public class RitualSlot : MonoBehaviour{
             if (human.GetComponent<Player>().BuyRitual(ritualBlueprint)) {
                 transform.parent.GetComponent<RitualMenu>().ExitMenu();
             }
+            else Tools.CreatePopup(gameObject, "Not Enough Zeal", 40, Color.red);
         }
     }
 }

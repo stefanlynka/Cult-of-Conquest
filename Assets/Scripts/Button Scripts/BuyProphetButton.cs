@@ -35,6 +35,7 @@ public class BuyProphetButton : MonoBehaviour{
         if (hasTempleOfOrigin) {
             if (Player.human.GetComponent<Player>().BuyProphet(NodeMenu.currentNode)) {
             }
+            else Tools.CreatePopup(gameObject, "Not Enough Money", 40, Color.yellow);
         }
     }
 }
