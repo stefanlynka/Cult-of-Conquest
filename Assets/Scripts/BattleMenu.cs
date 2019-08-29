@@ -47,6 +47,7 @@ public class BattleMenu : MonoBehaviour{
     public void ExitMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(20, 0, -10));
         Player.menuOpen = 0;
+        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
     }
 
     void SetupArmies(GameObject attackingArmy, GameObject defendingArmy) {
@@ -222,8 +223,9 @@ public class BattleMenu : MonoBehaviour{
 
     public void Retreat() {
         if (retreatAllowed) {
-            if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+            //if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
             defendArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
+            attackArmy.GetComponent<MoveAnimator>().SetTarget(attackArmy.GetComponent<Army>().currentNode.transform.position, false);
             if (inSimulation) {
                 RemoveAttackCooldowns();
                 retreating = true;
@@ -264,11 +266,13 @@ public class BattleMenu : MonoBehaviour{
         }
         retreating = false;
         inSimulation = false;
-        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
-        print("Action Complete, readyToExecute");
+        //if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+        //print("Action Complete, readyToExecute");
         retreatAllowed = true;
+        //if (attackArmy.GetComponent<Army>().owner != Player.human) ExitMenu();
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
     }
+
     public void AttackerWins() {
         if (defendArmy.GetComponent<Army>().faction != Faction.Independent) {
             defendArmy.GetComponent<Army>().owner.GetComponent<Player>().RemoveNode(battleNode);

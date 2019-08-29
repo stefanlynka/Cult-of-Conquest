@@ -230,12 +230,12 @@ public class Player : MonoBehaviour
                 defendingArmy = attackingArmy.GetComponent<Army>().GetRandomDifferentTarget(defendingArmy.GetComponent<Army>().currentNode);
             }
         }
-        menuOpen = 1;
-        battleMenu.GetComponent<BattleMenu>().EnterMenu();
+        attackingArmy.GetComponent<MoveAnimator>().SetTarget(defendingArmy.transform.position, true);
+        //battleMenu.GetComponent<BattleMenu>().EnterMenu();
         GameObject attackArmyMenu = Tools.GetChildNamed(battleMenu, "Attacking Army Menu");
         GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
-        attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
-        defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
+        //attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
+        //defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingArmy);
         battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingArmy, defendingArmy.GetComponent<Army>().currentNode);
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
@@ -282,6 +282,8 @@ public class Player : MonoBehaviour
             newArmy.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + faction.ToString() + "/Prophets/Prophet");
             newArmy.AddComponent<Army>();
             newArmy.AddComponent<CircleCollider2D>();
+            newArmy.AddComponent<MoveAnimator>();
+            newArmy.GetComponent<MoveAnimator>().SetTarget(newArmy.transform.position, false);
             newArmy.transform.position = new Vector3(node.transform.position.x, node.transform.position.y, -1);
             newArmy.transform.parent = gameObject.transform;
             newArmy.GetComponent<Army>().currentNode = node;

@@ -128,9 +128,10 @@ public class Army : MonoBehaviour
     }
 
     public void MoveToNode(GameObject destination) {
+        GetComponent<MoveAnimator>().SetTarget(destination.transform.position, false);
         currentNode.GetComponent<Node>().occupied = false;
         currentNode.GetComponent<Node>().occupant = null;
-        transform.position = new Vector3(destination.transform.position.x, destination.transform.position.y, transform.position.z);
+        //transform.position = new Vector3(destination.transform.position.x, destination.transform.position.y, transform.position.z);
         currentNode = destination;
         destination.GetComponent<Node>().faction = faction;
         destination.GetComponent<Node>().occupied = true;
@@ -138,7 +139,7 @@ public class Army : MonoBehaviour
         destination.GetComponent<Node>().owner = owner;
         destination.GetComponent<Node>().UpdateSprite();
         if (owner.GetComponent<AI>()) {
-            owner.GetComponent<AI>().readyToExecute = true;
+            //owner.GetComponent<AI>().readyToExecute = true;
         }
     }
 

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 528278849333287515}
   - component: {fileID: 528278849333287512}
   - component: {fileID: 528278849333287513}
-  - component: {fileID: 528278849333287514}
+  - component: {fileID: 757059631411703541}
   m_Layer: 0
   m_Name: Army Blue
   m_TagString: Untagged
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 528278849333287494}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.63, y: -3.47, z: -1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.075, y: 0.075, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -70,7 +70,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: f74b9146bdeff2144b40724b4c38679d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 442e4247b513cbd4ea4e2986ce561ff8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -94,13 +94,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selected: 0
-  race: 0
+  faction: 0
   currentNode: {fileID: 0}
-  map: {fileID: 0}
+  nodeManager: {fileID: 0}
+  owner: {fileID: 0}
   mouseOverArmy: 0
   maxMoves: 2
   movesLeft: 2
---- !u!58 &528278849333287514
+  sight: 2
+  marredBattle: 0
+  precombatPower: 0
+--- !u!58 &757059631411703541
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,4 +119,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.315
+  m_Radius: 7
