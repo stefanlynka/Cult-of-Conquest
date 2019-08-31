@@ -223,24 +223,25 @@ public class Player : MonoBehaviour
     }
 
 
-    public void Invade(GameObject attackingArmy, GameObject defendingArmy) {
-        if (defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Defensive Discord")) {
-            int randInt = Random.Range(1, 11); //1 to 10
-            if (randInt<= defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Defensive Discord"].currentLevel) {
-                defendingArmy = attackingArmy.GetComponent<Army>().GetRandomDifferentTarget(defendingArmy.GetComponent<Army>().currentNode);
-            }
-        }
-        attackingArmy.GetComponent<MoveAnimator>().SetTarget(defendingArmy.transform.position, true);
-        //battleMenu.GetComponent<BattleMenu>().EnterMenu();
+    public void Invade(GameObject attackingArmy, GameObject defendingNode) {
         GameObject attackArmyMenu = Tools.GetChildNamed(battleMenu, "Attacking Army Menu");
         GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
-        //attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
-        //defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
-        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingArmy);
-        battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingArmy, defendingArmy.GetComponent<Army>().currentNode);
+        attackingArmy.GetComponent<MoveAnimator>().SetTarget(defendingNode.transform.position, true);
+
+        if (defendingNode.GetComponent<Node>().occupant) {
+            GameObject defendingArmy = defendingNode.GetComponent<Node>().occupant;
+            if (defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Defensive Discord")) {
+                int randInt = Random.Range(1, 11); //1 to 10
+                if (randInt <= defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Defensive Discord"].currentLevel) {
+                    defendingArmy = attackingArmy.GetComponent<Army>().GetRandomDifferentTarget(defendingArmy.GetComponent<Army>().currentNode);
+                }
+            }
+            defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
+        }
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingNode);
+        battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingNode);
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
-        defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
-        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingArmy);
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingNode);
     }
 
 
@@ -310,6 +311,7 @@ public class Player : MonoBehaviour
         UpdateNodes();
         factionTraits.StartTurn(gameObject);
         DisplayFog();
+        UpdateEffigies();
         //print("Number 6 = " + factionTraits.UnitFunction(3));
     }
 
@@ -385,6 +387,37 @@ public class Player : MonoBehaviour
             army.GetComponent<Army>().currentNode.GetComponent<Node>().RevealNode(army.GetComponent<Army>().sight);
         }
         nodeManager.GetComponent<NodeManager>().HideStillHiddenNodes();
+    }
+
+    public void UpdateEffigies() {
+        int effigyCount = 0;
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
+            if (army.GetComponent<Army>().effigy != null) effigyCount++;
+        }
+        for (int i = 0; i < ownedNodes.Count; i++) {
+            GameObject node = ownedNodes[i];
+            if (node.GetComponent<Node>().effigy != null) effigyCount++;
+        }
+        if (effigyCount >= 3) {
+            int randInt = Random.Range(0, ownedNodes.Count);
+            while (ownedNodes[randInt].GetComponent<Node>().occupied) randInt = Random.Range(0, ownedNodes.Count);
+            GameObject node = ownedNodes[randInt];
+            BuyProphet(node);
+            GameObject godArmy = node.GetComponent<Node>().occupant;
+            godArmy.GetComponent<Army>().frontRow[0] = CreateGodUnit();
+        }
+    }
+
+
+    public MapUnit CreateGodUnit() {
+        MapUnit unit = new MapUnit("God", faction, "Prelate");
+        unit.maxDamage = 200;
+        unit.maxHealth = 10000;
+        unit.power = 1;
+        unit.attackSpeed = 30;
+    
+        return unit;
     }
 
     public List<Faction> GetDissectedFactions() {

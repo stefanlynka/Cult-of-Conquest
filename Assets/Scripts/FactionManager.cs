@@ -233,13 +233,15 @@ public class FactionManager : MonoBehaviour{
         army.GetComponent<Army>().owner.GetComponent<Player>().money += rewardMoney;
     }
     public void BalanceAdvantage(GameObject samataArmy, GameObject otherArmy) {
-        float vulnerability = 1.0f;
-        float overPoweredRatio = (samataArmy.GetComponent<Army>().GetPower() / otherArmy.GetComponent<Army>().GetPower()) - 1;
-        if (overPoweredRatio > 0) {
-            vulnerability += overPoweredRatio * 0.75f;
-        }
-        for (int i = 0; i < samataArmy.GetComponent<Army>().units.Count; i++) {
-            samataArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+        if (samataArmy.GetComponent<Army>() && otherArmy.GetComponent<Army>()) {
+            float vulnerability = 1.0f;
+            float overPoweredRatio = (samataArmy.GetComponent<Army>().GetPower() / otherArmy.GetComponent<Army>().GetPower()) - 1;
+            if (overPoweredRatio > 0) {
+                vulnerability += overPoweredRatio * 0.75f;
+            }
+            for (int i = 0; i < samataArmy.GetComponent<Army>().units.Count; i++) {
+                samataArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+            }
         }
     }
     public void PunishDisadvantage(GameObject noumenonArmy, GameObject otherArmy) {
@@ -279,7 +281,7 @@ public class FactionManager : MonoBehaviour{
         }
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
     }
-    public void BoostAttacker(GameObject noumenonArmy, GameObject defendingArmy) {
+    public void BoostAttacker(GameObject noumenonArmy, GameObject defendingNode) {
         Upgrade attackUpgrade = noumenonArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Strike First"];
         float damageMod = attackUpgrade.currentLevel * 0.2f;
         noumenonArmy.GetComponent<Army>().AddToDamageMod(damageMod);
@@ -291,8 +293,8 @@ public class FactionManager : MonoBehaviour{
             node.GetComponent<Node>().concealment = 1 + player.GetComponent<Player>().upgrades["Cover Your Tracks"].currentLevel;
         }
     }
-    public void AgainstStrongest(GameObject samataArmy, GameObject otherArmy) {
-        if (otherArmy.GetComponent<Army>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
+    public void AgainstStrongest(GameObject samataArmy, GameObject defendingNode) {
+        if (defendingNode.GetComponent<Node>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
             samataArmy.GetComponent<Army>().AddToDamageMod(0.1f * samataArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Against Tyranny"].currentLevel);
             print("against the strongest");
         }

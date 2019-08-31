@@ -24,6 +24,7 @@ public class Army : MonoBehaviour
     public Temple conqueredTemple;
     public Altar conqueredAltar;
     public int precombatPower;
+    public Effigy effigy;
 
     // Start is called before the first frame update
     void Start(){
@@ -97,6 +98,22 @@ public class Army : MonoBehaviour
 
     public void EnterNode(GameObject targetNode) {
         if (targetNode.GetComponent<Node>().occupiable) {
+
+            if (targetNode.GetComponent<Node>().faction != faction) {
+                owner.GetComponent<Player>().Invade(gameObject, targetNode);
+            }
+            else {
+                if (targetNode.GetComponent<Node>().occupied) {
+                    GameObject otherArmy = targetNode.GetComponent<Node>().occupant;
+                    SwitchNodes(currentNode, otherArmy, targetNode);
+                }
+                else {
+                    MoveToNode(targetNode);
+                }
+            }
+
+
+            /*
             if (!targetNode.GetComponent<Node>().occupied) {
                 //print("moving in freely");
                 MoveToNode(targetNode);
@@ -112,6 +129,10 @@ public class Army : MonoBehaviour
                     SwitchNodes(currentNode, otherArmy, targetNode);
                 }
             }
+        }
+        */
+
+
         }
     }
 
@@ -215,7 +236,7 @@ public class Army : MonoBehaviour
             power += units[i].power;
             //print("found some power: " + unit.power);
         }
-
+        //power += currentNode.GetComponent<Node>().GetPower();
         return power;
     }
 

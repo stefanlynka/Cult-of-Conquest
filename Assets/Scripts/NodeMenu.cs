@@ -8,7 +8,7 @@ public class NodeMenu : MonoBehaviour
     public static GameObject currentArmy;
     GameObject[] backRowSpaces = new GameObject[5];
     GameObject[] frontRowSpaces = new GameObject[5];
-    GameObject prophetMenu, buyProphetButton;
+    GameObject prophetMenu, buyProphetButton, locationMenu, effigyNodeMenu, effigyArmyMenu, effigyNodeSprite, effigyArmySprite;
 
     public bool open = false;
 
@@ -17,6 +17,11 @@ public class NodeMenu : MonoBehaviour
         FindUnitSpaces();
         prophetMenu = Tools.GetChildNamed(gameObject, "Prophet Menu");
         buyProphetButton = Tools.GetChildNamed(prophetMenu, "Buy Prophet Button");
+        locationMenu = Tools.GetChildNamed(gameObject, "Location Menu");
+        effigyNodeMenu = Tools.GetChildNamed(locationMenu, "Effigy in Node Label");
+        effigyArmyMenu = Tools.GetChildNamed(locationMenu, "Effigy in Transit Label");
+        effigyNodeSprite = Tools.GetChildNamed(effigyNodeMenu, "Effigy Sprite");
+        effigyArmySprite = Tools.GetChildNamed(effigyArmyMenu, "Effigy Sprite");
     }
 
     // Update is called once per frame
@@ -33,6 +38,7 @@ public class NodeMenu : MonoBehaviour
         if (currentArmy) LoadArmy();
         LoadAltar();
         LoadTemple();
+        LoadEffigy();
         open = true;
         ProphetMenuCheck();
         Player.menuOpen = 1;
@@ -43,6 +49,7 @@ public class NodeMenu : MonoBehaviour
         CleanUnitSpaces();
         open = false;
         Player.menuOpen = 0;
+        currentNode = null;
     }
 
     public void LoadArmy() {
@@ -81,7 +88,6 @@ public class NodeMenu : MonoBehaviour
         //print("Temple Loading");
         if (currentNode.GetComponent<Node>().temple != null) {
             Temple temple = currentNode.GetComponent<Node>().temple;
-            GameObject locationMenu = Tools.GetChildNamed(gameObject, "Location Menu");
             GameObject templeSpace = Tools.GetChildNamed(locationMenu, "Temple Space");
             GameObject titleText = Tools.GetChildNamed(templeSpace, "Temple Title Text");
             GameObject templeSprite = Tools.GetChildNamed(templeSpace, "Temple Sprite");
@@ -91,6 +97,22 @@ public class NodeMenu : MonoBehaviour
             templeSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Temples/Temple of " + temple.portrait);
             descriptionText.GetComponent<TextMesh>().text = temple.description;
         }
+    }
+
+    public void LoadEffigy() {
+        if (currentNode.GetComponent<Node>().effigy != null) {
+            Faction effigyFaction = currentNode.GetComponent<Node>().effigy.faction;
+            effigyNodeSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + effigyFaction + "/Effigy/" + effigyFaction + " Effigy");
+        }
+        else effigyNodeSprite.GetComponent<SpriteRenderer>().sprite = null;
+        if (currentArmy && currentArmy.GetComponent<Army>().effigy != null) {
+            Faction effigyFaction = currentArmy.GetComponent<Army>().effigy.faction;
+            effigyArmySprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + effigyFaction + "/Effigy/" + effigyFaction + " Effigy");
+        }
+        else effigyArmySprite.GetComponent<SpriteRenderer>().sprite = null;
+
+
+
     }
 
     void FindUnitSpaces() {

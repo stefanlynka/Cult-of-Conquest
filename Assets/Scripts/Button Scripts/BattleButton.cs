@@ -10,7 +10,7 @@ public class BattleButton : MonoBehaviour{
 
     // Start is called before the first frame update
     void Start(){
-        battleMenu = transform.parent.transform.parent.transform.parent.gameObject;
+        battleMenu = transform.parent.transform.parent.gameObject;
     }
 
     // Update is called once per frame

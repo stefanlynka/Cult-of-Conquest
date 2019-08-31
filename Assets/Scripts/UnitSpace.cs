@@ -25,17 +25,19 @@ public class UnitSpace : MonoBehaviour
 
     private void OnMouseDown() {
         if (Player.menuOpen == 1) {
-            if (NodeMenu.currentNode.GetComponent<Node>().temple != null) {
-                if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assimilate") && Player.human.GetComponent<Player>().upgrades["Assimilate"].currentLevel >= 2) {
-                    print("temple faction: " + NodeMenu.currentNode.GetComponent<Node>().temple.faction);
-                    Player.human.GetComponent<Player>().unitBlueprints.Clear();
-                    GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().MakeUnits(NodeMenu.currentNode.GetComponent<Node>().temple.faction, Player.human);
-                    GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().AssignUnits(Player.human);
-                    print("Units getting updated");
+            if (NodeMenu.currentNode) {
+                if (NodeMenu.currentNode.GetComponent<Node>().temple != null) {
+                    if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assimilate") && Player.human.GetComponent<Player>().upgrades["Assimilate"].currentLevel >= 2) {
+                        print("temple faction: " + NodeMenu.currentNode.GetComponent<Node>().temple.faction);
+                        Player.human.GetComponent<Player>().unitBlueprints.Clear();
+                        GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().MakeUnits(NodeMenu.currentNode.GetComponent<Node>().temple.faction, Player.human);
+                        GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().AssignUnits(Player.human);
+                        print("Units getting updated");
+                    }
                 }
-            }
+
                 //print("occupied = " + NodeMenu.currentNode.GetComponent<Node>().occupied);
-                if (NodeMenu.currentNode.GetComponent<Node>().occupied) {
+                //if (Tools.GetChildNamed(gameObject, "Name Text").GetComponent<TextMesh>().text != "Temple") {
                 currentUnitSpace = gameObject;
                 currentUnitPos = new UnitPos(position, frontRow);
                 unitBuyingSpaces.GetComponent<UnitShopManager>().EnterMenu();

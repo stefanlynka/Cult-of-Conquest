@@ -94,6 +94,10 @@ public class Upgrade {
     }
 }
 
+public class Effigy {
+    public Faction faction;
+}
+
 
 
 // For Option

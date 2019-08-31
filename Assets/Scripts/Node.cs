@@ -32,8 +32,8 @@ public class Node : MonoBehaviour
     public int sight = 1;
     public int concealment = 1;
     public Ritual ritual;
+    public Effigy effigy;
 
-    public string effigy = "";
     public Temple temple;
     public Altar altar;
 
@@ -200,6 +200,8 @@ public class Node : MonoBehaviour
         if (homeBase != Faction.None) {
             difficulty = 4;
             faction = homeBase;
+            effigy = new Effigy();
+            effigy.faction = faction;
         }
         else if (faction == Faction.Independent) {
             GameObject army = new GameObject();
@@ -346,7 +348,7 @@ public class Node : MonoBehaviour
 
     public int GetPower() {
         int power = 0;
-        if (occupant != null)                                       power += occupant.GetComponent<Army>().GetPower();
+        //if (occupant != null)                                       power += occupant.GetComponent<Army>().GetPower();
         if (altar != null && altar.name == AltarName.Conflict)      power += 30;
         if (temple != null && temple.name == TempleName.Protection) power += 50;
 
