@@ -42,6 +42,7 @@ public class NodeMenu : MonoBehaviour
         open = true;
         ProphetMenuCheck();
         Player.menuOpen = 1;
+        if (currentArmy) print("Army Power: "+currentArmy.GetComponent<Army>().GetOffensivePower());
     }
 
     public void ExitMenu() {
@@ -53,7 +54,7 @@ public class NodeMenu : MonoBehaviour
     }
 
     public void LoadArmy() {
-        print("Loading Army");
+        //print("Loading Army");
         //print("current army:" + currentArmy);
         MapUnit[] backUnits = currentArmy.GetComponent<Army>().backRow;
         MapUnit[] frontUnits = currentArmy.GetComponent<Army>().frontRow;

@@ -51,6 +51,7 @@ public class BattleMenu : MonoBehaviour{
         EnableButtons();
         SetBackButton(false);
         Player.menuOpen = 1;
+        if (IsBattleOver()) BattleOver();
     }
     public void ExitMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(20, 0, -10));
@@ -146,11 +147,11 @@ public class BattleMenu : MonoBehaviour{
         if (defendArmy) defendArmy.GetComponent<Army>().PrebattleSetup();
         if (defendArmy) {
             attackingPlayer.GetComponent<Player>().factionTraits.Precombat(attackArmy, defendArmy);
-            defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendArmy, attackArmy);
+            if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendArmy, attackArmy);
         }
         else {
             attackingPlayer.GetComponent<Player>().factionTraits.Precombat(attackArmy, defendingNode);
-            defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendingNode, attackArmy);
+            if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendingNode, attackArmy);
         }
         attackingPlayer.GetComponent<Player>().factionTraits.PrecombatAttacker(attackArmy, defendArmy);
     }
@@ -164,12 +165,12 @@ public class BattleMenu : MonoBehaviour{
     void StartingCooldowns() {
         cooldowns = new List<Cooldown>();
         for (int i = 0; i < attackers.Count; i++) {
-            int rand = Random.Range(0, 200);
+            int rand = Random.Range(0, 100);
             Cooldown newCooldown = new Cooldown(rand, attackers[i], "attacker");
             cooldowns.Add(newCooldown);
         }
         for (int i = 0; i < defenders.Count; i++) {
-            int rand = Random.Range(0, 200);
+            int rand = Random.Range(0, 100);
             Cooldown newCooldown = new Cooldown(rand, defenders[i], "defender");
             cooldowns.Add(newCooldown);
         }
@@ -183,7 +184,7 @@ public class BattleMenu : MonoBehaviour{
 
     public void StartSimulation() {
         inSimulation = true;
-        timer = 0;
+        timer = -10;
 
     }
 
@@ -235,10 +236,14 @@ public class BattleMenu : MonoBehaviour{
             if (defendArmy) defendingUnitArmy = attackArmy;
         }
 
-        if (target != null) {
+        if (target != null && attacker != null) {
             if (target.currentShield > 0) target.currentShield--;
             else {
-                target.currentHealth -= (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
+                int damage = (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
+                target.currentHealth -= damage;
+                print("damage being done: " + damage);
+                //print("unit space "+attacker);
+                Tools.CreatePopup(attacker.unitSpace, "Attacks for " + damage, 40, Color.red, 90, 0.005f);
                 // If the unit dealing damage is on the attacking side, the defending army triggers "Take Damage"
                 if (defendArmy) defendingPlayer.GetComponent<Player>().factionTraits.TakeDamage(defendingUnitArmy, target);
             }
@@ -292,7 +297,7 @@ public class BattleMenu : MonoBehaviour{
 
         if (defendArmy) {
             defendArmy.GetComponent<Army>().ResetArmy();
-            defendingPlayer.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
+            if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
             if (attackers.Count == 0) defendingPlayer.GetComponent<Player>().factionTraits.WonBattle(defendArmy);
         }
         attackArmy.GetComponent<Army>().ResetArmy();
@@ -324,7 +329,7 @@ public class BattleMenu : MonoBehaviour{
 
     public void AttackerWins() {
         AttackerClaimsEffigy();
-        defendingPlayer.GetComponent<Player>().RemoveNode(battleNode);
+        if (defendingPlayer) defendingPlayer.GetComponent<Player>().RemoveNode(battleNode);
         if (defendArmy && defendArmy.GetComponent<Army>().faction != Faction.Independent) defendArmy.GetComponent<Army>().Defeated();
 
         attackingPlayer.GetComponent<Player>().AddNode(battleNode);

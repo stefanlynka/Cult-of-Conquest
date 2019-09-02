@@ -312,6 +312,7 @@ public class Player : MonoBehaviour
         factionTraits.StartTurn(gameObject);
         DisplayFog();
         UpdateEffigies();
+        if (GetComponent<AI>()) GetComponent<AI>().StartTurn();
         //print("Number 6 = " + factionTraits.UnitFunction(3));
     }
 

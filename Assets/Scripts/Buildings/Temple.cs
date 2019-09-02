@@ -21,8 +21,9 @@ public class Temple {
         unit = new MapUnit("Temple", Faction.None, "");
         unit.maxHealth = 200;
         unit.currentHealth = 200;
-        unit.maxDamage = 50;
-        unit.attackSpeed = 100;
+        unit.maxDamage = 30;
+        unit.attackSpeed = 300;
+        unit.Reset();
     }
 
     public Temple DeepCopy() {

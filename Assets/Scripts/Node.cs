@@ -138,14 +138,14 @@ public class Node : MonoBehaviour
 
     public GameObject GetGreatestThreat() {
         GameObject biggestThreat = null;
-        int threat = 0;
+        float threat = 0;
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
 
             // If the neighbouring node is occupied, is owned by another faction, and is the new biggest threat
-            if (neighbour.GetComponent<Node>().faction != faction && threat < neighbour.GetComponent<Node>().GetPower()) {
+            if (neighbour.GetComponent<Node>().faction != faction && threat < neighbour.GetComponent<Node>().GetDefensivePower()) {
                 biggestThreat = neighbour;
-                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().GetPower());
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().GetDefensivePower());
             }
             /*
             if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction && neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower() > threat) {
@@ -172,31 +172,24 @@ public class Node : MonoBehaviour
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         if (homeBase == Faction.None) {
             Sprite newSprite = renderer.sprite;
-            switch (faction) {
-                case Faction.Carnot:
-                    newSprite = Resources.Load<Sprite>("Nodes/CarnotNode");
-                    break;
-                case Faction.Dukkha:
-                    newSprite = Resources.Load<Sprite>("Nodes/DukkhaNode");
-                    break;
-                case Faction.Samata:
-                    newSprite = Resources.Load<Sprite>("Nodes/SamataNode");
-                    break;
-                case Faction.Noumenon:
-                    newSprite = Resources.Load<Sprite>("Nodes/NoumenonNode");
-                    break;
-                case Faction.Paratrophs:
-                    newSprite = Resources.Load<Sprite>("Nodes/ParatrophNode");
-                    break;
-                case Faction.Unmar:
-                    newSprite = Resources.Load<Sprite>("Nodes/UnmarNode");
-                    break;
-            }
+
+            print("Nodes / "+faction.ToString());
+            if (neighbourDown && neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/"+faction.ToString()); 
+            else if (!neighbourDown && neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " B");
+            else if (neighbourDown && !neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " R");
+            else if (!neighbourDown && !neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " BR");
+
+            renderer.sprite = newSprite;
+        }
+        else {
+            Sprite newSprite = Resources.Load<Sprite>("Nodes/Home Node " + faction.ToString());
             renderer.sprite = newSprite;
         }
     }
 
     private void Setup() {
+        //temple = new Temple(TempleName.None, 0, Faction.None);
+        //altar = new Altar(AltarName.None, 0);
         if (homeBase != Faction.None) {
             difficulty = 4;
             faction = homeBase;
@@ -221,6 +214,11 @@ public class Node : MonoBehaviour
                     occupant.GetComponent<Army>().AddUnit(0, true, peon);
                     occupant.GetComponent<Army>().AddUnit(1, true, peon);
                     occupant.GetComponent<Army>().AddUnit(2, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(3, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(0, false, peon);
+                    //occupant.GetComponent<Army>().AddUnit(1, false, peon);
+                    //occupant.GetComponent<Army>().AddUnit(2, false, peon);
+                    //occupant.GetComponent<Army>().AddUnit(3, false, peon);
                     break;
                 case 2:
                     occupant.GetComponent<Army>().AddUnit(0, true, peon);
@@ -248,7 +246,7 @@ public class Node : MonoBehaviour
         else if (faction != Faction.Independent && occupant != null) {
             //owner = occupant.GetComponent<Army>().owner;
         }
-        UpdateSprite();
+        
     }
 
     public void BuildAltar(Altar newAltar) {
@@ -277,8 +275,8 @@ public class Node : MonoBehaviour
     MapUnit MakeNeutralUnit(string unitType) {
         MapUnit unit = new MapUnit(unitType, Faction.Independent, unitType);
         if (unitType == "peon") {
-            unit.SetHealth(50);
-            unit.maxDamage = 10;
+            unit.SetHealth(25);
+            unit.maxDamage = 5;
             unit.attackRange = 1;
             unit.attackSpeed = 60;
             unit.moneyCost = 5;
@@ -286,28 +284,28 @@ public class Node : MonoBehaviour
             unit.power = 10;
         }
         if (unitType == "acolyte") {
-            unit.SetHealth(100);
-            unit.maxDamage = 20;
+            unit.SetHealth(40);
+            unit.maxDamage = 9;
             unit.attackRange = 1;
-            unit.attackSpeed = 100;
+            unit.attackSpeed = 120;
             unit.moneyCost = 10;
             unit.zealCost = 15;
             unit.power = 15;
         }
         if (unitType == "shaman") {
-            unit.SetHealth(100);
-            unit.maxDamage = 10;
+            unit.SetHealth(50);
+            unit.maxDamage = 12;
             unit.attackRange = 3;
-            unit.attackSpeed = 120;
+            unit.attackSpeed = 180;
             unit.moneyCost = 10;
             unit.zealCost = 1;
             unit.power = 15;
         }
         if (unitType == "prelate") {
-            unit.SetHealth(200);
-            unit.maxDamage = 40;
+            unit.SetHealth(60);
+            unit.maxDamage = 20;
             unit.attackRange = 2;
-            unit.attackSpeed = 120;
+            unit.attackSpeed = 240;
             unit.moneyCost = 20;
             unit.zealCost = 0;
             unit.power = 25;
@@ -316,12 +314,12 @@ public class Node : MonoBehaviour
         return unit;
     }
 
-    public int GetThreatToNode() {
-        int threat = 0;
+    public float GetThreatToNode() {
+        float threat = 0;
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
             if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction) {
-                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetOffensivePower());
             }
         }
         return threat;
@@ -345,13 +343,31 @@ public class Node : MonoBehaviour
         }
         return 1 - friendlyNeighbours / neighbours.Count;
     }
-
+    /*
     public int GetPower() {
         int power = 0;
         //if (occupant != null)                                       power += occupant.GetComponent<Army>().GetPower();
         if (altar != null && altar.name == AltarName.Conflict)      power += 30;
         if (temple != null && temple.name == TempleName.Protection) power += 50;
 
+        return power;
+    }
+    */
+    public float GetDefensivePower() {
+        if (occupant != null) return occupant.GetComponent<Army>().GetDefensivePower();
+        else return GetBuildingPower();
+    }
+    public float GetBuildingPower() {
+        float totalHealth = 0;
+        float power = 0;
+        if (temple != null && temple.name == TempleName.Protection) {
+            totalHealth += temple.unit.GetHealth();
+            power += temple.unit.GetDPS() * totalHealth;
+        }
+        if (altar != null && altar.name == AltarName.Conflict) {
+            totalHealth += altar.unit.GetHealth();
+            power += altar.unit.GetDPS() * totalHealth;
+        }
         return power;
     }
 
@@ -367,7 +383,6 @@ public class Node : MonoBehaviour
     public void SetFog() {
         Tools.GetChildNamed(gameObject, "Fog Node").SetActive(hidden);
     }
-
 }
 
 /*

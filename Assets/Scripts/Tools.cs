@@ -86,7 +86,12 @@ public class Tools {
     public static void CreatePopup(GameObject origin, string text, int textSize, Color colour) {
         GameObject popup = new GameObject();
         popup.AddComponent<Popup>();
-        popup.GetComponent<Popup>().Setup(origin, text, textSize, colour);
+        popup.GetComponent<Popup>().Setup(origin.transform.position, text, textSize, colour);
+    }
+    public static void CreatePopup(GameObject origin, string text, int textSize, Color colour, int timer, float speed) {
+        GameObject popup = new GameObject();
+        popup.AddComponent<Popup>();
+        popup.GetComponent<Popup>().Setup(origin.transform.position, text, textSize, colour, timer, speed);
     }
     public static Faction GetRitualFaction(Ritual ritual) {
         GameObject players = GameObject.Find("/Players");

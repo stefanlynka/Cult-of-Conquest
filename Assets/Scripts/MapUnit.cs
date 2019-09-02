@@ -6,7 +6,8 @@ public class MapUnit
 {
     public string name;
     public Faction faction = Faction.Independent;
-    public string portraitName = "zergling";
+    public string portraitName = "peon";
+    public GameObject unitSpace;
 
     public int maxHealth = 100;
     public int currentHealth;
@@ -57,7 +58,7 @@ public class MapUnit
 
     public void Reset() {
         currentShield = maxShield;
-        currentHealth = maxHealth;
+        //currentHealth = maxHealth;
         damageMod = 1.0f;
         vulnerableMod = 1.0f;
         currentDamage = maxDamage;
@@ -82,5 +83,15 @@ public class MapUnit
         copy.currentShield = currentShield;
         copy.marred = marred;
         return copy;
+    }
+
+    public float GetPower() {
+        return (currentHealth + currentShield*10) * currentDamage / attackSpeed;
+    }
+    public float GetDPS() {
+        return (float) maxDamage / attackSpeed;
+    }
+    public float GetHealth() {
+        return (currentHealth + maxShield * 10);
     }
 }

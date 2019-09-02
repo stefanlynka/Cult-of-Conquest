@@ -36,6 +36,7 @@ public class NodeManager : MonoBehaviour
         for (int i = 0; i < nodes.Count; i++) {
             GameObject node = nodes[i];
             SetNodeNeighbours(node);
+            node.GetComponent<Node>().UpdateSprite();
         }
     }
 

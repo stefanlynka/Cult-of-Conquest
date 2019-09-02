@@ -221,21 +221,21 @@ public class FactionManager : MonoBehaviour{
         player.GetComponent<Player>().zeal += score;
     }
     public void RewardsForFairness(GameObject army) {
-        int allyLostPower = army.GetComponent<Army>().precombatPower - army.GetComponent<Army>().GetPower();
+        float allyLostPower = army.GetComponent<Army>().precombatPower - army.GetComponent<Army>().GetOffensivePower();
         List<MapUnit> defeatedEnemies = army.GetComponent<Army>().defeatedEnemies;
         int enemyLostPower = 0;
         for (int i = 0; i < defeatedEnemies.Count; i++) {
             enemyLostPower += defeatedEnemies[i].power;
         }
-        int minLostPower = Mathf.Min(allyLostPower,enemyLostPower);
-        int rewardMoney = minLostPower / 2;
+        float minLostPower = Mathf.Min(allyLostPower,enemyLostPower);
+        int rewardMoney = (int)minLostPower / 2;
         rewardMoney *= (int)(1 + (0.15f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Reap Just Rewards"].currentLevel));
         army.GetComponent<Army>().owner.GetComponent<Player>().money += rewardMoney;
     }
     public void BalanceAdvantage(GameObject samataArmy, GameObject otherArmy) {
         if (samataArmy.GetComponent<Army>() && otherArmy.GetComponent<Army>()) {
             float vulnerability = 1.0f;
-            float overPoweredRatio = (samataArmy.GetComponent<Army>().GetPower() / otherArmy.GetComponent<Army>().GetPower()) - 1;
+            float overPoweredRatio = (samataArmy.GetComponent<Army>().GetOffensivePower() / otherArmy.GetComponent<Army>().GetOffensivePower()) - 1;
             if (overPoweredRatio > 0) {
                 vulnerability += overPoweredRatio * 0.75f;
             }
@@ -246,7 +246,7 @@ public class FactionManager : MonoBehaviour{
     }
     public void PunishDisadvantage(GameObject noumenonArmy, GameObject otherArmy) {
         float vulnerability = 1.0f;
-        float overPoweredRatio = (otherArmy.GetComponent<Army>().GetPower() / noumenonArmy.GetComponent<Army>().GetPower()) - 1;
+        float overPoweredRatio = (otherArmy.GetComponent<Army>().GetOffensivePower() / noumenonArmy.GetComponent<Army>().GetOffensivePower()) - 1;
         if (overPoweredRatio > 0) {
             vulnerability += overPoweredRatio * 0.75f;
         }

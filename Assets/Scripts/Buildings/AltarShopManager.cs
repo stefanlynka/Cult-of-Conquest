@@ -57,7 +57,7 @@ public class AltarShopManager : MonoBehaviour{
                 MakeAltar();
                 break;
             case Faction.Unmar:
-                MakeAltarUnmar();
+                MakeAltar();
                 break;
             case Faction.Samata:
                 MakeAltar();
@@ -69,24 +69,24 @@ public class AltarShopManager : MonoBehaviour{
     }
 
     void MakeAltar() {
-        Altar harvestAltar = new Altar(AltarName.Harvest, 40);
+        Altar harvestAltar = new Altar(AltarName.Harvest, 20);
         harvestAltar.ability = "";
         harvestAltar.description = "Increase this hex's\nincome by 40%";
         altarBuySpaces[0].GetComponent<AltarShopSpace>().SetAltar(harvestAltar);
 
-        Altar devotionAltar = new Altar(AltarName.Devotion, 50);
+        Altar devotionAltar = new Altar(AltarName.Devotion, 20);
         devotionAltar.ability = "";
         devotionAltar.description = "Generate 1 zeal\neach turn";
         altarBuySpaces[1].GetComponent<AltarShopSpace>().SetAltar(devotionAltar);
 
-        Altar conflictAltar = new Altar(AltarName.Conflict, 60);
+        Altar conflictAltar = new Altar(AltarName.Conflict, 20);
         conflictAltar.ability = "";
-        conflictAltar.description = "Increase this hex's\ndefense by 20%";
+        conflictAltar.description = "Build a powerful\ndefensive building";
         altarBuySpaces[2].GetComponent<AltarShopSpace>().SetAltar(conflictAltar);
 
-        Altar fateAltar = new Altar(AltarName.Fate, 70);
+        Altar fateAltar = new Altar(AltarName.Fate, 20);
         fateAltar.ability = "";
-        fateAltar.description = "Increase influence in\ndetermining Oracle";
+        fateAltar.description = "Increase influence in\ndetermining Oracle (unimplemented)";
         altarBuySpaces[3].GetComponent<AltarShopSpace>().SetAltar(fateAltar);
     }
 

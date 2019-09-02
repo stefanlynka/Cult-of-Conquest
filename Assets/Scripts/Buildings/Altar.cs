@@ -17,10 +17,11 @@ public class Altar{
         cost = newCost;
         portrait = newName.ToString();
         unit = new MapUnit("Altar", Faction.None, "");
-        unit.maxHealth = 100;
-        unit.currentHealth = 100;
+        unit.maxHealth = 150;
+        unit.currentHealth = 150;
         unit.maxDamage = 10;
-        unit.attackSpeed = 20;
+        unit.attackSpeed = 60;
+        unit.Reset();
     }
 
     public Altar DeepCopy() {

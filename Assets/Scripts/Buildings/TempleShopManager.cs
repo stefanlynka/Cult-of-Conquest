@@ -70,22 +70,22 @@ public class TempleShopManager : MonoBehaviour{
     }
 
     void MakeTemple(Faction faction) {
-        Temple armamentsTemple = new Temple(TempleName.Armaments, 40, faction);
+        Temple armamentsTemple = new Temple(TempleName.Armaments, 30, faction);
         armamentsTemple.ability = "";
         armamentsTemple.description = "Decrease unit\ncost by 40%";
         templeBuySpaces[0].GetComponent<TempleShopSpace>().SetTemple(armamentsTemple);
 
-        Temple traditionTemple = new Temple(TempleName.Tradition, 50, faction);
+        Temple traditionTemple = new Temple(TempleName.Tradition, 30, faction);
         traditionTemple.ability = "";
-        traditionTemple.description = "Decrease ritual\npreparation time";
+        traditionTemple.description = "Decrease ritual\ncost at this node";
         templeBuySpaces[1].GetComponent<TempleShopSpace>().SetTemple(traditionTemple);
 
-        Temple protectionTemple = new Temple(TempleName.Protection, 60, faction);
+        Temple protectionTemple = new Temple(TempleName.Protection, 30, faction);
         protectionTemple.ability = "";
-        protectionTemple.description = "Increase this hex's\ndefense by 20%";
+        protectionTemple.description = "Build a powerful\ndefensive building";
         templeBuySpaces[2].GetComponent<TempleShopSpace>().SetTemple(protectionTemple);
 
-        Temple originTemple = new Temple(TempleName.Origin, 70, faction);
+        Temple originTemple = new Temple(TempleName.Origin, 50, faction);
         originTemple.ability = "";
         originTemple.description = "Allow creation\nof Prophets";
         templeBuySpaces[3].GetComponent<TempleShopSpace>().SetTemple(originTemple);

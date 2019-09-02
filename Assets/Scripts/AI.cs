@@ -10,8 +10,9 @@ public class AI : MonoBehaviour{
     GameObject unitShop;
 
     Faction faction;
-    public int turnStage = 9;
+    public bool finished = false;
     public bool readyToExecute = true;
+    bool nothingToDo;
 
 
     // Start is called before the first frame update
@@ -21,19 +22,13 @@ public class AI : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
+        //print("Ready to Execute = :"+readyToExecute);
         if (TurnManager.currentPlayer == gameObject){
-            if (turnStage == 0) {
-                CompileOptionsStage();
-            }
-            if (turnStage == 1) {
-                ExecutionStage();
-            }
-            if (turnStage == 9 && readyToExecute) {
+
+            if (readyToExecute && !finished) {
                 RunAI();
             }
-        }
-        else if (TurnManager.currentPlayer != gameObject) {
-            turnStage = 9;
+            else if (finished) print("All done folks");
         }
     }
 
@@ -42,10 +37,10 @@ public class AI : MonoBehaviour{
         ownedNodes = GetComponent<Player>().ownedNodes;
         faction = GetComponent<Player>().faction;
         //unitShop = GameObject.Find("")
-        turnStage = 9;
     }
 
     void RunAI() {
+        //nothingToDo = true;
         BuyUnits();
         for (int i = 0; i < armies.Count; i++) {
             GameObject currentArmy = armies[i];
@@ -60,37 +55,26 @@ public class AI : MonoBehaviour{
                 return;
             }
         }
+        //if (nothingToDo) turnStage = 10;
     }
 
-    // 
-    void CompileOptionsStage() {
-        BuyUnits();
-
-        List<GameObject> nodesByThreat = ownedNodes;
-        nodesByThreat.Sort(Tools.SortByThreat);
-        MoveToThreatened(nodesByThreat);
-
-        AttackLargestThreat();
-        turnStage = 1;
+    public void StartTurn() {
+        finished = false;
+        readyToExecute = true;
     }
-    void ExecutionStage() {
-        if (intentQueue.Count != 0 && readyToExecute) {
-            ExecuteIntent();
-        }
 
-        if (intentQueue.Count == 0) turnStage = 2;
-    }
+
 
     void BuyUnits() {
         //print("army count: "+armies.Count);
         bool moneyToSpend = true;
         while (moneyToSpend) {
             //print("has " + GetComponent<Player>().money + " money to spend");
-            int greatestPowerDifference = 9999;
+            float greatestPowerDifference = 9999;
             GameObject weakestArmy = armies[0];
             for (int i = 0; i < armies.Count; i++) {
                 GameObject armyNode = armies[i].GetComponent<Army>().currentNode;
-                int powerDifference = armies[i].GetComponent<Army>().GetPower() - armyNode.GetComponent<Node>().GetThreatToNode();
+                float powerDifference = armies[i].GetComponent<Army>().GetOffensivePower() - armyNode.GetComponent<Node>().GetThreatToNode();
                 if (powerDifference < greatestPowerDifference) {
                     weakestArmy = armies[i];
                     greatestPowerDifference = powerDifference;
@@ -108,6 +92,7 @@ public class AI : MonoBehaviour{
     }
 
     bool MoveToThreatenedNode(GameObject army) {
+        //print("checking possible threats");
         if (army.GetComponent<Army>().movesLeft <= 0) return false;
         List<GameObject> nodesByThreat = ownedNodes;
         nodesByThreat.Sort(Tools.SortByThreat);
@@ -182,6 +167,7 @@ public class AI : MonoBehaviour{
     }
 
     bool AttackNearbyThreat(GameObject army) {
+        //print("checking attacks");
         if (army.GetComponent<Army>().movesLeft <= 0) return false;
         GameObject armyNode = army.GetComponent<Army>().currentNode;
         GameObject target = armyNode.GetComponent<Node>().GetGreatestThreat();
@@ -198,7 +184,9 @@ public class AI : MonoBehaviour{
     }
 
     bool ShouldAttack(GameObject attackingArmy, GameObject defendingNode) {
-        if (attackingArmy.GetComponent<Army>().GetPower() >= 1.2 * defendingNode.GetComponent<Node>().GetPower()) {
+        print("attack power: " + attackingArmy.GetComponent<Army>().GetOffensivePower());
+        print("defend power: " + defendingNode.GetComponent<Node>().GetDefensivePower());
+        if (attackingArmy.GetComponent<Army>().GetOffensivePower() >= 1.2 * defendingNode.GetComponent<Node>().GetDefensivePower()) {
             return true;
         }
         return false;
@@ -233,13 +221,13 @@ public class AI : MonoBehaviour{
         return nodes;
     }
 
-    int ThreatToNode(GameObject node) {
-        int threat = 0;
+    float ThreatToNode(GameObject node) {
+        float threat = 0;
         List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
             if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction) {
-                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetOffensivePower());
             }
         }
         return threat;
@@ -251,9 +239,11 @@ public class AI : MonoBehaviour{
         Intent intent = intentQueue[0];
         switch (intent.type) {
             case "Attack":
+                print("execute attack");
                 GetComponent<Player>().attackNode(intent.army, intent.node);
                 break;
             case "Move":
+                print("execute move");
                 GetComponent<Player>().attackNode(intent.army, intent.node);
                 break;
         }
@@ -272,6 +262,8 @@ public class AI : MonoBehaviour{
         intent.node = node;
         intentQueue.Add(intent);
     }
+
+    // Deprecated
     /*
     GameObject GetMostThreatenedNeighbour(GameObject startNode, int range) {
         GameObject mostThreatened = startNode;
@@ -285,6 +277,25 @@ public class AI : MonoBehaviour{
             }
         }
     }
-    */
     
+    void CompileOptionsStage() {
+        print("are you even alive? 1");
+        BuyUnits();
+
+        List<GameObject> nodesByThreat = ownedNodes;
+        nodesByThreat.Sort(Tools.SortByThreat);
+        MoveToThreatened(nodesByThreat);
+
+        AttackLargestThreat();
+        turnStage = 1;
+    }
+    void ExecutionStage() {
+        print("are you even alive? 2");
+        if (intentQueue.Count != 0 && readyToExecute) {
+            ExecuteIntent();
+        }
+
+        if (intentQueue.Count == 0) turnStage = 2;
+    }
+    */
 }

@@ -60,12 +60,26 @@ public class UnitShopSpace : MonoBehaviour
     }
     public void BuyUnit(GameObject army, UnitPos unitPos) {
         //print("buying unit");
-        army.GetComponent<Army>().BuyUnit(unitPos, unit);
+        MapUnit unitToBuy = unit.DeepCopy();
+        if (NodeMenu.currentNode.GetComponent<Node>().temple != null && NodeMenu.currentNode.GetComponent<Node>().temple.name == TempleName.Armaments) {
+            unitToBuy.moneyCost = (int)(unitToBuy.moneyCost * 0.6f);
+        }
+        army.GetComponent<Army>().BuyUnit(unitPos, unitToBuy);
         LeaveMenu();
     }
     public void LeaveMenu() {
         nodeMenu.GetComponent<NodeMenu>().LoadArmy();
         unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
         Player.menuOpen = 1;
+    }
+
+    public void UpdateUnit() {
+        portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + unit.faction + "/Portrait/" + unit.name);
+        int cost = unit.moneyCost;
+        if (NodeMenu.currentNode.GetComponent<Node>().temple.name == TempleName.Armaments) cost = (int)(cost * 0.6f);
+        moneyCost.GetComponent<TextMesh>().text = unit.moneyCost.ToString();
+        zealCost.GetComponent<TextMesh>().text = unit.zealCost.ToString();
+        unitName.GetComponent<TextMesh>().text = unit.name;
+        unitPower.GetComponent<TextMesh>().text = unit.power.ToString();
     }
 }
