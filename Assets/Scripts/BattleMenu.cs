@@ -57,6 +57,8 @@ public class BattleMenu : MonoBehaviour{
         GetComponent<Panner>().SetTarget(new Vector3(20, 0, -10));
         Player.menuOpen = 0;
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+        Army.readyToMove = true;
+        print("LEAVE MENU, ARMY READY");
         EnableButtons();
     }
 
@@ -241,7 +243,7 @@ public class BattleMenu : MonoBehaviour{
             else {
                 int damage = (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
                 target.currentHealth -= damage;
-                print("damage being done: " + damage);
+
                 //print("unit space "+attacker);
                 Tools.CreatePopup(attacker.unitSpace, "Attacks for " + damage, 40, Color.red, 90, 0.005f);
                 // If the unit dealing damage is on the attacking side, the defending army triggers "Take Damage"

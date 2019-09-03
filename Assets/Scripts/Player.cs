@@ -203,11 +203,20 @@ public class Player : MonoBehaviour
     }
 
     public void attackNode(GameObject army, GameObject node) {
-        army.GetComponent<Army>().movesLeft--;
-
+        print("Army: " + army.name + " aims at: " + node.name);
+        print("This cost a move");
+        if (army.GetComponent<Army>().currentNode == node) print("What the fuck");
+        List<GameObject> moveList = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetPathTo(node);
+        moveList.RemoveAt(0);
+        for (int i = 0; i< moveList.Count; i++) {
+            army.GetComponent<Army>().OrderToEnterNode(moveList[i]);
+            army.GetComponent<Army>().movesLeft--;
+        }
+        /*
         GameObject finalNode = node;
         // If army isn't next to target, attack one step closer until adjacent
-        while (!army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(node) && army.GetComponent<Army>().currentNode != node) {
+        if (!army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(node) && army.GetComponent<Army>().currentNode != node) {
+            print("extra attacks necessary");
             //print("not adjacent to target yet");
             List<GameObject> moveList = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetPathTo(node);
             moveList.RemoveAt(0);
@@ -217,9 +226,11 @@ public class Player : MonoBehaviour
         // If army is next to target, go there        
         if (army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours.Contains(finalNode)) {
             //print("adjacent to target");
-            army.GetComponent<Army>().EnterNode(finalNode);
+            army.GetComponent<Army>().OrderToEnterNode(finalNode);
+            //army.GetComponent<Army>().EnterNode(finalNode);
             //army.GetComponent<Army>().movesLeft -= 1;
         }
+        */
     }
 
 

@@ -87,17 +87,18 @@ public class Node : MonoBehaviour
             if (goodPath != null) return goodPath;
             depth++;
             if (depth > 8) {
-                //print("we couldn't find it");
+                print("we couldn't find it");
                 return null;
             }
         }
+        print("end of the line");
         return null;
     }
     // Recursive path search used in GetPathTo()
     List<GameObject> ExtendPathToNeighbours(GameObject targetNode, List<GameObject> visited, int currentDepth, Faction player) {
         visited.Add(gameObject);
         if (gameObject == targetNode) {
-            //print("found the one");
+            print("found the one");
             return visited;
         }
         if (currentDepth > 0) {
@@ -105,8 +106,11 @@ public class Node : MonoBehaviour
             for (int i = 0; i < neighbours.Count; i++) {
                 GameObject neighbour = neighbours[i];
                 List<GameObject> goodPath = new List<GameObject>();
-                if (neighbour.GetComponent<Node>().faction == player && !visited.Contains(neighbour)) {
+                print("let's ask a neighbour");
+                // if (neighbour.GetComponent<Node>().faction == player && !visited.Contains(neighbour)) { //For only checking friendlies
+                if (!visited.Contains(neighbour)) {
                     List<GameObject> deepCopyVisited = Tools.DeepCopyGameObjectList(visited);
+                    print("checking with a neighbour");
                     goodPath = neighbour.GetComponent<Node>().ExtendPathToNeighbours(targetNode, deepCopyVisited, currentDepth, player);
                     if (goodPath != null) {
                         visited.Insert(0,gameObject);
@@ -143,7 +147,7 @@ public class Node : MonoBehaviour
             GameObject neighbour = neighbours[i];
 
             // If the neighbouring node is occupied, is owned by another faction, and is the new biggest threat
-            if (neighbour.GetComponent<Node>().faction != faction && threat < neighbour.GetComponent<Node>().GetDefensivePower()) {
+            if (neighbour.GetComponent<Node>().faction != faction && threat <= neighbour.GetComponent<Node>().GetDefensivePower()) {
                 biggestThreat = neighbour;
                 threat = Mathf.Max(threat, neighbour.GetComponent<Node>().GetDefensivePower());
             }
@@ -173,7 +177,7 @@ public class Node : MonoBehaviour
         if (homeBase == Faction.None) {
             Sprite newSprite = renderer.sprite;
 
-            print("Nodes / "+faction.ToString());
+
             if (neighbourDown && neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/"+faction.ToString()); 
             else if (!neighbourDown && neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " B");
             else if (neighbourDown && !neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " R");
@@ -322,7 +326,58 @@ public class Node : MonoBehaviour
                 threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetOffensivePower());
             }
         }
+        GameObject strongestNeighbour = StrongestAllyNeighbour();
+        if (strongestNeighbour != null) threat -= strongestNeighbour.GetComponent<Army>().GetDefensivePower();
         return threat;
+    }
+
+    public GameObject StrongestAllyNeighbour() {
+        GameObject strongestNeighbour = null;
+        float strengthOfStrongestNeighbour = 0;
+        if (occupant!= null) {
+            strongestNeighbour = occupant;
+            strengthOfStrongestNeighbour = occupant.GetComponent<Army>().GetDefensivePower();
+        }
+
+        for(int i=0; i< neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i].GetComponent<Node>().occupant;
+            if (neighbour != null && neighbours[i].GetComponent<Node>().faction == faction) {
+                if (neighbour.GetComponent<Army>().GetDefensivePower() > strengthOfStrongestNeighbour) {
+                    strongestNeighbour = neighbour;
+                    strengthOfStrongestNeighbour = neighbour.GetComponent<Army>().GetDefensivePower();
+                }
+            }
+        }
+        return strongestNeighbour;
+    }
+
+    public float GetThreatIgnoringCurrentArmy() {
+        float threat = 0;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction) {
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetOffensivePower());
+            }
+        }
+        GameObject strongestNeighbour = StrongestAlly();
+        if (strongestNeighbour != null) threat -= strongestNeighbour.GetComponent<Army>().GetDefensivePower();
+        return threat;
+    }
+
+    public GameObject StrongestAlly() {
+        GameObject strongestNeighbour = null;
+        float strengthOfStrongestNeighbour = 0;
+
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i].GetComponent<Node>().occupant;
+            if (neighbour != null && neighbours[i].GetComponent<Node>().faction == faction) {
+                if (neighbour.GetComponent<Army>().GetDefensivePower() > strengthOfStrongestNeighbour) {
+                    strongestNeighbour = neighbour;
+                    strengthOfStrongestNeighbour = neighbour.GetComponent<Army>().GetDefensivePower();
+                }
+            }
+        }
+        return strongestNeighbour;
     }
 
     public float GetSafety() {

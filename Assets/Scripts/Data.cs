@@ -133,9 +133,17 @@ public enum BattleType {
 
 // For AI
 public struct Intent {
-    public string type;
-    public GameObject army;
-    public GameObject node;
+    public Intent(GameObject node) {
+        targetNode = node;
+    }
+    public GameObject targetNode;
+}
+public enum TurnPhase {
+    DefendAgainstThreats,
+    Scouting,
+    Allocating,
+    Attacks,
+    Done
 }
 
 // For UnitSpace

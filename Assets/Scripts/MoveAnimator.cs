@@ -44,7 +44,11 @@ public class MoveAnimator : MonoBehaviour{
             else if (!atTarget) {
                 atTarget = true;
                 if (attacking) GameObject.Find("/Battle Menu").GetComponent<BattleMenu>().EnterMenu();
-                if (!attacking && GetComponent<AI>()) GetComponent<AI>().readyToExecute = true;
+                if (!attacking) {
+                    Army.readyToMove = true;
+                    //print("at destination, ready to execute");
+                    if (GetComponent<Army>().owner.GetComponent<AI>()) GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+                }
             }
         }
     }

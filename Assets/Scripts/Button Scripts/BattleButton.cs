@@ -19,11 +19,11 @@ public class BattleButton : MonoBehaviour{
 
     private void OnMouseDown() {
         if (buttonType == "simulation" && !battleMenu.GetComponent<BattleMenu>().inSimulation && !battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
-            print("enter simulation");
+            //print("enter simulation");
             battleMenu.GetComponent<BattleMenu>().StartSimulation();
         }
         else if (buttonType == "instant" && !battleMenu.GetComponent<BattleMenu>().inSimulation && !battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
-            print("enter instant");
+            //print("enter instant");
             battleMenu.GetComponent<BattleMenu>().InstantBattle();
         }
         else if (buttonType == "retreat" && !battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {

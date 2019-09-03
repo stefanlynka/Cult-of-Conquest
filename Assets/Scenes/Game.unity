@@ -168,7 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armies: []
   ownedNodes: []
-  turnStage: 9
+  turnPhase: 0
   readyToExecute: 1
 --- !u!114 &11888195
 MonoBehaviour:
@@ -8767,22 +8767,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc60442aabd89dc449c88d0d439eec58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!58 &917683413
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 917683411}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 8.259999
 --- !u!4 &917683415 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 528278849333287515, guid: d2c89193f86c6fd47965ae5396400759,
@@ -15395,22 +15379,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc60442aabd89dc449c88d0d439eec58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!58 &1639133862
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639133860}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 8.259999
 --- !u!4 &1653975275 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3234725538307344871, guid: d3583cd02f4db1e4680d295f82adc930,
@@ -21198,6 +21166,12 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1019610119633031429, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 44f03d54817dc884ea19a00d1a1a98cd,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d3583cd02f4db1e4680d295f82adc930, type: 3}
 --- !u!1001 &2379833299632716476
@@ -22166,6 +22140,12 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1019610119633031429, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9f410f2e8a89d2e43b2f4cff51954eb5,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d3583cd02f4db1e4680d295f82adc930, type: 3}
 --- !u!1001 &3664132570134905993
@@ -22369,7 +22349,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 1a94e984802d8bf48b8b82a4c58c7183,
+      objectReference: {fileID: 21300000, guid: 5a45878f6cd91fb4e98fe6aee5a45f00,
         type: 3}
     - target: {fileID: 8914848798693966700, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
@@ -23911,7 +23891,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 1a94e984802d8bf48b8b82a4c58c7183,
+      objectReference: {fileID: 21300000, guid: 5a45878f6cd91fb4e98fe6aee5a45f00,
         type: 3}
     - target: {fileID: 8914848798693966700, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}

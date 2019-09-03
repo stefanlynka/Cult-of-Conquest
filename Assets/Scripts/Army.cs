@@ -15,6 +15,8 @@ public class Army : MonoBehaviour {
     public int movesLeft = 2;
     public int sight = 2;
     public bool marredBattle = false;
+    public Queue<Intent> movesToDo = new Queue<Intent>();
+    public static bool readyToMove = true;
 
     public List<MapUnit> units = new List<MapUnit>();
     public MapUnit[] backRow = new MapUnit[4];
@@ -32,6 +34,8 @@ public class Army : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        MakeMoves();
+        if (owner == TurnManager.currentPlayer) print("Moves left: " + movesLeft);
     }
 
     public void Startup() {
@@ -51,6 +55,15 @@ public class Army : MonoBehaviour {
         }
         if (Input.GetMouseButtonDown(1) && TurnManager.currentPlayer.GetComponent<Player>().faction == faction) {
             Player.armyRightClicked = gameObject;
+        }
+    }
+
+    void MakeMoves() {
+        if (movesToDo.Count > 0 && readyToMove) {
+            Intent move = movesToDo.Dequeue();
+            //print("Army: " + gameObject.name + " targetNode: " + move.targetNode);
+            EnterNode(move.targetNode);
+            readyToMove = false;
         }
     }
 
@@ -117,28 +130,6 @@ public class Army : MonoBehaviour {
                     MoveToNode(targetNode);
                 }
             }
-
-
-            /*
-            if (!targetNode.GetComponent<Node>().occupied) {
-                //print("moving in freely");
-                MoveToNode(targetNode);
-            }
-            else {
-                GameObject otherArmy = targetNode.GetComponent<Node>().occupant;
-                if (faction != otherArmy.GetComponent<Army>().faction) {
-                    owner.GetComponent<Player>().Invade(gameObject, otherArmy);
-                    //print("attack!");
-                }
-                else {
-                    //print("change places");
-                    SwitchNodes(currentNode, otherArmy, targetNode);
-                }
-            }
-        }
-        */
-
-
         }
     }
 
@@ -155,6 +146,7 @@ public class Army : MonoBehaviour {
     }
 
     public void MoveToNode(GameObject destination) {
+        //print("moving, attacking = false");
         GetComponent<MoveAnimator>().SetTarget(destination.transform.position, false);
         currentNode.GetComponent<Node>().occupied = false;
         currentNode.GetComponent<Node>().occupant = null;
@@ -168,6 +160,13 @@ public class Army : MonoBehaviour {
         if (owner.GetComponent<AI>()) {
             //owner.GetComponent<AI>().readyToExecute = true;
         }
+    }
+
+    public void OrderToEnterNode(GameObject targetNode) {
+        print("Order given to attack: " + targetNode.name);
+        //for(int i = 0; i < movesToDo.cou)
+        Intent order = new Intent(targetNode);
+        movesToDo.Enqueue(order);
     }
 
 
@@ -212,7 +211,6 @@ public class Army : MonoBehaviour {
         units.Remove(unit);
         RemoveUnitFromArray(frontRow, unit);
         RemoveUnitFromArray(backRow, unit);
-        print("units removed");
     }
 
     void RemoveUnitFromArray(MapUnit[] array, MapUnit unit) {
@@ -291,7 +289,6 @@ public class Army : MonoBehaviour {
                 power += backRow[i].GetDPS() * totalHealth;
             }
         }
-        print("Army Power: " + power);
         return power;
     }
 
