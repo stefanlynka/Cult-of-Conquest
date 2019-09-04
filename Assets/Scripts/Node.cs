@@ -147,16 +147,24 @@ public class Node : MonoBehaviour
             GameObject neighbour = neighbours[i];
 
             // If the neighbouring node is occupied, is owned by another faction, and is the new biggest threat
-            if (neighbour.GetComponent<Node>().faction != faction && threat <= neighbour.GetComponent<Node>().GetDefensivePower()) {
+            if (neighbour.GetComponent<Node>().faction != faction && neighbour.GetComponent<Node>().faction != Faction.Independent && threat <= neighbour.GetComponent<Node>().GetDefensivePower()) {
                 biggestThreat = neighbour;
                 threat = Mathf.Max(threat, neighbour.GetComponent<Node>().GetDefensivePower());
             }
-            /*
-            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction && neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower() > threat) {
+        }
+        return biggestThreat;
+    }
+
+    public GameObject GetGreatestNeutralThreat() {
+        GameObject biggestThreat = null;
+        float threat = 0;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            // If the neighbouring node is occupied, is owned by another faction, and is the new biggest threat
+            if (neighbour.GetComponent<Node>().faction == Faction.Independent && threat <= neighbour.GetComponent<Node>().GetDefensivePower()) {
                 biggestThreat = neighbour;
-                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetPower());
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().GetDefensivePower());
             }
-            */
         }
         return biggestThreat;
     }

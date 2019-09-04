@@ -57,6 +57,7 @@ public class BattleMenu : MonoBehaviour{
         GetComponent<Panner>().SetTarget(new Vector3(20, 0, -10));
         Player.menuOpen = 0;
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
+        else if (attackingPlayer && attackingPlayer.GetComponent<AI>()) attackingPlayer.GetComponent<AI>().readyToExecute = true;
         Army.readyToMove = true;
         print("LEAVE MENU, ARMY READY");
         EnableButtons();

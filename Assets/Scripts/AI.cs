@@ -49,7 +49,7 @@ public class AI : MonoBehaviour{
                 }
                 else if (turnPhase == TurnPhase.Attacks) {
                     //print("attack phase");
-                    //Attack();
+                    Attack();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Done;
                 }
                 else if (turnPhase == TurnPhase.Done) {
@@ -74,51 +74,6 @@ public class AI : MonoBehaviour{
             }
         }
     }
-
-    void Attack() {
-        moreToDoInPhase = false;
-        for (int i = 0; i < armies.Count; i++) {
-            GameObject currentArmy = armies[i];
-            if (AttackNearbyThreat(currentArmy)) {
-                //print("Attack performed, waiting");
-                readyToExecute = false;
-                moreToDoInPhase = true;
-                //print("attacking, not ready to execute");
-                return;
-            }
-        }
-    }
-
-
-
-
-
-    void BuyUnits() {
-        //print("army count: "+armies.Count);
-        bool moneyToSpend = true;
-        while (moneyToSpend) {
-            //print("has " + GetComponent<Player>().money + " money to spend");
-            float greatestPowerDifference = 9999;
-            GameObject weakestArmy = armies[0];
-            for (int i = 0; i < armies.Count; i++) {
-                GameObject armyNode = armies[i].GetComponent<Army>().currentNode;
-                float powerDifference = armies[i].GetComponent<Army>().GetOffensivePower() - armyNode.GetComponent<Node>().GetThreatToNode();
-                if (powerDifference < greatestPowerDifference) {
-                    weakestArmy = armies[i];
-                    greatestPowerDifference = powerDifference;
-                }
-            }
-            if (weakestArmy.GetComponent<Army>().HasOpenPosition()) {
-                //print("weakest has opening");
-                UnitPos position = weakestArmy.GetComponent<Army>().GetOpenPosition();
-                MapUnit unit = GetComponent<Player>().unitBlueprints[3];
-                weakestArmy.GetComponent<Army>().BuyUnit(position, unit);
-                if (GetComponent<Player>().money < unit.moneyCost) moneyToSpend = false;
-            }
-            else moneyToSpend = false;
-        }
-    }
-
     bool MoveToThreatenedNode(GameObject army) {
 
         //print("checking possible threats");
@@ -169,57 +124,6 @@ public class AI : MonoBehaviour{
 
         return false;
     }
-
-    bool MoreThreatenedThan(GameObject node1, GameObject node2) {
-        //print("Other threat: " + node1.GetComponent<Node>().GetThreatToNode());
-        //print("Threat to me: " + node2.GetComponent<Node>().GetThreatIgnoringCurrentArmy());
-        if (node1.GetComponent<Node>().GetThreatToNode() > node2.GetComponent<Node>().GetThreatIgnoringCurrentArmy()) return true;
-        return false;
-    }
-
-    bool AttackNearbyThreat(GameObject army) {
-        //print("checking attacks");
-        if (army.GetComponent<Army>().movesLeft <= 0) return false;
-        GameObject armyNode = army.GetComponent<Army>().currentNode;
-        GameObject target = armyNode.GetComponent<Node>().GetGreatestThreat();
-        if (target != null) {
-            //print("target exists");
-            //print("Should I? " + ShouldAttack(army, target));
-        }
-        if (target != null && ShouldAttack(army, target)) {
-            //print("ATTACK!");
-            GetComponent<Player>().attackNode(army, target);
-            return true;
-        }
-        return false;
-    }
-
-    bool ShouldAttack(GameObject attackingArmy, GameObject defendingNode) {
-        //print("attack power: " + attackingArmy.GetComponent<Army>().GetOffensivePower());
-        //print("defend power: " + defendingNode.GetComponent<Node>().GetDefensivePower());
-        if (attackingArmy.GetComponent<Army>().GetOffensivePower() >= 1.2 * defendingNode.GetComponent<Node>().GetDefensivePower()) {
-            return true;
-        }
-        return false;
-    }
-
-
-    void TestIDS() {
-        for (int k = 0; k < 1; k++) {
-            for (int i = 0; i < armies.Count; i++) {
-                // For all armies
-                GameObject army = armies[i];
-                GameObject armyNode = army.GetComponent<Army>().currentNode;
-                GameObject randomNeighbour = armyNode.GetComponent<Node>().GetRandomNeighbour2();
-                List<GameObject> pathway = armyNode.GetComponent<Node>().GetPathTo(randomNeighbour);
-                //print("Pathway to random neighbour: " + pathway);
-                for (int j = 0; j < pathway.Count; j++) {
-                    //print("Path includes: " + pathway[j]);
-                }
-            }
-        }
-    }
-
     List<GameObject> GetNodesInRange(List<GameObject> nodes, GameObject node, int range) {
         if (!nodes.Contains(node)) nodes.Add(node);
         if (range > 0) {
@@ -231,27 +135,13 @@ public class AI : MonoBehaviour{
         }
         return nodes;
     }
-
-    float ThreatToNode(GameObject node) {
-        float threat = 0;
-        List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
-        for (int i = 0; i < neighbours.Count; i++) {
-            GameObject neighbour = neighbours[i];
-            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction) {
-                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetOffensivePower());
-            }
-        }
-        return threat;
-    }
-
-    public void StartTurn() {
-        turnPhase = TurnPhase.DefendAgainstThreats;
-        readyToExecute = true;
-    }
-    bool readyForNextPhase() {
-        if (!moreToDoInPhase && Army.readyToMove) return true;
+    bool MoreThreatenedThan(GameObject node1, GameObject node2) {
+        //print("Other threat: " + node1.GetComponent<Node>().GetThreatToNode());
+        //print("Threat to me: " + node2.GetComponent<Node>().GetThreatIgnoringCurrentArmy());
+        if (node1.GetComponent<Node>().GetThreatToNode() > node2.GetComponent<Node>().GetThreatIgnoringCurrentArmy()) return true;
         return false;
     }
+
 
 
 
@@ -268,14 +158,13 @@ public class AI : MonoBehaviour{
             }
         }
     }
-
     bool NearbyUnscoutedArmy(GameObject army) {
         GameObject node = army.GetComponent<Army>().currentNode;
         for (int i = 0; i < node.GetComponent<Node>().neighbours.Count; i++) {
             GameObject neighbourNode = node.GetComponent<Node>().neighbours[i];
             GameObject neighbouringArmy = neighbourNode.GetComponent<Node>().occupant;
-            if (neighbouringArmy != null) {
-                if (!enemyArmyInfo.ContainsKey(neighbouringArmy)  || (enemyArmyInfo.ContainsKey(neighbouringArmy) && enemyArmyInfo[neighbouringArmy].timeSinceScout >= 2)) {
+            if (neighbouringArmy != null && neighbouringArmy.GetComponent<Army>().faction != faction && neighbouringArmy.GetComponent<Army>().faction != Faction.Independent) {
+                if (!enemyArmyInfo.ContainsKey(neighbouringArmy) || (enemyArmyInfo.ContainsKey(neighbouringArmy) && enemyArmyInfo[neighbouringArmy].timeSinceScout >= 2)) {
                     print("Go Scout: " + neighbourNode.name);
                     readyToExecute = false;
                     RememberArmy(neighbouringArmy);
@@ -286,7 +175,6 @@ public class AI : MonoBehaviour{
         }
         return false;
     }
-
     public void RememberArmy(GameObject enemyArmy) {
         ArmyInfo newInfo = new ArmyInfo(0, enemyArmy.GetComponent<Army>().GetOffensivePower());
         if (enemyArmyInfo.ContainsKey(enemyArmy)) {
@@ -298,7 +186,167 @@ public class AI : MonoBehaviour{
     }
 
 
+
+
+    void BuyUnits() {
+        //print("army count: "+armies.Count);
+        bool moneyToSpend = true;
+        while (moneyToSpend) {
+            //print("has " + GetComponent<Player>().money + " money to spend");
+            float greatestPowerDifference = 9999;
+            GameObject weakestArmy = armies[0];
+            for (int i = 0; i < armies.Count; i++) {
+                GameObject armyNode = armies[i].GetComponent<Army>().currentNode;
+                float powerDifference = armies[i].GetComponent<Army>().GetOffensivePower() - armyNode.GetComponent<Node>().GetThreatToNode();
+                if (powerDifference < greatestPowerDifference) {
+                    weakestArmy = armies[i];
+                    greatestPowerDifference = powerDifference;
+                }
+            }
+            if (weakestArmy.GetComponent<Army>().HasOpenPosition()) {
+                //print("weakest has opening");
+                UnitPos position = weakestArmy.GetComponent<Army>().GetOpenPosition();
+                MapUnit unit = GetComponent<Player>().unitBlueprints[3];
+                weakestArmy.GetComponent<Army>().BuyUnit(position, unit);
+                if (GetComponent<Player>().money < unit.moneyCost) moneyToSpend = false;
+            }
+            else moneyToSpend = false;
+        }
+    }
+
+
+
+    void Attack() {
+        moreToDoInPhase = false;
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject currentArmy = armies[i];
+            if (AttackNearbyThreat(currentArmy)) {
+                //print("Attack performed, waiting");
+                readyToExecute = false;
+                moreToDoInPhase = true;
+                //print("attacking, not ready to execute");
+                return;
+            }
+        }
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject currentArmy = armies[i];
+            if (AttackNeutral(currentArmy)) {
+                print("Attacking Neutral");
+                readyToExecute = false;
+                moreToDoInPhase = true;
+                //print("attacking, not ready to execute");
+                return;
+            }
+        }
+    }
+    bool AttackNeutral(GameObject army) {
+        if (army.GetComponent<Army>().movesLeft <= 0) return false;
+        GameObject armyNode = army.GetComponent<Army>().currentNode;
+        GameObject target = armyNode.GetComponent<Node>().GetGreatestNeutralThreat();
+        if (target != null && ShouldAttack(army, target)) {
+            GetComponent<Player>().attackNode(army, target);
+            return true;
+        }
+        return false;
+    }
+    bool AttackNearbyThreat(GameObject army) {
+        //print("checking attacks");
+        if (army.GetComponent<Army>().movesLeft <= 0) return false;
+        if (KnowsAllNearbyThreats(army)) {
+            GameObject target = GetGreatestThreat(army);
+            if (target != null && ShouldAttack(army, target.GetComponent<Army>().currentNode)) {
+                //print("ATTACK!");
+                GetComponent<Player>().attackNode(army, target.GetComponent<Army>().currentNode);
+                return true;
+            }
+        }
+        return false;
+    }
+    bool ShouldAttack(GameObject attackingArmy, GameObject defendingNode) {
+        //print("attack power: " + attackingArmy.GetComponent<Army>().GetOffensivePower());
+        //print("defend power: " + defendingNode.GetComponent<Node>().GetDefensivePower());
+        if (attackingArmy.GetComponent<Army>().GetOffensivePower() >= 1.2 * defendingNode.GetComponent<Node>().GetDefensivePower()) {
+            return true;
+        }
+        return false;
+    }
+    GameObject GetGreatestThreat(GameObject army) {
+        List<GameObject> neighbouringNodes = army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours;
+        GameObject mostThreateningEnemy = null;
+        float highestThreat = 0;
+        for(int i = 0; i< neighbouringNodes.Count; i++) {
+            GameObject neighbourArmy = neighbouringNodes[i].GetComponent<Node>().occupant;
+            if (neighbourArmy && neighbourArmy.GetComponent<Army>().faction != faction && neighbourArmy.GetComponent<Army>().faction != Faction.Independent) {
+                if (enemyArmyInfo.ContainsKey(neighbourArmy) && enemyArmyInfo[neighbourArmy].expectedPower > highestThreat) {
+                    mostThreateningEnemy = neighbourArmy;
+                    highestThreat = enemyArmyInfo[neighbourArmy].expectedPower;
+                }
+            }
+        }
+        return mostThreateningEnemy;
+    }
+    bool KnowsAllNearbyThreats(GameObject army) {
+        List<GameObject> neighbouringNodes = army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours;
+        for (int i = 0; i < neighbouringNodes.Count; i++) {
+            GameObject neighbourArmy = neighbouringNodes[i].GetComponent<Node>().occupant;
+            if (neighbourArmy && neighbourArmy.GetComponent<Army>().faction != faction && neighbourArmy.GetComponent<Army>().faction != Faction.Independent) {
+                if (!enemyArmyInfo.ContainsKey(neighbourArmy) || enemyArmyInfo.ContainsKey(neighbourArmy) && enemyArmyInfo[neighbourArmy].timeSinceScout >= 2) {
+                    print("We don't know everybody");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+
+    
+
+    void TestIDS() {
+        for (int k = 0; k < 1; k++) {
+            for (int i = 0; i < armies.Count; i++) {
+                // For all armies
+                GameObject army = armies[i];
+                GameObject armyNode = army.GetComponent<Army>().currentNode;
+                GameObject randomNeighbour = armyNode.GetComponent<Node>().GetRandomNeighbour2();
+                List<GameObject> pathway = armyNode.GetComponent<Node>().GetPathTo(randomNeighbour);
+                //print("Pathway to random neighbour: " + pathway);
+                for (int j = 0; j < pathway.Count; j++) {
+                    //print("Path includes: " + pathway[j]);
+                }
+            }
+        }
+    }
+    public void StartTurn() {
+        turnPhase = TurnPhase.DefendAgainstThreats;
+        readyToExecute = true;
+    }
+    void IncrementArmyInfo() {
+        foreach(KeyValuePair<GameObject, ArmyInfo> info in enemyArmyInfo) {
+            ArmyInfo newInfo = info.Value;
+            newInfo.timeSinceScout++;
+            enemyArmyInfo[info.Key] = newInfo;
+        }
+    }
+    bool readyForNextPhase() {
+        if (!moreToDoInPhase && Army.readyToMove) return true;
+        return false;
+    }
+
     /*
+
+    float ThreatToNode(GameObject node) {
+        float threat = 0;
+        List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
+        for (int i = 0; i < neighbours.Count; i++) {
+            GameObject neighbour = neighbours[i];
+            if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().faction != faction) {
+                threat = Mathf.Max(threat, neighbour.GetComponent<Node>().occupant.GetComponent<Army>().GetOffensivePower());
+            }
+        }
+        return threat;
+    }
 
     void ExecuteIntent() {
         print("Executing Intent");
