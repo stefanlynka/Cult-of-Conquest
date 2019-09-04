@@ -5,6 +5,8 @@ using UnityEngine;
 public class Army : MonoBehaviour {
     public bool selected = false;
     public static GameObject highlightFog;
+    public static bool readyToMove = true;
+    public static List<Intent> movesToDo = new List<Intent>();
 
     public Faction faction;
     public GameObject currentNode;
@@ -15,8 +17,6 @@ public class Army : MonoBehaviour {
     public int movesLeft = 2;
     public int sight = 2;
     public bool marredBattle = false;
-    public Queue<Intent> movesToDo = new Queue<Intent>();
-    public static bool readyToMove = true;
 
     public List<MapUnit> units = new List<MapUnit>();
     public MapUnit[] backRow = new MapUnit[4];
@@ -60,10 +60,11 @@ public class Army : MonoBehaviour {
 
     void MakeMoves() {
         if (movesToDo.Count > 0 && readyToMove) {
-            Intent move = movesToDo.Dequeue();
-            //print("Army: " + gameObject.name + " targetNode: " + move.targetNode);
-            EnterNode(move.targetNode);
             readyToMove = false;
+            Intent move = movesToDo[0];
+            movesToDo.Remove(move);
+            print("Army: " + move.armyMoving.name + " now actually moving to targetNode: " + move.targetNode);
+            move.armyMoving.GetComponent<Army>().EnterNode(move.targetNode);
         }
     }
 
@@ -164,9 +165,12 @@ public class Army : MonoBehaviour {
 
     public void OrderToEnterNode(GameObject targetNode) {
         print("Order given to attack: " + targetNode.name);
-        //for(int i = 0; i < movesToDo.cou)
-        Intent order = new Intent(targetNode);
-        movesToDo.Enqueue(order);
+        Intent order = new Intent(gameObject, targetNode);
+        movesToDo.Add(order);
+    }
+    public void OrderToEnterNodeNow(GameObject targetNode) {
+        Intent order = new Intent(gameObject, targetNode);
+        movesToDo.Insert(0, order);
     }
 
 

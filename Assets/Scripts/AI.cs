@@ -7,6 +7,7 @@ public class AI : MonoBehaviour{
     public List<GameObject> armies = new List<GameObject>();
     public List<GameObject> ownedNodes = new List<GameObject>();
     public List<Intent> intentQueue = new List<Intent>();
+    public Dictionary<GameObject, ArmyInfo> enemyArmyInfo = new Dictionary<GameObject, ArmyInfo>();
     GameObject unitShop;
 
     Faction faction;
@@ -38,7 +39,8 @@ public class AI : MonoBehaviour{
                     if (readyForNextPhase()) turnPhase = TurnPhase.Scouting;
                 }
                 else if (turnPhase == TurnPhase.Scouting) {
-                    turnPhase = TurnPhase.Allocating;
+                    Scout();
+                    if (readyForNextPhase()) turnPhase = TurnPhase.Allocating;
                 }
                 else if (turnPhase == TurnPhase.Allocating) {
                     print("spend phase");
@@ -47,7 +49,7 @@ public class AI : MonoBehaviour{
                 }
                 else if (turnPhase == TurnPhase.Attacks) {
                     //print("attack phase");
-                    Attack();
+                    //Attack();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Done;
                 }
                 else if (turnPhase == TurnPhase.Done) {
@@ -86,6 +88,8 @@ public class AI : MonoBehaviour{
             }
         }
     }
+
+
 
 
 
@@ -167,8 +171,8 @@ public class AI : MonoBehaviour{
     }
 
     bool MoreThreatenedThan(GameObject node1, GameObject node2) {
-        print("Other threat: " + node1.GetComponent<Node>().GetThreatToNode());
-        print("Threat to me: " + node2.GetComponent<Node>().GetThreatIgnoringCurrentArmy());
+        //print("Other threat: " + node1.GetComponent<Node>().GetThreatToNode());
+        //print("Threat to me: " + node2.GetComponent<Node>().GetThreatIgnoringCurrentArmy());
         if (node1.GetComponent<Node>().GetThreatToNode() > node2.GetComponent<Node>().GetThreatIgnoringCurrentArmy()) return true;
         return false;
     }
@@ -208,9 +212,9 @@ public class AI : MonoBehaviour{
                 GameObject armyNode = army.GetComponent<Army>().currentNode;
                 GameObject randomNeighbour = armyNode.GetComponent<Node>().GetRandomNeighbour2();
                 List<GameObject> pathway = armyNode.GetComponent<Node>().GetPathTo(randomNeighbour);
-                print("Pathway to random neighbour: " + pathway);
+                //print("Pathway to random neighbour: " + pathway);
                 for (int j = 0; j < pathway.Count; j++) {
-                    print("Path includes: " + pathway[j]);
+                    //print("Path includes: " + pathway[j]);
                 }
             }
         }
@@ -247,6 +251,50 @@ public class AI : MonoBehaviour{
     bool readyForNextPhase() {
         if (!moreToDoInPhase && Army.readyToMove) return true;
         return false;
+    }
+
+
+
+    void Scout() {
+        moreToDoInPhase = false;
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject currentArmy = armies[i];
+            if (currentArmy.GetComponent<Army>().movesLeft > 0 && NearbyUnscoutedArmy(currentArmy)) {
+                //print("Attack performed, waiting");
+                readyToExecute = false;
+                moreToDoInPhase = true;
+                //print("attacking, not ready to execute");
+                return;
+            }
+        }
+    }
+
+    bool NearbyUnscoutedArmy(GameObject army) {
+        GameObject node = army.GetComponent<Army>().currentNode;
+        for (int i = 0; i < node.GetComponent<Node>().neighbours.Count; i++) {
+            GameObject neighbourNode = node.GetComponent<Node>().neighbours[i];
+            GameObject neighbouringArmy = neighbourNode.GetComponent<Node>().occupant;
+            if (neighbouringArmy != null) {
+                if (!enemyArmyInfo.ContainsKey(neighbouringArmy)  || (enemyArmyInfo.ContainsKey(neighbouringArmy) && enemyArmyInfo[neighbouringArmy].timeSinceScout >= 2)) {
+                    print("Go Scout: " + neighbourNode.name);
+                    readyToExecute = false;
+                    RememberArmy(neighbouringArmy);
+                    GetComponent<Player>().attackNode(army, neighbourNode);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void RememberArmy(GameObject enemyArmy) {
+        ArmyInfo newInfo = new ArmyInfo(0, enemyArmy.GetComponent<Army>().GetOffensivePower());
+        if (enemyArmyInfo.ContainsKey(enemyArmy)) {
+            enemyArmyInfo[enemyArmy] = newInfo;
+        }
+        else {
+            enemyArmyInfo.Add(enemyArmy, newInfo);
+        }
     }
 
 

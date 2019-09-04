@@ -275,12 +275,16 @@ public class BattleMenu : MonoBehaviour{
         if (retreatAllowed) {
             //if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
             if (defendArmy) defendingPlayer.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
-            attackArmy.GetComponent<MoveAnimator>().SetTarget(attackArmy.GetComponent<Army>().currentNode.transform.position, false);
+            attackArmy.GetComponent<Army>().OrderToEnterNodeNow(attackArmy.GetComponent<Army>().currentNode);
+            //attackArmy.GetComponent<MoveAnimator>().SetTarget(attackArmy.GetComponent<Army>().currentNode.transform.position, false);
             if (inSimulation) {
                 RemoveAttackCooldowns();
                 retreating = true;
             }
             else {
+                if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && defendArmy) {
+                    attackArmy.GetComponent<Army>().owner.GetComponent<AI>().RememberArmy(defendArmy);
+                }
                 ExitMenu();
             }
         }
@@ -316,6 +320,9 @@ public class BattleMenu : MonoBehaviour{
             AttackerWins();
         }
         if (retreating) {
+            if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && defendArmy) {
+                attackArmy.GetComponent<Army>().owner.GetComponent<AI>().RememberArmy(defendArmy);
+            }
             ExitMenu();
         }
         retreating = false;

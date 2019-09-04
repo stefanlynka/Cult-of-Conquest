@@ -87,18 +87,18 @@ public class Node : MonoBehaviour
             if (goodPath != null) return goodPath;
             depth++;
             if (depth > 8) {
-                print("we couldn't find it");
+                //print("we couldn't find it");
                 return null;
             }
         }
-        print("end of the line");
+        //print("end of the line");
         return null;
     }
     // Recursive path search used in GetPathTo()
     List<GameObject> ExtendPathToNeighbours(GameObject targetNode, List<GameObject> visited, int currentDepth, Faction player) {
         visited.Add(gameObject);
         if (gameObject == targetNode) {
-            print("found the one");
+            //print("found the one");
             return visited;
         }
         if (currentDepth > 0) {
@@ -106,11 +106,11 @@ public class Node : MonoBehaviour
             for (int i = 0; i < neighbours.Count; i++) {
                 GameObject neighbour = neighbours[i];
                 List<GameObject> goodPath = new List<GameObject>();
-                print("let's ask a neighbour");
+                //print("let's ask a neighbour");
                 // if (neighbour.GetComponent<Node>().faction == player && !visited.Contains(neighbour)) { //For only checking friendlies
                 if (!visited.Contains(neighbour)) {
                     List<GameObject> deepCopyVisited = Tools.DeepCopyGameObjectList(visited);
-                    print("checking with a neighbour");
+                    //print("checking with a neighbour");
                     goodPath = neighbour.GetComponent<Node>().ExtendPathToNeighbours(targetNode, deepCopyVisited, currentDepth, player);
                     if (goodPath != null) {
                         visited.Insert(0,gameObject);
