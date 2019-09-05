@@ -188,11 +188,22 @@ public class BattleMenu : MonoBehaviour{
     public void StartSimulation() {
         inSimulation = true;
         timer = -10;
+    }
 
+    bool AIRetreatCheck() {
+        if (attackingPlayer.GetComponent<AI>()) {
+            if (attackArmy.GetComponent<Army>().units.Count <= 3) {
+                if (attackArmy.GetComponent<Army>().GetOffensivePower() < battleNode.GetComponent<Node>().GetDefensivePower()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     void RunSimulation() {
         timer++;
+        if (!retreating && AIRetreatCheck()) Retreat();
         if (cooldowns.Count != 0) {
             while (cooldowns.Count > 0 && timer == cooldowns[0].timeToAct) {
                 // Run Next Attack
@@ -215,15 +226,22 @@ public class BattleMenu : MonoBehaviour{
         //print("defenders left: " + defenders.Count);
         bool armyDefeated = false;
         if (defenders.Count <= 0) armyDefeated = true;
-        while (!armyDefeated) {
+        while (cooldowns.Count > 0) {
             timer = cooldowns[0].timeToAct;
+            if (!retreating && AIRetreatCheck()) {
+                retreating = true;
+                RemoveAttackCooldowns();
+                if (defendArmy) defendingPlayer.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
+                attackArmy.GetComponent<Army>().OrderToEnterNodeNow(attackArmy.GetComponent<Army>().currentNode);
+            }
             // Run Next Attack
-            armyDefeated = NextAttack(false);
+            armyDefeated = NextAttack(retreating);
         }
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
         if (defendArmy) defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
         defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(battleNode);
         timer = 0;
+        if (retreating) BattleOver();
     }
     bool NextAttack(bool retreating) {
         MapUnit attacker = cooldowns[0].unit;
@@ -301,19 +319,20 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void BattleOver() {
-
+        print("got to battle over");
         if (defendArmy) {
             defendArmy.GetComponent<Army>().ResetArmy();
             if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
             if (attackers.Count == 0) defendingPlayer.GetComponent<Player>().factionTraits.WonBattle(defendArmy);
         }
+        print("A");
         attackArmy.GetComponent<Army>().ResetArmy();
         attackingPlayer.GetComponent<Player>().factionTraits.BattleOver(attackArmy);
         RefreshBuildings();
         //GameObject winningArmy = defendArmy;
 
         if (defenders.Count == 0) attackingPlayer.GetComponent<Player>().factionTraits.WonBattle(attackArmy);
-
+        print("B");
         if (attackers.Count == 0) {
             attackArmy.GetComponent<Army>().Defeated();
         }
@@ -324,13 +343,16 @@ public class BattleMenu : MonoBehaviour{
             if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && defendArmy) {
                 attackArmy.GetComponent<Army>().owner.GetComponent<AI>().RememberArmy(defendArmy);
             }
+            print("C. Did we leave?");
             ExitMenu();
         }
+        print("C");
         retreating = false;
         inSimulation = false;
         //if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
         //print("Action Complete, readyToExecute");
         retreatAllowed = true;
+        print("D");
         //if (attackArmy.GetComponent<Army>().owner != Player.human) ExitMenu();
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
         DisableButtons();

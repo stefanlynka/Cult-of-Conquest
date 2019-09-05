@@ -184,7 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armies: []
   ownedNodes: []
-  faction: 4
+  faction: 3
   money: 20
   zeal: 0
   isArmySelected: 0
