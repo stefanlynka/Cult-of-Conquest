@@ -33,6 +33,9 @@ public class AltarShopManager : MonoBehaviour{
             GameObject buyingSpace = Tools.GetChildNamed(buyingSpaces, "Altar Buying Space " + i);
             altarBuySpaces[i] = buyingSpace;
         }
+        for (int i = 0; i < TurnManager.players.Count; i++) {
+            MakeAltarBlueprints(TurnManager.players[i]);
+        }
         GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
     }
 
@@ -68,47 +71,29 @@ public class AltarShopManager : MonoBehaviour{
         }
     }
 
-    void MakeAltar() {
-        Altar harvestAltar = new Altar(AltarName.Harvest, 20);
-        harvestAltar.ability = "";
-        harvestAltar.description = "Increase this hex's\nincome by 40%";
-        altarBuySpaces[0].GetComponent<AltarShopSpace>().SetAltar(harvestAltar);
-
-        Altar devotionAltar = new Altar(AltarName.Devotion, 20);
-        devotionAltar.ability = "";
-        devotionAltar.description = "Generate 1 zeal\neach turn";
-        altarBuySpaces[1].GetComponent<AltarShopSpace>().SetAltar(devotionAltar);
-
-        Altar conflictAltar = new Altar(AltarName.Conflict, 20);
-        conflictAltar.ability = "";
-        conflictAltar.description = "Build a powerful\ndefensive building";
-        altarBuySpaces[2].GetComponent<AltarShopSpace>().SetAltar(conflictAltar);
-
-        Altar fateAltar = new Altar(AltarName.Fate, 20);
-        fateAltar.ability = "";
-        fateAltar.description = "Increase influence in\ndetermining Oracle (unimplemented)";
-        altarBuySpaces[3].GetComponent<AltarShopSpace>().SetAltar(fateAltar);
+    public void MakeAltarBlueprints(GameObject player) {
+        Faction faction = player.GetComponent<Player>().faction;
+        Altar harvestAltar = new Altar(AltarName.Harvest, 20, "Increase this hex's\nincome by 40%");
+        player.GetComponent<Player>().altarBlueprints.Add(AltarName.Harvest, harvestAltar);
+        Altar devotionAltar = new Altar(AltarName.Devotion, 20, "Generate 1 zeal\neach turn");
+        player.GetComponent<Player>().altarBlueprints.Add(AltarName.Devotion, devotionAltar);
+        Altar conflictAltar = new Altar(AltarName.Conflict, 20, "Build a powerful\ndefensive building");
+        player.GetComponent<Player>().altarBlueprints.Add(AltarName.Conflict, conflictAltar);
+        Altar fateAltar = new Altar(AltarName.Fate, 20, "Increase influence in\ndetermining Oracle (unimplemented)");
+        player.GetComponent<Player>().altarBlueprints.Add(AltarName.Fate, fateAltar);
     }
 
-    void MakeAltarUnmar() {
-        Altar harvestAltar = new Altar(AltarName.Harvest, 99);
-        harvestAltar.ability = "";
-        harvestAltar.description = "Increase this hex's\nincome by 99%";
+    void MakeAltar() {
+        Altar harvestAltar = new Altar(AltarName.Harvest, 20, "Increase this hex's\nincome by 40%");
         altarBuySpaces[0].GetComponent<AltarShopSpace>().SetAltar(harvestAltar);
 
-        Altar devotionAltar = new Altar(AltarName.Devotion, 99);
-        devotionAltar.ability = "";
-        devotionAltar.description = "Generate 1 zeal\neach turn";
+        Altar devotionAltar = new Altar(AltarName.Devotion, 20, "Generate 1 zeal\neach turn");
         altarBuySpaces[1].GetComponent<AltarShopSpace>().SetAltar(devotionAltar);
 
-        Altar conflictAltar = new Altar(AltarName.Conflict, 99);
-        conflictAltar.ability = "";
-        conflictAltar.description = "Increase this hex's\ndefense by 20%";
+        Altar conflictAltar = new Altar(AltarName.Conflict, 20, "Build a powerful\ndefensive building");
         altarBuySpaces[2].GetComponent<AltarShopSpace>().SetAltar(conflictAltar);
 
-        Altar fateAltar = new Altar(AltarName.Fate, 99);
-        fateAltar.ability = "";
-        fateAltar.description = "Increase influence in\ndetermining Oracle";
+        Altar fateAltar = new Altar(AltarName.Fate, 20, "Increase influence in\ndetermining Oracle (unimplemented)");
         altarBuySpaces[3].GetComponent<AltarShopSpace>().SetAltar(fateAltar);
     }
 }

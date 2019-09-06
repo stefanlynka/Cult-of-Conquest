@@ -17,8 +17,6 @@ public class TurnManager : MonoBehaviour{
 
     // Start is called before the first frame update
     void Start(){
-        human = Player.human;
-        InitializeMembers();
     }
 
     // Update is called once per frame
@@ -26,7 +24,7 @@ public class TurnManager : MonoBehaviour{
         
     }
 
-    void InitializeMembers() {
+    public void InitializeMembers() {
         nodes = NodeManager.nodes;
         //players.Add(human);
 
@@ -39,6 +37,7 @@ public class TurnManager : MonoBehaviour{
         for(int i =0; i < players.Count; i++) {
             playerDict.Add(players[i].GetComponent<Player>().faction, players[i]);
         }
+        human = Player.human;
         currentPlayer = human;
     }
 

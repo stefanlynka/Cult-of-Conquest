@@ -14,6 +14,7 @@ public class AI : MonoBehaviour{
     public TurnPhase turnPhase = TurnPhase.DefendAgainstThreats;
     public bool readyToExecute = true;
     bool moreToDoInPhase = false;
+    int unallocatedMoney = 0;
 
 
     // Start is called before the first frame update
@@ -43,8 +44,10 @@ public class AI : MonoBehaviour{
                     if (readyForNextPhase()) turnPhase = TurnPhase.Allocating;
                 }
                 else if (turnPhase == TurnPhase.Allocating) {
-                    print("spend phase");
-                    BuyUnits();
+                    print("spend phase start");
+                    AllocateMoney();
+                    print("spend phase over");
+                    //BuyUnits();
                     turnPhase = TurnPhase.Attacks;
                 }
                 else if (turnPhase == TurnPhase.Attacks) {
@@ -186,6 +189,144 @@ public class AI : MonoBehaviour{
     }
 
 
+    void AllocateMoney() {
+        int totalMoneyNeeded = 0;
+        Dictionary<GameObject, int> armyRequirements = new Dictionary<GameObject, int>();
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
+            int moneyNeeded = GetMinMoneyNeeded(army);
+            totalMoneyNeeded += moneyNeeded;
+            armyRequirements.Add(army, moneyNeeded);
+            print("money needed: " + moneyNeeded);
+        }
+        if (totalMoneyNeeded > unallocatedMoney) print("not enough money to allocate");
+        else print("Have enough money to allocate");
+        print("Total Money Needed: " + totalMoneyNeeded);
+    }
+    int GetMinMoneyNeeded(GameObject army) {
+        int moneyNeeded = 0;
+        GameObject threat = GetGreatestThreat(army);
+        if (threat != null && army.GetComponent<Army>().GetDefensivePower() < enemyArmyInfo[threat].expectedPower) {
+            float threatLevel = enemyArmyInfo[threat].expectedPower;
+            MapUnit[] frontRowDefault = Tools.DeepCopyMapUnitArray(army.GetComponent<Army>().frontRow);
+            MapUnit[] backRowDefault = Tools.DeepCopyMapUnitArray(army.GetComponent<Army>().backRow);
+            Temple templeDefault = null;
+            if (army.GetComponent<Army>().currentNode.GetComponent<Node>().temple != null) templeDefault = army.GetComponent<Army>().currentNode.GetComponent<Node>().temple.DeepCopy();
+            Altar altarDefault = null;
+            if (army.GetComponent<Army>().currentNode.GetComponent<Node>().altar != null) altarDefault = army.GetComponent<Army>().currentNode.GetComponent<Node>().altar.DeepCopy();
+            List<MapUnit> unitsNeeded = new List<MapUnit>();
+
+            unitsNeeded = UnitsNeededByCopying(frontRowDefault, backRowDefault, templeDefault, altarDefault, threat);
+            if (unitsNeeded.Count > 0) {
+                print("Building "+ unitsNeeded.Count + " units will be enough");
+                for (int i = 0; i < unitsNeeded.Count; i++) {
+                    moneyNeeded += unitsNeeded[i].moneyCost;
+                    print("this unit cost: " + unitsNeeded[i].moneyCost);
+                }
+                return moneyNeeded;
+            }
+
+            unitsNeeded = UnitsNeededByCopyingMax(frontRowDefault, backRowDefault, templeDefault, altarDefault, threat);
+            if (unitsNeeded.Count > 0) {
+                print("Building the biggest unit will be enough");
+                for (int i = 0; i < unitsNeeded.Count; i++) {
+                    moneyNeeded += unitsNeeded[i].moneyCost;
+                }
+                return moneyNeeded;
+            }
+
+        }
+        else print("Don't need money");
+        return 0;
+    }
+
+    List<MapUnit> UnitsNeededByCopying(MapUnit[] FRDefault, MapUnit[] BRDefault, Temple templeDefault, Altar altarDefault, GameObject enemyArmy) {
+        MapUnit[] frontRowSimulated = Tools.DeepCopyMapUnitArray(FRDefault);
+        MapUnit[] backRowSimulated = Tools.DeepCopyMapUnitArray(BRDefault);
+        Temple templeSimulated = null;
+        if (templeDefault != null) templeSimulated = templeDefault.DeepCopy();
+        Altar altarSimulated = null;
+        if (altarDefault != null) altarSimulated = altarDefault.DeepCopy();
+        List<MapUnit> enemyUnits = enemyArmy.GetComponent<Army>().units;
+        List<MapUnit> unitsNeeded = new List<MapUnit>();
+        float threatLevel = enemyArmyInfo[enemyArmy].expectedPower;
+
+        enemyUnits.Sort(Tools.SortByPower);
+        int index = enemyUnits.Count - 1;
+        while (index >= 0 && GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) < threatLevel) {
+            MapUnit simulatedUnit = GetComponent<Player>().unitBlueprints[Tools.UnitToIndex(enemyUnits[index])].DeepCopy();
+            Tools.AddUnitToRows(frontRowSimulated, backRowSimulated, simulatedUnit);
+            unitsNeeded.Add(simulatedUnit);
+            index--;
+        }
+        if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) return unitsNeeded;
+
+        if (templeSimulated == null) {
+            templeSimulated = GetComponent<Player>().templeBlueprints[TempleName.Protection].DeepCopy();
+            MapUnit templeStandIn = new MapUnit("temple", Faction.None, "");
+            templeStandIn.moneyCost = GetComponent<Player>().templeBlueprints[TempleName.Protection].cost;
+            unitsNeeded.Add(templeStandIn);
+            if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
+                return unitsNeeded;
+            }
+        }
+        if (altarSimulated == null) {
+            altarSimulated = GetComponent<Player>().altarBlueprints[AltarName.Conflict].DeepCopy();
+            MapUnit altarStandIn = new MapUnit("altar", Faction.None, "");
+            altarStandIn.moneyCost = GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost;
+            unitsNeeded.Add(altarStandIn);
+            if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
+                return unitsNeeded;
+            }
+        }
+
+        return new List<MapUnit>();
+    }
+    List<MapUnit> UnitsNeededByCopyingMax(MapUnit[] FRDefault, MapUnit[] BRDefault, Temple templeDefault, Altar altarDefault, GameObject enemyArmy) {
+        MapUnit[] frontRowSimulated = Tools.DeepCopyMapUnitArray(FRDefault);
+        MapUnit[] backRowSimulated = Tools.DeepCopyMapUnitArray(BRDefault);
+        Temple templeSimulated = null;
+        if (templeDefault != null) templeSimulated = templeDefault.DeepCopy();
+        Altar altarSimulated = null;
+        if (altarDefault != null) altarSimulated = altarDefault.DeepCopy();
+        List<MapUnit> enemyUnits = enemyArmy.GetComponent<Army>().units;
+        List<MapUnit> unitsNeeded = new List<MapUnit>();
+        float threatLevel = enemyArmyInfo[enemyArmy].expectedPower;
+
+        enemyUnits.Sort(Tools.SortByPower);
+        int index = enemyUnits.Count - 1;
+        int biggestEnemyUnitIndex = Tools.UnitToIndex(enemyUnits[enemyUnits.Count - 1]);
+        while (index >= 0 && GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) < threatLevel) {
+            MapUnit simulatedUnit = GetComponent<Player>().unitBlueprints[biggestEnemyUnitIndex].DeepCopy();
+            Tools.AddUnitToRows(frontRowSimulated, backRowSimulated, simulatedUnit);
+            unitsNeeded.Add(simulatedUnit);
+            index--;
+        }
+        if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
+            return unitsNeeded;
+        }
+
+        if (templeSimulated == null) {
+            templeSimulated = GetComponent<Player>().templeBlueprints[TempleName.Protection].DeepCopy();
+            MapUnit templeStandIn = new MapUnit("temple", Faction.None, "");
+            templeStandIn.moneyCost = GetComponent<Player>().templeBlueprints[TempleName.Protection].cost;
+            unitsNeeded.Add(templeStandIn);
+            if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
+                return unitsNeeded;
+            }
+        }
+        if (altarSimulated == null) {
+            altarSimulated = GetComponent<Player>().altarBlueprints[AltarName.Conflict].DeepCopy();
+            MapUnit altarStandIn = new MapUnit("altar", Faction.None, "");
+            altarStandIn.moneyCost = GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost;
+            unitsNeeded.Add(altarStandIn);
+            if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
+                return unitsNeeded;
+            }
+        }
+
+        return new List<MapUnit>();
+    }
 
 
     void BuyUnits() {
@@ -213,7 +354,31 @@ public class AI : MonoBehaviour{
             else moneyToSpend = false;
         }
     }
-
+    public float GetDefensivePower(MapUnit[] frontRowUnits, MapUnit[] backRowUnits, Temple temple, Altar altar) {
+        float totalHealth = 0;
+        float power = 0;
+        if (temple != null && temple.name == TempleName.Protection) {
+            totalHealth += temple.unit.GetHealth();
+            power += temple.unit.GetDPS() * totalHealth;
+        }
+        if (altar != null && altar.name == AltarName.Conflict) {
+            totalHealth += altar.unit.GetHealth();
+            power += altar.unit.GetDPS() * totalHealth;
+        }
+        for (int i = 0; i < frontRowUnits.Length; i++) {
+            if (frontRowUnits[i] != null) {
+                totalHealth += frontRowUnits[i].GetHealth();
+                power += frontRowUnits[i].GetDPS() * totalHealth;
+            }
+        }
+        for (int i = 0; i < backRowUnits.Length; i++) {
+            if (backRowUnits[i] != null) {
+                totalHealth += backRowUnits[i].GetHealth();
+                power += backRowUnits[i].GetDPS() * totalHealth;
+            }
+        }
+        return power;
+    }
 
 
     void Attack() {
@@ -321,6 +486,7 @@ public class AI : MonoBehaviour{
     public void StartTurn() {
         turnPhase = TurnPhase.DefendAgainstThreats;
         readyToExecute = true;
+        unallocatedMoney = GetComponent<Player>().money;
     }
     void IncrementArmyInfo() {
         foreach(KeyValuePair<GameObject, ArmyInfo> info in enemyArmyInfo) {

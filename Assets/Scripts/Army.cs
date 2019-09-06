@@ -26,6 +26,7 @@ public class Army : MonoBehaviour {
     public Altar conqueredAltar;
     public int precombatPower;
     public Effigy effigy;
+    public int allocatedMoney = 0;
 
     // Start is called before the first frame update
     void Start() {
@@ -295,6 +296,7 @@ public class Army : MonoBehaviour {
         }
         return power;
     }
+
 
     public bool HasOpenPosition() {
         if (units.Count < 8) return true;

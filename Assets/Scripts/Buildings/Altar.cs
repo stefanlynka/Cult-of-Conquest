@@ -8,13 +8,13 @@ public class Altar{
     public string portrait;
     public int cost;
     public string description;
-    public string ability;
 
     public MapUnit unit;
 
-    public Altar(AltarName newName, int newCost) {
+    public Altar(AltarName newName, int newCost, string desc) {
         name = newName;
         cost = newCost;
+        description = desc;
         portrait = newName.ToString();
         unit = new MapUnit("Altar", Faction.None, "");
         unit.maxHealth = 150;
@@ -25,12 +25,12 @@ public class Altar{
     }
 
     public Altar DeepCopy() {
-        Altar copy = new Altar(name, cost);
-        copy.portrait = copy.name.ToString();
-        copy.description = description;
-        copy.ability = ability;
-        return copy;
+        Altar newAltar = new Altar(name, cost, description);
+        newAltar.portrait = portrait;
+        newAltar.unit = unit.DeepCopy();
+        return newAltar;
     }
+
 
     public void ResetUnit() {
         unit = new MapUnit("Altar", Faction.None, "");
@@ -38,5 +38,13 @@ public class Altar{
         unit.currentHealth = 100;
         unit.maxDamage = 10;
         unit.attackSpeed = 20;
+    }
+
+    public void SetNull() {
+        name = AltarName.None;
+        cost = 0;
+        description = "";
+        portrait = "";
+        unit = null;
     }
 }

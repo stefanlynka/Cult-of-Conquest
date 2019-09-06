@@ -33,6 +33,9 @@ public class TempleShopManager : MonoBehaviour{
             GameObject buyingSpace = Tools.GetChildNamed(buyingSpaces, "Temple Buying Space " + i);
             templeBuySpaces[i] = buyingSpace;
         }
+        for (int i = 0; i < TurnManager.players.Count; i++) {
+            MakeTempleBlueprints(TurnManager.players[i]);
+        }
         GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
     }
 
@@ -69,25 +72,29 @@ public class TempleShopManager : MonoBehaviour{
         }
     }
 
+    public void MakeTempleBlueprints(GameObject player) {
+        Faction faction = player.GetComponent<Player>().faction;
+        Temple armamentsTemple = new Temple(TempleName.Armaments, 30, "Decrease unit\ncost by 40%", currentFaction);
+        player.GetComponent<Player>().templeBlueprints.Add(TempleName.Armaments, armamentsTemple);
+        Temple traditionTemple = new Temple(TempleName.Tradition, 30, "Decrease ritual\ncost at this node", currentFaction);
+        player.GetComponent<Player>().templeBlueprints.Add(TempleName.Tradition, traditionTemple);
+        Temple protectionTemple = new Temple(TempleName.Protection, 30, "Build a powerful\ndefensive building", currentFaction);
+        player.GetComponent<Player>().templeBlueprints.Add(TempleName.Protection, protectionTemple);
+        Temple originTemple = new Temple(TempleName.Origin, 50, "Allow creation\nof Prophets", currentFaction);
+        player.GetComponent<Player>().templeBlueprints.Add(TempleName.Origin, originTemple);
+    }
+
     void MakeTemple(Faction faction) {
-        Temple armamentsTemple = new Temple(TempleName.Armaments, 30, faction);
-        armamentsTemple.ability = "";
-        armamentsTemple.description = "Decrease unit\ncost by 40%";
+        Temple armamentsTemple = new Temple(TempleName.Armaments, 30, "Decrease unit\ncost by 40%", currentFaction);
         templeBuySpaces[0].GetComponent<TempleShopSpace>().SetTemple(armamentsTemple);
 
-        Temple traditionTemple = new Temple(TempleName.Tradition, 30, faction);
-        traditionTemple.ability = "";
-        traditionTemple.description = "Decrease ritual\ncost at this node";
+        Temple traditionTemple = new Temple(TempleName.Tradition, 30, "Decrease ritual\ncost at this node", currentFaction);
         templeBuySpaces[1].GetComponent<TempleShopSpace>().SetTemple(traditionTemple);
 
-        Temple protectionTemple = new Temple(TempleName.Protection, 30, faction);
-        protectionTemple.ability = "";
-        protectionTemple.description = "Build a powerful\ndefensive building";
+        Temple protectionTemple = new Temple(TempleName.Protection, 30, "Build a powerful\ndefensive building", currentFaction);
         templeBuySpaces[2].GetComponent<TempleShopSpace>().SetTemple(protectionTemple);
 
-        Temple originTemple = new Temple(TempleName.Origin, 50, faction);
-        originTemple.ability = "";
-        originTemple.description = "Allow creation\nof Prophets";
+        Temple originTemple = new Temple(TempleName.Origin, 50, "Allow creation\nof Prophets", currentFaction);
         templeBuySpaces[3].GetComponent<TempleShopSpace>().SetTemple(originTemple);
     }
 }

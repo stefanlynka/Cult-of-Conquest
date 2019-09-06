@@ -50,6 +50,13 @@ public class Tools {
         }
         return newlist;
     }
+    public static MapUnit[] DeepCopyMapUnitArray(MapUnit[] oldList) {
+        MapUnit[] newList = new MapUnit[oldList.Length];
+        for (int i = 0; i < oldList.Length; i++) {
+            if (oldList[i] != null) newList[i] = oldList[i].DeepCopy();
+        }
+        return newList;
+    }
 
     public static int SortByTime(Cooldown c1, Cooldown c2) {
         return c1.timeToAct.CompareTo(c2.timeToAct);
@@ -118,5 +125,27 @@ public class Tools {
         else if (faction == Faction.Unmar) colour = Color.white;
         else if (faction == Faction.Zenteel) colour = new Color(1.0f, 0.5f, 0f);
         return colour;
+    }
+    public static bool AddUnitToRows(MapUnit[] frontRow, MapUnit[] backRow, MapUnit unit) {
+        for (int i = 0; i < frontRow.Length; i++) {
+            if (frontRow[i] != null) {
+                frontRow[i] = unit;
+                return true;
+            }
+        }
+        for (int i = 0; i < backRow.Length; i++) {
+            if (backRow[i] != null) {
+                backRow[i] = unit;
+                return true;
+            }
+        }
+        return false;
+    }
+    public static int UnitToIndex(MapUnit unit) {
+        if (unit.name == "peon") return 0;
+        if (unit.name == "acolyte") return 1;
+        if (unit.name == "shaman") return 1;
+        if (unit.name == "prelate") return 3;
+        return 0;
     }
 }

@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
     public List<GameObject> armies = new List<GameObject>();
     public List<GameObject> ownedNodes = new List<GameObject>();
     public List<MapUnit> unitBlueprints = new List<MapUnit>();
+    public Dictionary<TempleName, Temple> templeBlueprints = new Dictionary<TempleName, Temple>();
+    public Dictionary<AltarName, Altar> altarBlueprints = new Dictionary<AltarName, Altar>();
     public List<Ritual> ritualBlueprints = new List<Ritual>();
     public List<Ritual> ritualBackup = new List<Ritual>();
     public Dictionary<Faction, int> dissections = new Dictionary<Faction, int>();

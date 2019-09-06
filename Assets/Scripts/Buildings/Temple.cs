@@ -8,14 +8,13 @@ public class Temple {
     public string portrait;
     public int cost;
     public string description;
-    public string ability;
     public Faction faction;
-
     public MapUnit unit;
 
-    public Temple(TempleName newName, int newCost, Faction newFaction) {
+    public Temple(TempleName newName, int newCost, string desc, Faction newFaction) {
         name = newName;
         cost = newCost;
+        description = desc;
         portrait = newName.ToString();
         faction = newFaction;
         unit = new MapUnit("Temple", Faction.None, "");
@@ -27,11 +26,10 @@ public class Temple {
     }
 
     public Temple DeepCopy() {
-        Temple copy = new Temple(name, cost, faction);
-        copy.portrait = copy.name.ToString();
-        copy.description = description;
-        copy.ability = ability;
-        return copy;
+        Temple newTemple = new Temple(name, cost, description, faction);
+        newTemple.portrait = portrait;
+        newTemple.unit = unit.DeepCopy();
+        return newTemple;
     }
 
     public void ResetUnit() {
@@ -42,5 +40,12 @@ public class Temple {
             unit.maxDamage = 50;
             unit.attackSpeed = 100;
         }
+    }
+    public void SetNull() {
+        name = TempleName.None;
+        cost = 0;
+        description = "";
+        portrait = "";
+        unit = null;
     }
 }
