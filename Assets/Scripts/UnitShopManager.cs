@@ -246,7 +246,7 @@ public class UnitShopManager : MonoBehaviour {
 
         MapUnit acolyte = new MapUnit("acolyte", Faction.Paratrophs, "acolyte");
         acolyte.SetHealth(25);
-        acolyte.maxDamage = 9;
+        acolyte.maxDamage = 10;
         acolyte.attackRange = 1;
         acolyte.attackSpeed = 120;
         acolyte.moneyCost = 10;

@@ -27,6 +27,7 @@ public class Army : MonoBehaviour {
     public int precombatPower;
     public Effigy effigy;
     public int allocatedMoney = 0;
+    public List<MapUnit> unitsToAdd = new List<MapUnit>();
 
     // Start is called before the first frame update
     void Start() {
@@ -77,7 +78,7 @@ public class Army : MonoBehaviour {
         AddUnit(1, true, owner.GetComponent<Player>().unitBlueprints[0]);
         AddUnit(2, true, owner.GetComponent<Player>().unitBlueprints[0]);
         AddUnit(3, true, owner.GetComponent<Player>().unitBlueprints[0]);
-        //AddUnit(0, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        AddUnit(0, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(1, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(2, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(3, false, owner.GetComponent<Player>().unitBlueprints[0]);
@@ -198,7 +199,10 @@ public class Army : MonoBehaviour {
         owner.GetComponent<Player>().zeal++;
         owner.GetComponent<Player>().dissections[unit.faction]++;
     }
-
+    public void SellUnit(MapUnit unit) {
+        owner.GetComponent<Player>().money += unit.moneyCost / 4;
+        RemoveUnit(unit);
+    }
     public void AddUnit(int index, bool fRow, MapUnit unit) {
         //print("adding unit");
         MapUnit newUnit = unit.DeepCopy();
@@ -253,8 +257,6 @@ public class Army : MonoBehaviour {
         float power = 0;
         for (int i = 0; i < frontRow.Length; i++) {
             if (frontRow[i] != null) {
-                //print("unit health: " + frontRow[i].GetHealth());
-                //print("unit dps: " + frontRow[i].GetDPS());
                 totalHealth += frontRow[i].GetHealth();
                 power += frontRow[i].GetDPS() * totalHealth;
             }

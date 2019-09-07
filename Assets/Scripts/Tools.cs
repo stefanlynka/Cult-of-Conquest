@@ -128,16 +128,25 @@ public class Tools {
     }
     public static bool AddUnitToRows(MapUnit[] frontRow, MapUnit[] backRow, MapUnit unit) {
         for (int i = 0; i < frontRow.Length; i++) {
-            if (frontRow[i] != null) {
+            if (frontRow[i] == null) {
                 frontRow[i] = unit;
                 return true;
             }
         }
         for (int i = 0; i < backRow.Length; i++) {
-            if (backRow[i] != null) {
+            if (backRow[i] == null) {
                 backRow[i] = unit;
                 return true;
             }
+        }
+        return false;
+    }
+    public static bool RowsHaveOpening(MapUnit[] frontRow, MapUnit[] backRow) {
+        foreach(MapUnit unit in frontRow) {
+            if (unit == null) return true;
+        }
+        foreach (MapUnit unit in backRow) {
+            if (unit == null) return true;
         }
         return false;
     }
@@ -147,5 +156,37 @@ public class Tools {
         if (unit.name == "shaman") return 1;
         if (unit.name == "prelate") return 3;
         return 0;
+    }
+    public static void ReplaceWeakestUnitInRows(MapUnit[] frontRow, MapUnit[] backRow, MapUnit unit) {
+        bool weakestIsInFront = false;
+        int weakestIndex = 0;
+        float weakestPower = 9999;
+        for (int i = 0; i < frontRow.Length; i++) {
+            if (frontRow[i] != null && frontRow[i].GetPower() < weakestPower) {
+                weakestPower = frontRow[i].GetPower();
+                weakestIsInFront = true;
+                weakestIndex = i;
+            }
+        }
+        for (int i = 0; i < backRow.Length; i++) {
+            if (backRow[i] != null && backRow[i].GetPower() < weakestPower) {
+                weakestPower = backRow[i].GetPower();
+                weakestIsInFront = false;
+                weakestIndex = i;
+            }
+        }
+        if (weakestIsInFront) frontRow[weakestIndex] = unit;
+        else backRow[weakestIndex] = unit;
+        return;
+    }
+    public static int GetOpenSpotCount(MapUnit[] frontRow, MapUnit[] backRow) {
+        int numSpots = 0;
+        foreach (MapUnit unit in frontRow) {
+            if (unit == null) numSpots++;
+        }
+        foreach (MapUnit unit in backRow) {
+            if (unit == null) numSpots++;
+        }
+        return numSpots;
     }
 }

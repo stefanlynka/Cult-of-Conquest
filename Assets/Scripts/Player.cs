@@ -43,7 +43,6 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     void Update(){
-        //print(TurnManager.currentPlayer);
         if (gameObject == TurnManager.currentPlayer) {
             CheckSelected();
             if (Input.GetMouseButtonDown(1)) {
@@ -422,7 +421,6 @@ public class Player : MonoBehaviour
             godArmy.GetComponent<Army>().frontRow[0] = CreateGodUnit();
         }
     }
-
 
     public MapUnit CreateGodUnit() {
         MapUnit unit = new MapUnit("God", faction, "Prelate");

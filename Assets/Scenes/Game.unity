@@ -436,6 +436,7 @@ MonoBehaviour:
   sight: 2
   marredBattle: 0
   precombatPower: 0
+  allocatedMoney: 0
 --- !u!212 &47433033
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1223,6 +1224,7 @@ MonoBehaviour:
   sight: 2
   marredBattle: 0
   precombatPower: 0
+  allocatedMoney: 0
 --- !u!212 &97013041
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -15171,6 +15173,7 @@ GameObject:
   - component: {fileID: 1593165793}
   - component: {fileID: 1593165792}
   - component: {fileID: 1593165791}
+  - component: {fileID: 1593165794}
   m_Layer: 0
   m_Name: Sell Button
   m_TagString: Untagged
@@ -15279,6 +15282,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1593165794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593165789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0da4280779f50e04fb60db63fca7459a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1602775937
 GameObject:
   m_ObjectHideFlags: 0

@@ -221,7 +221,6 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void InstantBattle() {
-        //print("battle beginning");
         //print("attackers left: " + attackers.Count);
         //print("defenders left: " + defenders.Count);
         bool armyDefeated = false;
@@ -236,6 +235,7 @@ public class BattleMenu : MonoBehaviour{
             }
             // Run Next Attack
             armyDefeated = NextAttack(retreating);
+            if (armyDefeated) cooldowns.Clear();
         }
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
         if (defendArmy) defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);

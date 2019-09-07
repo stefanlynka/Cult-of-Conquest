@@ -446,6 +446,12 @@ public class Node : MonoBehaviour
     public void SetFog() {
         Tools.GetChildNamed(gameObject, "Fog Node").SetActive(hidden);
     }
+    public int GetUnitCost(int index) {
+        int cost = owner.GetComponent<Player>().unitBlueprints[index].moneyCost;
+        if (temple != null && temple.name == TempleName.Armaments) cost = (int)(cost * 0.6);
+        return cost;
+    }
+
 }
 
 /*
