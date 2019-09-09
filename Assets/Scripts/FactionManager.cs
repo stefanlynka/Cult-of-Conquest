@@ -74,22 +74,22 @@ public class FactionManager : MonoBehaviour{
     void MakeParatrophs(FactionTraits traits) {
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
-        traits.PrecombatAttacker = Empty;
-        traits.PrecombatDefender = Empty;
+        traits.PrecombatAttacker = StolenPrecombatAttack;
+        traits.PrecombatDefender = StolenPrecombatDefense;
         traits.TakeDamage = Empty;
-        traits.ArmyLostUnit = Empty;
+        traits.ArmyLostUnit = DownToOneCheck;
         traits.KilledEnemy = StoreEnemy;
         traits.EnemyRetreated = Empty;
         traits.BattleOver = ReassembleEnemies;
         traits.WonBattle = Empty;
         traits.StartTurn = ResetBlueprints;
-        traits.EndTurn = Empty;
+        traits.EndTurn = IncreaseFog;
     }
     void MakeUnmar(FactionTraits traits) { 
         traits.NewUnit = GiveShield;
         traits.Precombat = BoostMarred;
         traits.PrecombatAttacker = Empty;
-        traits.PrecombatDefender = Empty;
+        traits.PrecombatDefender = BoostDefense;
         traits.TakeDamage = UnitBecomeMarred;
         traits.ArmyLostUnit = ArmyBecomeMarred;
         traits.KilledEnemy = Empty;
@@ -282,28 +282,36 @@ public class FactionManager : MonoBehaviour{
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
     }
     public void BoostAttacker(GameObject noumenonArmy, GameObject defendingNode) {
-        Upgrade attackUpgrade = noumenonArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Strike First"];
-        float damageMod = attackUpgrade.currentLevel * 0.2f;
-        noumenonArmy.GetComponent<Army>().AddToDamageMod(damageMod);
+        if (noumenonArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Strike First")){
+            Upgrade attackUpgrade = noumenonArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Strike First"];
+            float damageMod = attackUpgrade.currentLevel * 0.2f;
+            noumenonArmy.GetComponent<Army>().AddToDamageMod(damageMod);
+        }
     }
     public void IncreaseFog(GameObject player) {
-        List<GameObject> nodes = player.GetComponent<Player>().ownedNodes;
-        for(int i = 0; i< nodes.Count; i++) {
-            GameObject node = nodes[i];
-            node.GetComponent<Node>().concealment = 1 + player.GetComponent<Player>().upgrades["Cover Your Tracks"].currentLevel;
+        if (player.GetComponent<Player>().upgrades.ContainsKey("Cover Your Tracks")) {
+            List<GameObject> nodes = player.GetComponent<Player>().ownedNodes;
+            for (int i = 0; i < nodes.Count; i++) {
+                GameObject node = nodes[i];
+                node.GetComponent<Node>().concealment = 1 + player.GetComponent<Player>().upgrades["Cover Your Tracks"].currentLevel;
+            }
         }
     }
     public void AgainstStrongest(GameObject samataArmy, GameObject defendingNode) {
-        if (defendingNode.GetComponent<Node>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
-            samataArmy.GetComponent<Army>().AddToDamageMod(0.1f * samataArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Against Tyranny"].currentLevel);
-            print("against the strongest");
+        if (samataArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Against Tyranny")) {
+            if (defendingNode.GetComponent<Node>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
+                samataArmy.GetComponent<Army>().AddToDamageMod(0.1f * samataArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Against Tyranny"].currentLevel);
+                print("against the strongest");
+            }
         }
     }
     public void DownToOneCheck(GameObject army) {
-        if (army.GetComponent<Army>().units.Count == 1) {
-            MapUnit lastUnit = army.GetComponent<Army>().units[0];
-            lastUnit.currentHealth = lastUnit.maxHealth + (int)(lastUnit.maxHealth * 0.3f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Last One Standing"].currentLevel);
-            lastUnit.currentDamage = lastUnit.currentDamage + (int)(lastUnit.currentDamage * 0.1f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Last One Standing"].currentLevel);
+        if (army.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Last One Standing")) {
+            if (army.GetComponent<Army>().units.Count == 1) {
+                MapUnit lastUnit = army.GetComponent<Army>().units[0];
+                lastUnit.currentHealth = lastUnit.maxHealth + (int)(lastUnit.maxHealth * 0.3f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Last One Standing"].currentLevel);
+                lastUnit.currentDamage = lastUnit.currentDamage + (int)(lastUnit.currentDamage * 0.1f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Last One Standing"].currentLevel);
+            }
         }
     }
     public void BoostMarred(GameObject unmarArmy, GameObject otherArmy) {
@@ -313,11 +321,13 @@ public class FactionManager : MonoBehaviour{
         }
     }
     public void BoostDefense(GameObject unmarArmy, GameObject otherArmy) {
-        for (int i = 0; i < unmarArmy.GetComponent<Army>().units.Count; i++) {
-            MapUnit unit = unmarArmy.GetComponent<Army>().units[i];
-            if (unit.name == "Altar" || unit.name == "Temple") {
-                unit.damageMod += unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Fortification"].currentLevel * 0.2f;
-                unit.currentHealth += (int)(unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Fortification"].currentLevel * 0.2f);
+        if (unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Fortification")) {
+            for (int i = 0; i < unmarArmy.GetComponent<Army>().units.Count; i++) {
+                MapUnit unit = unmarArmy.GetComponent<Army>().units[i];
+                if (unit.name == "Altar" || unit.name == "Temple") {
+                    unit.damageMod += unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Fortification"].currentLevel * 0.2f;
+                    unit.currentHealth += (int)(unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Fortification"].currentLevel * 0.2f);
+                }
             }
         }
     }
@@ -329,14 +339,47 @@ public class FactionManager : MonoBehaviour{
     }
     public void ProtectExplorers(GameObject carnotArmy, GameObject otherArmy) {
         Dictionary<string, Upgrade> upgrades = carnotArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades;
-        float exposure = carnotArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetExposure();
-        if (upgrades.ContainsKey("Entropic Explorer") && exposure > 0.5f) {
-            carnotArmy.GetComponent<Army>().AddToDamageMod(exposure * 0.2f * upgrades["Entropic Explorer"].currentLevel);
+        if (upgrades.ContainsKey("Entropic Explorer")) {
+            float exposure = carnotArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetExposure();
+            if (upgrades.ContainsKey("Entropic Explorer") && exposure > 0.5f) {
+                carnotArmy.GetComponent<Army>().AddToDamageMod(exposure * 0.2f * upgrades["Entropic Explorer"].currentLevel);
+            }
+        }
+    }
+    public void StolenPrecombatAttack(GameObject paratrophArmy, GameObject defendingNode) {
+        if (paratrophArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Against Tyranny")) {
+            if (defendingNode.GetComponent<Node>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
+                paratrophArmy.GetComponent<Army>().AddToDamageMod(0.1f * paratrophArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Against Tyranny"].currentLevel);
+                print("against the strongest");
+            }
+        }
+        if (paratrophArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Strike First")) {
+            Upgrade attackUpgrade = paratrophArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Strike First"];
+            float damageMod = attackUpgrade.currentLevel * 0.2f;
+            paratrophArmy.GetComponent<Army>().AddToDamageMod(damageMod);
+        }
+    }
+    public void StolenPrecombatDefense(GameObject paratrophArmy, GameObject otherArmy) {
+        Dictionary<string, Upgrade> upgrades = paratrophArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades;
+        if (upgrades.ContainsKey("Entropic Explorer")) {
+            float exposure = paratrophArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetExposure();
+            if (upgrades.ContainsKey("Entropic Explorer") && exposure > 0.5f) {
+                paratrophArmy.GetComponent<Army>().AddToDamageMod(exposure * 0.2f * upgrades["Entropic Explorer"].currentLevel);
+            }
+        }
+        if (upgrades.ContainsKey("Fortification")) {
+            for (int i = 0; i < paratrophArmy.GetComponent<Army>().units.Count; i++) {
+                MapUnit unit = paratrophArmy.GetComponent<Army>().units[i];
+                if (unit.name == "Altar" || unit.name == "Temple") {
+                    unit.damageMod += upgrades["Fortification"].currentLevel * 0.2f;
+                    unit.currentHealth += (int)(upgrades["Fortification"].currentLevel * 0.2f);
+                }
+            }
         }
     }
 
 
-    public void Empty(MapUnit unit) {}
+        public void Empty(MapUnit unit) {}
     public void Empty() {}
     public void Empty(GameObject nothing) {}
     public void Empty(GameObject nothing, MapUnit noone) { }

@@ -248,7 +248,7 @@ public class Player : MonoBehaviour
 
         if (defendingNode.GetComponent<Node>().occupant) {
             GameObject defendingArmy = defendingNode.GetComponent<Node>().occupant;
-            if (defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Defensive Discord")) {
+            if (defendingArmy.GetComponent<Army>().owner && defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Defensive Discord")) {
                 int randInt = Random.Range(1, 11); //1 to 10
                 if (randInt <= defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Defensive Discord"].currentLevel) {
                     defendingArmy = attackingArmy.GetComponent<Army>().GetRandomDifferentTarget(defendingArmy.GetComponent<Army>().currentNode);

@@ -53,6 +53,7 @@ public class AI : MonoBehaviour {
                     print("Spending 1 Phase");
                     AllocateMoney();
                     SpendMoney();
+                    SpendZeal();
                     turnPhase = TurnPhase.Attacks1;
                 }
                 else if (turnPhase == TurnPhase.Attacks1) {
@@ -902,6 +903,75 @@ public class AI : MonoBehaviour {
 
 
 
+    void SpendZeal() {
+        switch (faction) {
+            case Faction.Noumenon:
+                TryToUpgrade();
+                break;
+            case Faction.Zenteel:
+                TryToUpgrade();
+                break;
+            case Faction.Paratrophs:
+                TryToUpgrade();
+                break;
+            case Faction.Unmar:
+                TryToUpgrade();
+                break;
+            case Faction.Samata:
+                TryToUpgrade();
+                break;
+            case Faction.Carnot:
+                TryToUpgrade();
+                break;
+
+        }
+    }
+    void TryToUpgrade() {
+        foreach(KeyValuePair<string, Upgrade> upgrade in GetComponent<Player>().upgrades) {
+            if (upgrade.Value.zealCost <= GetComponent<Player>().zeal && upgrade.Value.currentLevel < upgrade.Value.maxLevel) {
+                GetComponent<Player>().BuyUpgrade(upgrade.Value);
+            }
+        }
+    }
+    void UpgradeParatrophs() {
+        foreach (KeyValuePair<string, Upgrade> upgrade in GetComponent<Player>().upgrades) {
+            if (upgrade.Value.zealCost <= GetComponent<Player>().zeal && upgrade.Value.currentLevel < upgrade.Value.maxLevel) {
+                if (!upgrade.Value.name.Contains("Adapt")) GetComponent<Player>().BuyUpgrade(upgrade.Value);
+                else if (upgrade.Value.name == "Adapt 1"){
+                    Upgrade newUpgrade = GetRandomUpgrade();
+                    GetComponent<Player>().upgrades.Remove("Adapt 1");
+                    GetComponent<Player>().upgrades.Add(newUpgrade.name, newUpgrade);
+                    GetComponent<Player>().BuyUpgrade(newUpgrade);
+                }
+                else if (upgrade.Value.name == "Adapt 2") {
+                    Upgrade newUpgrade = GetRandomUpgrade();
+                    GetComponent<Player>().upgrades.Remove("Adapt 2");
+                    GetComponent<Player>().upgrades.Add(newUpgrade.name, newUpgrade);
+                    GetComponent<Player>().BuyUpgrade(newUpgrade);
+                }
+            }
+        }
+    }
+    Upgrade GetRandomUpgrade() {
+        int randInt = Random.Range(0, 7);
+        switch (randInt) {
+            case 0:
+                return new Upgrade("Strike First", 5, 3, "Increase damage \nwhen attacking");
+            case 1:
+                return new Upgrade("Cover Your Tracks", 8, 2, "Increase \nfog of war");
+            case 2:
+                return new Upgrade("Fortification", 5, 3, "Increase damage\nand health\n of protective buildings");
+            case 3:
+                return new Upgrade("Last One Standing", 5, 3, "Strengthen your\nlast unit\nin a battle");
+            case 4:
+                return new Upgrade("Against Tyranny", 5, 3, "Increase damage\nwhen attacking strongest\nenemy faction");
+            case 5:
+                return new Upgrade("Entropic Explorer", 5, 3, "Increase defense\nbased on\nnode's exposure");
+            case 6:
+                return new Upgrade("Defensive Discord", 5, 3, "Enemies have\na chance to \nattack randomly");
+        }
+        return null;
+    }
 
 
     void Attack() {
