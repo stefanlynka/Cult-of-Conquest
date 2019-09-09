@@ -64,8 +64,14 @@ public class Tools {
     public static int SortByThreat(GameObject node1, GameObject node2) {
         return node1.GetComponent<Node>().GetThreatToNode().CompareTo(node2.GetComponent<Node>().GetThreatToNode());
     }
+    public static int SortByNodePower(GameObject node1, GameObject node2) {
+        return node1.GetComponent<Node>().GetDefensivePower().CompareTo(node2.GetComponent<Node>().GetDefensivePower());
+    }
     public static int SortByPower(MapUnit unit1, MapUnit unit2) {
         return unit1.power.CompareTo(unit2.power);
+    }
+    public static int SortByUtility(AllocateOption option1, AllocateOption option2) {
+        return option1.utility.CompareTo(option2.utility);
     }
 
     public static Ritual DeepCopyRitual(Ritual ritual) {
@@ -188,5 +194,32 @@ public class Tools {
             if (unit == null) numSpots++;
         }
         return numSpots;
+    }
+    public static void ReplaceUnit(MapUnit[] frontRow, MapUnit[] backRow, MapUnit unitToBeReplaced, MapUnit replacingUnit) {
+        for (int i = 0; i < frontRow.Length; i++) {
+            if (frontRow[i] != null && frontRow[i] == unitToBeReplaced) {
+                frontRow[i] = replacingUnit;
+                return;
+            }
+        }
+        for (int i = 0; i < backRow.Length; i++) {
+            if (backRow[i] != null && backRow[i] == unitToBeReplaced) {
+                backRow[i] = replacingUnit;
+                return;
+            }
+        }
+    }
+    public static UnitPos GetUnitPosition(MapUnit[] frontRow, MapUnit[] backRow, MapUnit unit) {
+        for (int i = 0; i < frontRow.Length; i++) {
+            if (frontRow[i] != null && frontRow[i] == unit) {
+                return new UnitPos(i,true);
+            }
+        }
+        for (int i = 0; i < backRow.Length; i++) {
+            if (backRow[i] != null && backRow[i] == unit) {
+                return new UnitPos(i, false);
+            }
+        }
+        return new UnitPos();
     }
 }

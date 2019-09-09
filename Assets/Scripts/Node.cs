@@ -168,6 +168,15 @@ public class Node : MonoBehaviour
         }
         return biggestThreat;
     }
+    public List<GameObject> GetNeutralThreats() {
+        List<GameObject> threats = new List<GameObject>();
+        foreach(GameObject neighbour in neighbours) {
+            if (neighbour.GetComponent<Node>().faction == Faction.Independent) {
+                threats.Add(neighbour);
+            }
+        }
+        return threats;
+    }
 
     public void UpdateRitual() {
         if (ritual.name != null) {

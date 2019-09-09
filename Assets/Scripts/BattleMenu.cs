@@ -53,13 +53,13 @@ public class BattleMenu : MonoBehaviour{
         Player.menuOpen = 1;
         if (IsBattleOver()) BattleOver();
     }
+
     public void ExitMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(20, 0, -10));
         Player.menuOpen = 0;
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
         else if (attackingPlayer && attackingPlayer.GetComponent<AI>()) attackingPlayer.GetComponent<AI>().readyToExecute = true;
         Army.readyToMove = true;
-        print("LEAVE MENU, ARMY READY");
         EnableButtons();
     }
 
@@ -319,20 +319,17 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void BattleOver() {
-        print("got to battle over");
         if (defendArmy) {
             defendArmy.GetComponent<Army>().ResetArmy();
             if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
             if (attackers.Count == 0) defendingPlayer.GetComponent<Player>().factionTraits.WonBattle(defendArmy);
         }
-        print("A");
         attackArmy.GetComponent<Army>().ResetArmy();
         attackingPlayer.GetComponent<Player>().factionTraits.BattleOver(attackArmy);
         RefreshBuildings();
         //GameObject winningArmy = defendArmy;
 
         if (defenders.Count == 0) attackingPlayer.GetComponent<Player>().factionTraits.WonBattle(attackArmy);
-        print("B");
         if (attackers.Count == 0) {
             attackArmy.GetComponent<Army>().Defeated();
         }
@@ -343,16 +340,13 @@ public class BattleMenu : MonoBehaviour{
             if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && defendArmy) {
                 attackArmy.GetComponent<Army>().owner.GetComponent<AI>().RememberArmy(defendArmy);
             }
-            print("C. Did we leave?");
             ExitMenu();
         }
-        print("C");
         retreating = false;
         inSimulation = false;
         //if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
         //print("Action Complete, readyToExecute");
         retreatAllowed = true;
-        print("D");
         //if (attackArmy.GetComponent<Army>().owner != Player.human) ExitMenu();
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
         DisableButtons();

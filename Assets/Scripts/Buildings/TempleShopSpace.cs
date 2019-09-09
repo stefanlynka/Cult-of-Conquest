@@ -44,8 +44,7 @@ public class TempleShopSpace : MonoBehaviour{
     }
 
     public void BuyTemple() {
-        Player.human.GetComponent<Player>().money -= temple.cost;
-        NodeMenu.currentNode.GetComponent<Node>().BuildTemple(temple);
+        Player.human.GetComponent<Player>().BuyTemple(NodeMenu.currentNode, temple.name);
         nodeMenu.GetComponent<NodeMenu>().LoadTemple();
         templeShopManager.GetComponent<TempleShopManager>().ExitMenu();
         Player.menuOpen = 1;

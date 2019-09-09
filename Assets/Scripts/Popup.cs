@@ -49,7 +49,7 @@ public class Popup : MonoBehaviour{
         newColour.a = timer / 60f;
         GetComponent<TextMesh>().color = newColour;
         if (timer <= 0) {
-            print("done");
+            //print("done");
             Destroy(gameObject);
         }
     }

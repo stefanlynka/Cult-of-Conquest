@@ -56,5 +56,8 @@ public class Controller : MonoBehaviour{
         altarShopManager.GetComponent<AltarShopManager>().Setup();
         templeShopManager.GetComponent<TempleShopManager>().Setup();
         upgradeManager.GetComponent<UpgradeManager>().Startup();
+        foreach(GameObject player in players) {
+            player.GetComponent<Player>().StartGameSetup();
+        }
     }
 }

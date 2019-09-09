@@ -143,8 +143,10 @@ public struct Intent {
 public enum TurnPhase {
     DefendAgainstThreats,
     Scouting,
-    Allocating,
-    Attacks,
+    Spending1,
+    Attacks1,
+    Spending2,
+    Attacks2,
     Done
 }
 public struct ArmyInfo {
@@ -154,6 +156,102 @@ public struct ArmyInfo {
     }
     public int timeSinceScout;
     public float expectedPower;
+}
+public class AllocateOption {
+    public GameObject node;
+    public GameObject army;
+    public string type;
+    public float utility;
+    public int unitIndex;
+    public TempleName templeName;
+    public AltarName altarName;
+    public int cost;
+    public UnitPos unitPos;
+    public int oldUnitIndex;
+    public AllocateOption(string prophetOption, float newUtility, int newCost) {
+        node = null;
+        army = null;
+        type = prophetOption;
+        utility = newUtility;
+        cost = newCost;
+        unitIndex = 0;
+        oldUnitIndex = 0;
+        unitPos = new UnitPos();
+        templeName = TempleName.None;
+        altarName = AltarName.None;
+    }
+    public AllocateOption(string unitOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex) {
+        node = null;
+        army = newArmy;
+        type = unitOption;
+        utility = newUtility;
+        cost = newCost;
+        unitIndex = mapunitIndex;
+        oldUnitIndex = 0;
+        unitPos = new UnitPos();
+        templeName = TempleName.None;
+        altarName = AltarName.None;
+    }
+    public AllocateOption(string upgradeOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex, int oldIndex) {
+        node = null;
+        army = newArmy;
+        type = upgradeOption;
+        utility = newUtility;
+        cost = newCost;
+        unitIndex = mapunitIndex;
+        oldUnitIndex = oldIndex;
+        unitPos = new UnitPos();
+        templeName = TempleName.None;
+        altarName = AltarName.None;
+    }
+    public AllocateOption(string replaceOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex, UnitPos position) {
+        node = null;
+        army = newArmy;
+        type = replaceOption;
+        utility = newUtility;
+        cost = newCost;
+        unitIndex = mapunitIndex;
+        unitPos = position;
+        oldUnitIndex = 0;
+        templeName = TempleName.None;
+        altarName = AltarName.None;
+    }
+    public AllocateOption(string replenishOption, float newUtility, int newCost, GameObject armyToReplenish) {
+        node = null;
+        army = armyToReplenish;
+        type = replenishOption;
+        utility = newUtility;
+        cost = newCost;
+        unitIndex = 0;
+        oldUnitIndex = 0;
+        unitPos = new UnitPos();
+        templeName = TempleName.None;
+        altarName = AltarName.None;
+    }
+    public AllocateOption(string templeOption, float newUtility, int newCost, GameObject buildingNode, TempleName newname) {
+        node = buildingNode;
+        army = null;
+        type = templeOption;
+        utility = newUtility;
+        cost = newCost;
+        unitIndex = 0;
+        oldUnitIndex = 0;
+        unitPos = new UnitPos();
+        templeName = newname;
+        altarName = AltarName.None;
+    }
+    public AllocateOption(string altarOption, float newUtility, int newCost, GameObject buildingNode, AltarName newname) {
+        node = buildingNode;
+        army = null;
+        type = altarOption;
+        utility = newUtility;
+        cost = newCost;
+        unitIndex = 0;
+        oldUnitIndex = 0;
+        unitPos = new UnitPos();
+        templeName = TempleName.None;
+        altarName = newname;
+    }
 }
 
 // For UnitSpace

@@ -27,6 +27,7 @@ public class Army : MonoBehaviour {
     public int precombatPower;
     public Effigy effigy;
     public int allocatedMoney = 0;
+    public int allocatedReplenish = 0;
     public List<MapUnit> unitsToAdd = new List<MapUnit>();
 
     // Start is called before the first frame update
@@ -37,7 +38,7 @@ public class Army : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         MakeMoves();
-        if (owner == TurnManager.currentPlayer) print("Moves left: " + movesLeft);
+        //if (owner == TurnManager.currentPlayer) print("Moves left: " + movesLeft);
     }
 
     public void Startup() {
@@ -79,9 +80,9 @@ public class Army : MonoBehaviour {
         AddUnit(2, true, owner.GetComponent<Player>().unitBlueprints[0]);
         AddUnit(3, true, owner.GetComponent<Player>().unitBlueprints[0]);
         AddUnit(0, false, owner.GetComponent<Player>().unitBlueprints[0]);
-        //AddUnit(1, false, owner.GetComponent<Player>().unitBlueprints[0]);
-        //AddUnit(2, false, owner.GetComponent<Player>().unitBlueprints[0]);
-        //AddUnit(3, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        AddUnit(1, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        AddUnit(2, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        AddUnit(3, false, owner.GetComponent<Player>().unitBlueprints[0]);
     }
 
     public void SetPrecombatPower() {
@@ -177,15 +178,17 @@ public class Army : MonoBehaviour {
 
 
     public void BuyUnit(UnitPos unitPos, MapUnit unit) {
-        print("trying to buy unit");
-        if (unit.moneyCost <= owner.GetComponent<Player>().money && unit.zealCost <= owner.GetComponent<Player>().zeal) {
-            owner.GetComponent<Player>().money -= unit.moneyCost;
+        //print("trying to buy unit");
+        int unitCost = currentNode.GetComponent<Node>().GetUnitCost(Tools.UnitToIndex(unit));
+        if (unitCost <= owner.GetComponent<Player>().money && unit.zealCost <= owner.GetComponent<Player>().zeal) {
+            owner.GetComponent<Player>().money -= unitCost;
             owner.GetComponent<Player>().zeal -= unit.zealCost;
             owner.GetComponent<Player>().factionTraits.NewUnit(unit);
             AddUnit(unitPos.position, unitPos.frontRow, unit);
         }
-        else print("not enough money");
+        //else print("not enough money");
     }
+
     public void BuyFakeUnit(UnitPos unitPos, MapUnit unit) {
         unit.maxDamage = 0;
         unit.moneyCost = Mathf.RoundToInt(unit.moneyCost * 0.4f);
@@ -254,25 +257,48 @@ public class Army : MonoBehaviour {
     */
     public float GetOffensivePower() {
         float totalHealth = 0;
+        float totalDPS = 0;
         float power = 0;
         for (int i = 0; i < frontRow.Length; i++) {
             if (frontRow[i] != null) {
                 totalHealth += frontRow[i].GetHealth();
-                power += frontRow[i].GetDPS() * totalHealth;
+                totalDPS += frontRow[i].GetDPS();
             }
         }
+        power += totalDPS * totalHealth;
+        totalDPS = 0;
         for (int i = 0; i < backRow.Length; i++) {
             if (backRow[i] != null) {
                 totalHealth += backRow[i].GetHealth();
-                power += backRow[i].GetDPS() * totalHealth;
+                totalDPS += backRow[i].GetDPS();
             }
         }
-        //print("Army Power: " + power);
+        power += totalDPS * totalHealth;
         return power;
+
+        /*
+float totalHealth = 0;
+float power = 0;
+for (int i = 0; i < frontRow.Length; i++) {
+    if (frontRow[i] != null) {
+        totalHealth += frontRow[i].GetHealth();
+        power += frontRow[i].GetDPS() * totalHealth;
+    }
+}
+for (int i = 0; i < backRow.Length; i++) {
+    if (backRow[i] != null) {
+        totalHealth += backRow[i].GetHealth();
+        power += backRow[i].GetDPS() * totalHealth;
+    }
+}
+//print("Army Power: " + power);
+return power;
+*/
     }
 
     public float GetDefensivePower() {
         float totalHealth = 0;
+        float totalDPS = 0;
         float power = 0;
         if (currentNode.GetComponent<Node>().temple != null && currentNode.GetComponent<Node>().temple.name == TempleName.Protection) {
             totalHealth += currentNode.GetComponent<Node>().temple.unit.GetHealth();
@@ -282,20 +308,22 @@ public class Army : MonoBehaviour {
             totalHealth += currentNode.GetComponent<Node>().altar.unit.GetHealth();
             power += currentNode.GetComponent<Node>().altar.unit.GetDPS() * totalHealth;
         }
+        totalDPS = 0;
         for (int i = 0; i < frontRow.Length; i++) {
             if (frontRow[i] != null) {
-                //print("unit health: " + frontRow[i].GetHealth());
-                //print("unit dps: " + frontRow[i].GetDPS());
                 totalHealth += frontRow[i].GetHealth();
-                power += frontRow[i].GetDPS() * totalHealth;
+                totalDPS += frontRow[i].GetDPS();
             }
         }
+        power += totalDPS * totalHealth;
+        totalDPS = 0;
         for (int i = 0; i < backRow.Length; i++) {
             if (backRow[i] != null) {
                 totalHealth += backRow[i].GetHealth();
                 power += backRow[i].GetDPS() * totalHealth;
             }
         }
+        power += totalDPS * totalHealth;
         return power;
     }
 

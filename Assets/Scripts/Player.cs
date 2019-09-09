@@ -60,7 +60,7 @@ public class Player : MonoBehaviour
 
 
     public void Startup() {
-        print("initializing members");
+        //print("initializing members");
         for (int i = 0; i < transform.childCount; i++) {
             GameObject child = transform.GetChild(i).gameObject;
             if (child.GetComponent<Army>()) {
@@ -81,6 +81,9 @@ public class Player : MonoBehaviour
         //SetupFactionTraits();
         SetFaction();
         if (faction == Faction.Paratrophs) SetupDissections();
+    }
+    public void StartGameSetup() {
+        SetupOrigin();
     }
 
     void SetFaction() {
@@ -182,7 +185,10 @@ public class Player : MonoBehaviour
 
             if (!selectedArmy) {
                 if (nodeRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
-                else if (armyRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
+                else if (armyRightClicked) {
+                    //print("right clicked army");
+                    nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
+                }
             }
             else {
                 if (randomPanel.activeSelf && RightClickedOnNearbyEnemy()) {
@@ -205,7 +211,7 @@ public class Player : MonoBehaviour
 
     public void attackNode(GameObject army, GameObject node) {
         print("Army: " + army.name + " aims at: " + node.name);
-        print("This cost a move");
+        //print("This cost a move");
         if (army.GetComponent<Army>().currentNode == node) print("What the fuck");
         List<GameObject> moveList = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetPathTo(node);
         moveList.RemoveAt(0);
@@ -263,7 +269,6 @@ public class Player : MonoBehaviour
     public void AddNode(GameObject node) {
         ownedNodes.Add(node);
     }
-
     public bool BuyRitual(Ritual ritual) {
         if (zeal >= ritual.zealCost) {
             print("Ritual Purchased");
@@ -274,7 +279,6 @@ public class Player : MonoBehaviour
         }
         return false;
     }
-
     public bool BuyUpgrade(Upgrade upgrade) {
         print("upgrade name " + upgrade.name);
         print("upgrade level " + upgrade.currentLevel);
@@ -286,7 +290,6 @@ public class Player : MonoBehaviour
         }
         return false;
     }
-
     public bool BuyProphet(GameObject node) {
         if (money>= 20) {
             money -= 20;
@@ -314,10 +317,27 @@ public class Player : MonoBehaviour
         }
         return false;
     }
+    public bool BuyTemple(GameObject node, TempleName templeName) {
+        if (templeBlueprints.ContainsKey(templeName) && money >= templeBlueprints[templeName].cost) {
+            node.GetComponent<Node>().BuildTemple(templeBlueprints[templeName]);
+            money -= templeBlueprints[templeName].cost;
+            return true;
+        }
+        return false;
+    }
+    public bool BuyAltar(GameObject node, AltarName altarName) {
+        if (altarBlueprints.ContainsKey(altarName) && money >= altarBlueprints[altarName].cost) {
+            node.GetComponent<Node>().BuildAltar(altarBlueprints[altarName]);
+            money -= altarBlueprints[altarName].cost;
+            return true;
+        }
+        return false;
+    }
 
     public void StartTurn() {
         print("Start Turn!");
         money += GetMoneyIncome();
+        print("Money: " + money);
         zeal += GetZealIncome();
         RestUnits();
         UpdateNodes();
@@ -438,5 +458,13 @@ public class Player : MonoBehaviour
             if (entry.Value >= 10) factions.Add(entry.Key);
         }
         return factions;
+    }
+    public void SetupOrigin() {
+        foreach(GameObject node in ownedNodes) {
+            if (node.GetComponent<Node>().homeBase == faction) {
+                node.GetComponent<Node>().BuildTemple(templeBlueprints[TempleName.Origin]);
+                node.GetComponent<Node>().BuildAltar(altarBlueprints[AltarName.Harvest]);
+            }
+        }
     }
 }

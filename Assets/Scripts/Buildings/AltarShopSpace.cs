@@ -44,8 +44,7 @@ public class AltarShopSpace : MonoBehaviour{
     }
 
     public void BuyAltar() {
-        Player.human.GetComponent<Player>().money -= altar.cost;
-        NodeMenu.currentNode.GetComponent<Node>().BuildAltar(altar);
+        Player.human.GetComponent<Player>().BuyAltar(NodeMenu.currentNode, altar.name);
         nodeMenu.GetComponent<NodeMenu>().LoadAltar();
         altarShopManager.GetComponent<AltarShopManager>().ExitMenu();
         Player.menuOpen = 1;

@@ -47,7 +47,6 @@ public class NodeManager : MonoBehaviour
                 nodes.Add(node);
             }
         }
-        print("nodes are collected");
     }
 
     void SetNodeNeighbours(GameObject node) {
