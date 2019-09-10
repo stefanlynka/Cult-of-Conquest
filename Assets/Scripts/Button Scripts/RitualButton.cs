@@ -33,8 +33,8 @@ public class RitualButton : MonoBehaviour{
 
     void SelectNodesForRitual() {
         print("Selecting time");
-        CloseMenu();
         ritualMenu.GetComponent<RitualManager>().SetupRitualSelection(NodeMenu.currentNode.GetComponent<Node>().ritual, NodeMenu.currentNode);
+        CloseMenu();
     }
     void CloseMenu() {
         GameObject.Find("/Node Menu").GetComponent<NodeMenu>().ExitMenu();

@@ -53,7 +53,7 @@ public class NodeManager : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++) {
             GameObject otherNode = transform.GetChild(i).gameObject;
             float distance = Vector3.Distance(node.transform.localPosition, otherNode.transform.localPosition);
-            if (Mathf.Abs(distance-nodeDistance) < nodeDistanceBuffer ) {
+            if (Mathf.Abs(distance-nodeDistance) < nodeDistanceBuffer && otherNode.activeSelf) {
                 SituateNeighbours(node, otherNode);
             }
         }

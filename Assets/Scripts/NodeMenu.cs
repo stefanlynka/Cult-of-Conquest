@@ -8,7 +8,7 @@ public class NodeMenu : MonoBehaviour
     public static GameObject currentArmy;
     GameObject[] backRowSpaces = new GameObject[5];
     GameObject[] frontRowSpaces = new GameObject[5];
-    GameObject prophetMenu, buyProphetButton, locationMenu, effigyNodeMenu, effigyArmyMenu, effigyNodeSprite, effigyArmySprite;
+    GameObject prophetMenu, buyProphetButton, locationMenu, effigyNodeMenu, effigyArmyMenu, effigyNodeSprite, effigyArmySprite, incomeLabel;
 
     public static bool nodeMenuOpen = false;
 
@@ -22,6 +22,7 @@ public class NodeMenu : MonoBehaviour
         effigyArmyMenu = Tools.GetChildNamed(locationMenu, "Effigy in Transit Label");
         effigyNodeSprite = Tools.GetChildNamed(effigyNodeMenu, "Effigy Sprite");
         effigyArmySprite = Tools.GetChildNamed(effigyArmyMenu, "Effigy Sprite");
+        incomeLabel = Tools.GetChildNameContains(gameObject, "Node Income Label");
     }
 
     // Update is called once per frame
@@ -39,6 +40,7 @@ public class NodeMenu : MonoBehaviour
         LoadAltar();
         LoadTemple();
         LoadEffigy();
+        LoadIncome();
         nodeMenuOpen = true;
         ProphetMenuCheck();
         Player.menuOpen = 1;
@@ -98,6 +100,10 @@ public class NodeMenu : MonoBehaviour
             templeSprite.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Temples/Temple of " + temple.portrait);
             descriptionText.GetComponent<TextMesh>().text = temple.description;
         }
+    }
+
+    void LoadIncome() {
+        Tools.GetChildNamed(incomeLabel, "Text").GetComponent<TextMesh>().text = "Income: " + currentNode.GetComponent<Node>().GetNodeMoneyIncome();
     }
 
     public void LoadEffigy() {

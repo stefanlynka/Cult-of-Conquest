@@ -49,13 +49,17 @@ public class BattleMenu : MonoBehaviour{
     }
 
     void CheckAIDecision() {
-        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) {
+        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && !DefenderIsHuman(defendNode)) {
             if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode)) {
                 InstantBattle();
             }
             else if (retreatAllowed) Retreat();
             ExitMenu();
         }
+    }
+    bool DefenderIsHuman(GameObject node) {
+        if (node.GetComponent<Node>().owner && !node.GetComponent<Node>().owner.GetComponent<AI>()) return true;
+        return false;
     }
 
     public void EnterMenu() {

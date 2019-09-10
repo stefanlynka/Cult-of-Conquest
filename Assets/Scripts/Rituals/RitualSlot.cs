@@ -20,7 +20,7 @@ public class RitualSlot : MonoBehaviour{
     private void OnMouseDown() {
         if (Player.menuOpen == 2) {
             Ritual ritualToBuy = ritualBlueprint.DeepCopy();
-            if (NodeMenu.currentNode.GetComponent<Node>().temple.name == TempleName.Tradition) {
+            if (NodeMenu.currentNode.GetComponent<Node>().temple != null && NodeMenu.currentNode.GetComponent<Node>().temple.name == TempleName.Tradition) {
                 ritualToBuy.zealCost--;
             }
             if (human.GetComponent<Player>().BuyRitual(ritualToBuy)) {

@@ -182,6 +182,7 @@ public class Node : MonoBehaviour
         if (ritual.name != null) {
             ritual.prepTime--;
             if (ritual.prepTime == 0) {
+                Tools.CreatePopup(gameObject, "Ritual Ready", 80, Color.red);
                 print("RITUAL READY!!!!!!!");
             }
             if (ritual.prepTime < 0) {

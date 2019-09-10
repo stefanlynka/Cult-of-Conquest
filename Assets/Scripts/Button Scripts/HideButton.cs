@@ -17,7 +17,7 @@ public class HideButton : MonoBehaviour{
 
     private void OnMouseDown() {
         MapUnit unit = NodeMenu.currentArmy.GetComponent<Army>().GetUnit(UnitSpace.currentUnitPos);
-        if (Player.human.GetComponent<Player>().money >= unit.moneyCost / 4) HideUnit(unit);
+        if (unit!=null && Player.human.GetComponent<Player>().money >= unit.moneyCost / 4) HideUnit(unit);
     }
 
     void HideUnit(MapUnit unit) {
