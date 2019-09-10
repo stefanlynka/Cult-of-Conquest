@@ -10,7 +10,7 @@ public class NodeMenu : MonoBehaviour
     GameObject[] frontRowSpaces = new GameObject[5];
     GameObject prophetMenu, buyProphetButton, locationMenu, effigyNodeMenu, effigyArmyMenu, effigyNodeSprite, effigyArmySprite;
 
-    public bool open = false;
+    public static bool nodeMenuOpen = false;
 
     // Start is called before the first frame update
     void Start(){
@@ -39,7 +39,7 @@ public class NodeMenu : MonoBehaviour
         LoadAltar();
         LoadTemple();
         LoadEffigy();
-        open = true;
+        nodeMenuOpen = true;
         ProphetMenuCheck();
         Player.menuOpen = 1;
         if (currentArmy) print("Army Power: "+currentArmy.GetComponent<Army>().GetOffensivePower());
@@ -48,7 +48,7 @@ public class NodeMenu : MonoBehaviour
     public void ExitMenu() {
         GetComponent<Panner>().SetTarget(new Vector3(0, 11, -10));
         CleanUnitSpaces();
-        open = false;
+        nodeMenuOpen = false;
         Player.menuOpen = 0;
         currentNode = null;
     }

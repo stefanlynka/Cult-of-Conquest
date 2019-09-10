@@ -105,7 +105,7 @@ public class UpgradeManager : MonoBehaviour{
         player.GetComponent<Player>().upgrades.Add(upgrade2.name, upgrade2);
         LoadPlayerUpgrade(1, upgrade2, player);
         Upgrade upgrade3 = new Upgrade("Protect the Pure", 5, 3, "Trade some\nunit health\nfor shields");
-        TradeHealthForShields(player);
+        //TradeHealthForShields(player);
         player.GetComponent<Player>().upgrades.Add(upgrade3.name, upgrade3);
         LoadPlayerUpgrade(2, upgrade3, player);
     }
@@ -154,7 +154,6 @@ public class UpgradeManager : MonoBehaviour{
                 }
             }
             index++;
-            print(index);
         }
     }
 

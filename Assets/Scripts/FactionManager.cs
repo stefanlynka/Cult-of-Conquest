@@ -149,7 +149,9 @@ public class FactionManager : MonoBehaviour{
         unit.currentShield = 1;
     }
     public void UnitBecomeMarred(GameObject army, MapUnit unit){
+        print("mar check");
         if (unit.marred == false) {
+            print("got marred");
             unit.marred = true;
             unit.marredCountdown = 2;
             unit.damageMod += army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Doomed Power"].currentLevel * 0.15f;
@@ -297,9 +299,10 @@ public class FactionManager : MonoBehaviour{
             }
         }
     }
-    public void AgainstStrongest(GameObject samataArmy, GameObject defendingNode) {
+    public void AgainstStrongest(GameObject samataArmy, GameObject defendingArmy) {
+        GameObject defendingNode = defendingArmy.GetComponent<Army>().currentNode;
         if (samataArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Against Tyranny")) {
-            if (defendingNode.GetComponent<Node>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
+            if (defendingNode.GetComponent<Node>().owner && defendingNode.GetComponent<Node>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
                 samataArmy.GetComponent<Army>().AddToDamageMod(0.1f * samataArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Against Tyranny"].currentLevel);
                 print("against the strongest");
             }

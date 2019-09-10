@@ -28,13 +28,20 @@ public class TurnManager : MonoBehaviour{
         nodes = NodeManager.nodes;
         //players.Add(human);
 
+        bool foundHuman = false;
         GameObject playerHolder = GameObject.Find("/Players");
         for (int i = 0; i < playerHolder.transform.childCount; i++) {
             GameObject child = playerHolder.transform.GetChild(i).gameObject;
-            if (child.GetComponent<Player>()) players.Add(child);
+            if (!child.GetComponent<AI>()) foundHuman = true;
+            if (child.GetComponent<Player>() && foundHuman && !players.Contains(child)) players.Add(child);
+        }
+        for (int i = 0; i < playerHolder.transform.childCount; i++) {
+            GameObject child = playerHolder.transform.GetChild(i).gameObject;
+            if (!child.GetComponent<AI>()) foundHuman = true;
+            if (child.GetComponent<Player>() && foundHuman && !players.Contains(child)) players.Add(child);
         }
 
-        for(int i =0; i < players.Count; i++) {
+        for (int i =0; i < players.Count; i++) {
             playerDict.Add(players[i].GetComponent<Player>().faction, players[i]);
         }
         human = Player.human;

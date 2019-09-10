@@ -25,7 +25,7 @@ public class RitualButton : MonoBehaviour{
             if (ritual.IsReady()) {
                 SelectNodesForRitual();
             }
-            else {
+            else if (NodeMenu.currentNode.GetComponent<Node>().owner && NodeMenu.currentNode.GetComponent<Node>().owner==Player.human) {
                 ritualMenu.GetComponent<RitualMenu>().EnterMenu();
             }
         }

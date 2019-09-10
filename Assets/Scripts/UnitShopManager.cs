@@ -96,7 +96,7 @@ public class UnitShopManager : MonoBehaviour {
 
     public void LeaveMenu() {
         nodeMenu.GetComponent<NodeMenu>().LoadArmy();
-        unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 21, -15));
+        unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
         Player.menuOpen = 1;
     }
 

@@ -66,7 +66,7 @@ public class Army : MonoBehaviour {
             readyToMove = false;
             Intent move = movesToDo[0];
             movesToDo.Remove(move);
-            print("Army: " + move.armyMoving.name + " now actually moving to targetNode: " + move.targetNode);
+            print("Army: " + move.armyMoving.name + " moving to: " + move.targetNode);
             move.armyMoving.GetComponent<Army>().EnterNode(move.targetNode);
         }
     }
@@ -75,14 +75,14 @@ public class Army : MonoBehaviour {
         owner = TurnManager.human;
         GameObject playerList = GameObject.Find("/Players");
         owner = transform.parent.gameObject;
-        AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[0]);
-        AddUnit(1, true, owner.GetComponent<Player>().unitBlueprints[0]);
-        AddUnit(2, true, owner.GetComponent<Player>().unitBlueprints[0]);
-        AddUnit(3, true, owner.GetComponent<Player>().unitBlueprints[0]);
-        AddUnit(0, false, owner.GetComponent<Player>().unitBlueprints[0]);
-        AddUnit(1, false, owner.GetComponent<Player>().unitBlueprints[0]);
-        AddUnit(2, false, owner.GetComponent<Player>().unitBlueprints[0]);
-        AddUnit(3, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[2]);
+        //AddUnit(1, true, owner.GetComponent<Player>().unitBlueprints[0]);
+        //AddUnit(2, true, owner.GetComponent<Player>().unitBlueprints[0]);
+        //AddUnit(3, true, owner.GetComponent<Player>().unitBlueprints[0]);
+        //AddUnit(0, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        //AddUnit(1, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        //AddUnit(2, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        //AddUnit(3, false, owner.GetComponent<Player>().unitBlueprints[0]);
     }
 
     public void SetPrecombatPower() {
@@ -95,7 +95,7 @@ public class Army : MonoBehaviour {
         for (int i = 0; i < units.Count; i++) {
             MapUnit unit = units[i];
             unit.damageMod += modifier;
-            print("new modifier = " + unit.damageMod);
+            //print("new modifier = " + unit.damageMod);
         }
     }
 
@@ -167,7 +167,7 @@ public class Army : MonoBehaviour {
     }
 
     public void OrderToEnterNode(GameObject targetNode) {
-        print("Order given to attack: " + targetNode.name);
+        //print("Order given to attack: " + targetNode.name);
         Intent order = new Intent(gameObject, targetNode);
         movesToDo.Add(order);
     }
@@ -181,6 +181,13 @@ public class Army : MonoBehaviour {
         //print("trying to buy unit");
         int unitCost = currentNode.GetComponent<Node>().GetUnitCost(Tools.UnitToIndex(unit));
         if (unitCost <= owner.GetComponent<Player>().money && unit.zealCost <= owner.GetComponent<Player>().zeal) {
+            if (owner.GetComponent<Player>().upgrades.ContainsKey("Protect the Pure")) {
+                float upgradeLevel = owner.GetComponent<Player>().upgrades["Protect the Pure"].currentLevel;
+                unit.maxHealth = (int)(unit.maxHealth - 0.1f * upgradeLevel);
+                unit.currentHealth = unit.maxHealth;
+                unit.maxShield += (int)upgradeLevel * 2;
+                unit.currentShield = unit.maxShield;
+            }
             owner.GetComponent<Player>().money -= unitCost;
             owner.GetComponent<Player>().zeal -= unit.zealCost;
             owner.GetComponent<Player>().factionTraits.NewUnit(unit);
@@ -190,11 +197,12 @@ public class Army : MonoBehaviour {
     }
 
     public void BuyFakeUnit(UnitPos unitPos, MapUnit unit) {
-        unit.maxDamage = 0;
+        //unit.maxDamage = 0;
         unit.moneyCost = Mathf.RoundToInt(unit.moneyCost * 0.4f);
         unit.zealCost = 0;
-        unit.name += "Fake";
-        unit.portraitName += "Fake";
+        unit.name += " fake";
+        unit.portraitName += " fake";
+        unit.fake = true;
         BuyUnit(unitPos, unit);
     }
     public void DissectUnit(MapUnit unit) {
@@ -223,6 +231,9 @@ public class Army : MonoBehaviour {
         units.Remove(unit);
         RemoveUnitFromArray(frontRow, unit);
         RemoveUnitFromArray(backRow, unit);
+        if (units.Count == 0) {
+            Destroy(gameObject);
+        }
     }
 
     void RemoveUnitFromArray(MapUnit[] array, MapUnit unit) {

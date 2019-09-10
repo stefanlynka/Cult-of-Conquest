@@ -30,11 +30,13 @@ public class MapUnit
     public int zealCost = 0;
     public int power;
     public int visiblePower;
+    public bool fake = false;
 
     public MapUnit(string newName, Faction newFaction, string portrait) {
         name = newName;
         faction = newFaction;
         portraitName = portrait;
+        fake = false;
     }
 
     // Start is called before the first frame update
@@ -82,6 +84,7 @@ public class MapUnit
         copy.maxShield = maxShield;
         copy.currentShield = currentShield;
         copy.marred = marred;
+        copy.fake = fake;
         return copy;
     }
 

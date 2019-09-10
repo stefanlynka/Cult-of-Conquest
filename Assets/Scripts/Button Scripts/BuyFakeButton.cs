@@ -18,21 +18,21 @@ public class BuyFakeButton : MonoBehaviour{
     }
     public void InitializeMembers() {
         unit = transform.parent.GetComponent<UnitShopSpace>().unit.DeepCopy();
-        unit.maxDamage = 0;
-        unit.moneyCost = int.Parse(transform.GetChild(0).GetComponent<TextMesh>().text);
-        unit.zealCost = 0;
-        unit.name += "Fake";
-        unit.portraitName += "Fake";
+        //unit.moneyCost = Mathf.RoundToInt(unit.moneyCost * 0.4f);
+        //unit.zealCost = 0;
+        //unit.name += "Fake";
+        //unit.portraitName += "Fake";
+        unit.fake = true;
     }
 
     private void OnMouseDown() {
-        if (Player.human.GetComponent<Player>().money >= unit.moneyCost && Player.human.GetComponent<Player>().zeal >= unit.zealCost) {
+        if (Player.human.GetComponent<Player>().money >= Mathf.RoundToInt(unit.moneyCost * 0.4f) && Player.human.GetComponent<Player>().zeal >= unit.zealCost) {
             BuyUnit(NodeMenu.currentArmy, UnitSpace.currentUnitPos);
         }
     }
 
     public void BuyUnit(GameObject army, UnitPos unitPos) {
-        army.GetComponent<Army>().BuyUnit(unitPos, unit);
+        army.GetComponent<Army>().BuyFakeUnit(unitPos, unit.DeepCopy());
         LeaveMenu();
     }
     public void LeaveMenu() {

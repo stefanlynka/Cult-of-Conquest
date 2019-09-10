@@ -5,7 +5,7 @@ using UnityEngine;
 public class Panner : MonoBehaviour
 {
     Vector3 target;
-    int panSpeed = 20;
+    int panSpeed = 10;
 
     private void Awake() {
         target = transform.position;

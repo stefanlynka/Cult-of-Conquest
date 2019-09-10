@@ -8,7 +8,7 @@ public class AI : MonoBehaviour {
     public List<GameObject> ownedNodes = new List<GameObject>();
     public List<Intent> intentQueue = new List<Intent>();
     public Dictionary<GameObject, ArmyInfo> enemyArmyInfo = new Dictionary<GameObject, ArmyInfo>();
-    GameObject unitShop;
+    GameObject turnManager;
     List<AllocateOption> bestOptions = new List<AllocateOption>();
     List<AllocateOption> committedOptions = new List<AllocateOption>();
 
@@ -30,6 +30,7 @@ public class AI : MonoBehaviour {
         armies = GetComponent<Player>().armies;
         ownedNodes = GetComponent<Player>().ownedNodes;
         faction = GetComponent<Player>().faction;
+        turnManager = GameObject.Find("/Turn Manager");
     }
 
     // Update is called once per frame
@@ -40,38 +41,39 @@ public class AI : MonoBehaviour {
         if (TurnManager.currentPlayer == gameObject) {
             if (readyToExecute && Army.readyToMove && Army.movesToDo.Count == 0) {
                 if (turnPhase == TurnPhase.DefendAgainstThreats) {
-                    print("Defending Phase");
+                    //print("Defending Phase");
                     Defend();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Scouting;
                 }
                 else if (turnPhase == TurnPhase.Scouting) {
-                    print("Scouting Phase");
+                    //print("Scouting Phase");
                     Scout();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Spending1;
                 }
                 else if (turnPhase == TurnPhase.Spending1) {
-                    print("Spending 1 Phase");
+                    //print("Spending 1 Phase");
                     AllocateMoney();
                     SpendMoney();
                     SpendZeal();
                     turnPhase = TurnPhase.Attacks1;
                 }
                 else if (turnPhase == TurnPhase.Attacks1) {
-                    print("Attacking 1 Phase");
+                    //print("Attacking 1 Phase");
                     Attack();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Spending2;
                 }
                 else if (turnPhase == TurnPhase.Spending2) {
-                    print("Spending 2 Phase");
+                    //print("Spending 2 Phase");
                     SpendSavedMoney();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Attacks2;
                 }
                 else if (turnPhase == TurnPhase.Attacks2) {
-                    print("Attacking 2 Phase");
+                    //print("Attacking 2 Phase");
                     Attack();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Done;
                 }
                 else if (turnPhase == TurnPhase.Done) {
+                    turnManager.GetComponent<TurnManager>().NextTurn();
                     //print("Turn Over");
                 }
 
@@ -79,7 +81,10 @@ public class AI : MonoBehaviour {
         }
     }
 
-
+    public bool WantsToFight(GameObject army, GameObject defendingNode) {
+        if (army.GetComponent<Army>().GetOffensivePower() >= 1.25f * defendingNode.GetComponent<Node>().GetDefensivePower()) return true;
+        return false;
+    }
 
 
     void Defend() {
@@ -381,9 +386,9 @@ public class AI : MonoBehaviour {
         return new List<MapUnit>();
     }
     void GetProphetUtility() {
-        if (unallocatedMoney >= 30 && investInProphets == 0) {
+        if (unallocatedMoney >= 30 && investInProphets == 0 && ownedNodes.Count>armies.Count) {
             float localNodesToConquer = 9;
-            float expandingUtility = localNodesToConquer / ownedNodes.Count;
+            float expandingUtility = localNodesToConquer / armies.Count;
             //print("expanding Util: " + expandingUtility);
 
             float protectBordersUtility = (GetFrontierNodeCount() * 5) / (2 * armies.Count);
@@ -930,6 +935,7 @@ public class AI : MonoBehaviour {
         foreach(KeyValuePair<string, Upgrade> upgrade in GetComponent<Player>().upgrades) {
             if (upgrade.Value.zealCost <= GetComponent<Player>().zeal && upgrade.Value.currentLevel < upgrade.Value.maxLevel) {
                 GetComponent<Player>().BuyUpgrade(upgrade.Value);
+                print("Bought Upgrade: "+ upgrade.Value.name);
             }
         }
     }

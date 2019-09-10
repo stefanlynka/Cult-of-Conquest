@@ -14,7 +14,7 @@ public class BattleMenu : MonoBehaviour{
     GameObject battleNode;
     public GameObject attackArmyMenu;
     public GameObject defendArmyMenu;
-    public GameObject attackingPlayer, defendingPlayer;
+    public GameObject attackingPlayer, defendingPlayer, defendNode;
     public List<MapUnit> units = new List<MapUnit>();
     public List<MapUnit> attackers = new List<MapUnit>();
     public List<MapUnit> defenders = new List<MapUnit>();
@@ -27,6 +27,7 @@ public class BattleMenu : MonoBehaviour{
 
     int timer = 0;
     bool retreating = false;
+    bool inBattleMenu = false;
 
     public BattleType battleType;
 
@@ -44,6 +45,17 @@ public class BattleMenu : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         if (inSimulation) RunSimulation();
+        if (inBattleMenu) CheckAIDecision();
+    }
+
+    void CheckAIDecision() {
+        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) {
+            if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode)) {
+                InstantBattle();
+            }
+            else if (retreatAllowed) Retreat();
+            ExitMenu();
+        }
     }
 
     public void EnterMenu() {
@@ -52,6 +64,7 @@ public class BattleMenu : MonoBehaviour{
         SetBackButton(false);
         Player.menuOpen = 1;
         if (IsBattleOver()) BattleOver();
+        inBattleMenu = true;
     }
 
     public void ExitMenu() {
@@ -61,6 +74,7 @@ public class BattleMenu : MonoBehaviour{
         else if (attackingPlayer && attackingPlayer.GetComponent<AI>()) attackingPlayer.GetComponent<AI>().readyToExecute = true;
         Army.readyToMove = true;
         EnableButtons();
+        inBattleMenu = false;
     }
 
     void DisableButtons() {
@@ -92,6 +106,7 @@ public class BattleMenu : MonoBehaviour{
 
     void SetupArmies(GameObject attackingArmy, GameObject defendingNode) {
         ClearRows();
+        defendNode = defendingNode;
         attackingPlayer = attackingArmy.GetComponent<Army>().owner;
         defendingPlayer = defendingNode.GetComponent<Node>().owner;
         if (defendingNode.GetComponent<Node>().occupant) {
@@ -258,19 +273,20 @@ public class BattleMenu : MonoBehaviour{
         }
 
         if (target != null && attacker != null) {
-            if (target.currentShield > 0) target.currentShield--;
+            int damage = (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
+            if (attacker.fake) damage = 0;
+            if (target.fake) damage *= 2;
+            if (target.currentShield > 0 && damage > 0) target.currentShield--;
             else {
-                int damage = (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
                 target.currentHealth -= damage;
-
                 //print("unit space "+attacker);
                 Tools.CreatePopup(attacker.unitSpace, "Attacks for " + damage, 40, Color.red, 90, 0.005f);
                 // If the unit dealing damage is on the attacking side, the defending army triggers "Take Damage"
-                if (defendArmy) defendingPlayer.GetComponent<Player>().factionTraits.TakeDamage(defendingUnitArmy, target);
+                if (defendingUnitArmy && defendingUnitArmy.GetComponent<Army>().owner) defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.TakeDamage(defendingUnitArmy, target);
             }
 
             if (target.currentHealth <= 0) {
-                if (defendArmy) defendingPlayer.GetComponent<Player>().factionTraits.ArmyLostUnit(defendingUnitArmy);
+                if (defendingUnitArmy && defendingUnitArmy.GetComponent<Army>().owner) defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.ArmyLostUnit(defendingUnitArmy);
                 attackingPlayer.GetComponent<Player>().factionTraits.KilledEnemy(attackingUnitArmy, target);
                 RemoveTargetFromCooldowns(target);
                 RemoveUnitFromLists(target);

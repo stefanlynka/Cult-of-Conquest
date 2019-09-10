@@ -33,12 +33,15 @@ public class Player : MonoBehaviour
     public GameObject randomPanel;
 
     public void Awake() {
-        if (name == "Human") human = gameObject;
+        if (!GetComponent<AI>() && !name.Contains("Neutral")) {
+            human = gameObject;
+            //print("I'm spartacus " + gameObject.name);
+        }
     }
 
     // Start is called before the first frame update
     void Start(){
-        SetupFactionTraits();
+        Setup();
     }
 
     // Update is called once per frame
@@ -60,24 +63,11 @@ public class Player : MonoBehaviour
 
 
     public void Startup() {
-        //print("initializing members");
-        for (int i = 0; i < transform.childCount; i++) {
-            GameObject child = transform.GetChild(i).gameObject;
-            if (child.GetComponent<Army>()) {
-                armies.Add(child);
-            }
-        }
-        //armies.Add(GameObject.Find("/Army Blue"));
-        //armies.Add(GameObject.Find("/Army Red"));
         nodeMenu = GameObject.Find("/Node Menu");
         nodeManager = GameObject.Find("/Node Manager");
         battleMenu = GameObject.Find("/Battle Menu");
         randomPanel = GameObject.Find("/Random Panel");
 
-        for (int i = 0; i < NodeManager.nodes.Count; i++) {
-            GameObject node = NodeManager.nodes[i];
-            if (node.GetComponent<Node>().faction == faction) ownedNodes.Add(node);
-        }
         //SetupFactionTraits();
         SetFaction();
         if (faction == Faction.Paratrophs) SetupDissections();
@@ -86,9 +76,16 @@ public class Player : MonoBehaviour
         SetupOrigin();
     }
 
+    void Setup() {
+        SetupFactionTraits();
+        money = 30;
+        zeal = 5;
+    }
+
     void SetFaction() {
         for (int i = 0; i < transform.childCount; i++) {
             GameObject army = transform.GetChild(i).gameObject;
+            if (!armies.Contains(army)) armies.Add(army);
             army.GetComponent<Army>().faction = faction;
             army.GetComponent<Army>().currentNode.GetComponent<Node>().faction = faction;
             if (!ownedNodes.Contains(army.GetComponent<Army>().currentNode)) ownedNodes.Add(army.GetComponent<Army>().currentNode);
@@ -96,6 +93,7 @@ public class Player : MonoBehaviour
         for (int i = 0; i < ownedNodes.Count; i++) {
             GameObject node = ownedNodes[i];
             node.GetComponent<Node>().faction = faction;
+            node.GetComponent<Node>().owner = gameObject;
         }
     }
 
@@ -199,7 +197,7 @@ public class Player : MonoBehaviour
                 //Add rightClickedNode to Randomizer
             }
         }
-        else if (menuOpen == 1 && Input.GetMouseButtonDown(1)) {
+        else if (menuOpen == 1 && Input.GetMouseButtonDown(1) && NodeMenu.nodeMenuOpen == true) {
             nodeMenu.GetComponent<NodeMenu>().ExitMenu();
         }
 
@@ -280,9 +278,9 @@ public class Player : MonoBehaviour
         return false;
     }
     public bool BuyUpgrade(Upgrade upgrade) {
-        print("upgrade name " + upgrade.name);
-        print("upgrade level " + upgrade.currentLevel);
-        print("upgrade max " + upgrade.maxLevel);
+        //print("upgrade name " + upgrade.name);
+        //print("upgrade level " + upgrade.currentLevel);
+        //print("upgrade max " + upgrade.maxLevel);
         if (zeal >= upgrade.zealCost && upgrades.ContainsKey(upgrade.name) && upgrade.currentLevel < upgrade.maxLevel) {
             zeal -= upgrade.zealCost;
             upgrades[upgrade.name].currentLevel++;

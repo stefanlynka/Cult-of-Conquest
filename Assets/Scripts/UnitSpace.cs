@@ -62,10 +62,12 @@ public class UnitSpace : MonoBehaviour
             NameText.GetComponent<TextMesh>().text = unit.name;
             HealthText.GetComponent<TextMesh>().text = "HP: " + unit.currentHealth + "/" + unit.maxHealth;
             Portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + unit.faction + "/Portrait/" + unit.portraitName);
+            if (unit.marred) Portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + unit.faction + "/Portrait/" + unit.portraitName + " marred");
             if (unit.currentShield == 0) Shield.GetComponent<SpriteRenderer>().sprite = null;
-            if (unit.currentShield == 1) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield1");
-            if (unit.currentShield == 2) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield2");
-            if (unit.currentShield == 3) Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Icons/Shield3");
+            else {
+                string shieldSpriteName = "Icons/Shields/Shield " + unit.currentShield;
+                Shield.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(shieldSpriteName);
+            }
             unit.unitSpace = gameObject;
         }
     }
