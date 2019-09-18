@@ -73,7 +73,7 @@ public class AltarShopManager : MonoBehaviour{
 
     public void MakeAltarBlueprints(GameObject player) {
         Faction faction = player.GetComponent<Player>().faction;
-        Altar harvestAltar = new Altar(AltarName.Harvest, 20, "Increase this hex's\nincome by 40%");
+        Altar harvestAltar = new Altar(AltarName.Harvest, 20, "Increase this\nhex's income\nby 40%");
         player.GetComponent<Player>().altarBlueprints.Add(AltarName.Harvest, harvestAltar);
         Altar devotionAltar = new Altar(AltarName.Devotion, 20, "Generate 1 zeal\neach turn");
         player.GetComponent<Player>().altarBlueprints.Add(AltarName.Devotion, devotionAltar);
@@ -93,7 +93,7 @@ public class AltarShopManager : MonoBehaviour{
         Altar conflictAltar = new Altar(AltarName.Conflict, 20, "Build a powerful\ndefensive building");
         altarBuySpaces[2].GetComponent<AltarShopSpace>().SetAltar(conflictAltar);
 
-        Altar fateAltar = new Altar(AltarName.Fate, 20, "Increase influence in\ndetermining Oracle (unimplemented)");
+        Altar fateAltar = new Altar(AltarName.Fate, 20, "Increase influence in\ndetermining Oracle");
         altarBuySpaces[3].GetComponent<AltarShopSpace>().SetAltar(fateAltar);
     }
 }

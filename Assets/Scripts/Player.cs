@@ -79,7 +79,7 @@ public class Player : MonoBehaviour
     void Setup() {
         SetupFactionTraits();
         money = 30;
-        zeal = 5;
+        zeal = 18;
     }
 
     void SetFaction() {
@@ -89,6 +89,9 @@ public class Player : MonoBehaviour
             army.GetComponent<Army>().faction = faction;
             army.GetComponent<Army>().currentNode.GetComponent<Node>().faction = faction;
             if (!ownedNodes.Contains(army.GetComponent<Army>().currentNode)) ownedNodes.Add(army.GetComponent<Army>().currentNode);
+        }
+        foreach(GameObject node in NodeManager.nodes) {
+            if (node.GetComponent<Node>().faction == faction) node.GetComponent<Node>().owner = gameObject;
         }
         for (int i = 0; i < ownedNodes.Count; i++) {
             GameObject node = ownedNodes[i];
@@ -143,7 +146,7 @@ public class Player : MonoBehaviour
         return false;
     }
     bool ClickingOnAnArmy() {
-        if (!selectedArmy && armyLeftClicked.GetComponent<Army>().movesLeft > 0) return true;
+        if (!selectedArmy && armyLeftClicked.GetComponent<Army>().movesLeft > 0 && armyLeftClicked.GetComponent<Army>().faction == faction) return true;
         return false;
     }
     bool ClickingOnDifferentArmy() {
@@ -158,12 +161,10 @@ public class Player : MonoBehaviour
     public void ImplementClicks() {
 
         if (menuOpen == 0) {
-
             if (LeftClickedOnNearbyEnemy()) {
                 attackNode(selectedArmy, nodeLeftClicked);
                 selectedArmy.GetComponent<Army>().Deselect();
             }
-
             else if (armyLeftClicked) {
                 if (ClickingOnAnArmy()) {
                     armyLeftClicked.GetComponent<Army>().Select();
@@ -210,7 +211,6 @@ public class Player : MonoBehaviour
     public void attackNode(GameObject army, GameObject node) {
         print("Army: " + army.name + " aims at: " + node.name);
         //print("This cost a move");
-        if (army.GetComponent<Army>().currentNode == node) print("What the fuck");
         List<GameObject> moveList = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetPathTo(node);
         moveList.RemoveAt(0);
         for (int i = 0; i< moveList.Count; i++) {
@@ -316,7 +316,7 @@ public class Player : MonoBehaviour
         return false;
     }
     public bool BuyTemple(GameObject node, TempleName templeName) {
-        if (templeBlueprints.ContainsKey(templeName) && money >= templeBlueprints[templeName].cost) {
+        if (node && templeBlueprints.ContainsKey(templeName) && money >= templeBlueprints[templeName].cost) {
             node.GetComponent<Node>().BuildTemple(templeBlueprints[templeName]);
             money -= templeBlueprints[templeName].cost;
             return true;

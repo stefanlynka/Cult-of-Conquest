@@ -57,6 +57,7 @@ public class TurnManager : MonoBehaviour{
         GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().AssignUnits(currentPlayer);
         //GameObject.Find("/Unit Buying Menu/Unit Spaces").GetComponent<UnitShopManager>().MakeUnits(currentPlayer.GetComponent<Player>().faction);
         currentPlayer.GetComponent<Player>().StartTurn();
+        Army.readyToMove = true;
     }
 
 }

@@ -74,13 +74,13 @@ public class TempleShopManager : MonoBehaviour{
 
     public void MakeTempleBlueprints(GameObject player) {
         Faction faction = player.GetComponent<Player>().faction;
-        Temple armamentsTemple = new Temple(TempleName.Armaments, 30, "Decrease unit\ncost by 40%", currentFaction);
+        Temple armamentsTemple = new Temple(TempleName.Armaments, 30, "Decrease unit\ncost by 40%", player.GetComponent<Player>().faction);
         player.GetComponent<Player>().templeBlueprints.Add(TempleName.Armaments, armamentsTemple);
-        Temple traditionTemple = new Temple(TempleName.Tradition, 30, "Decrease ritual\ncost at this node", currentFaction);
+        Temple traditionTemple = new Temple(TempleName.Tradition, 30, "Decrease ritual\ncost at this node", player.GetComponent<Player>().faction);
         player.GetComponent<Player>().templeBlueprints.Add(TempleName.Tradition, traditionTemple);
-        Temple protectionTemple = new Temple(TempleName.Protection, 30, "Build a powerful\ndefensive building", currentFaction);
+        Temple protectionTemple = new Temple(TempleName.Protection, 30, "Build a powerful\ndefensive building", player.GetComponent<Player>().faction);
         player.GetComponent<Player>().templeBlueprints.Add(TempleName.Protection, protectionTemple);
-        Temple originTemple = new Temple(TempleName.Origin, 50, "Allow creation\nof Prophets", currentFaction);
+        Temple originTemple = new Temple(TempleName.Origin, 50, "Allow creation\nof Prophets", player.GetComponent<Player>().faction);
         player.GetComponent<Player>().templeBlueprints.Add(TempleName.Origin, originTemple);
     }
 

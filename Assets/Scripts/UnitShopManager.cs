@@ -82,6 +82,12 @@ public class UnitShopManager : MonoBehaviour {
             if (unit == null) Tools.GetChildNamed(costButton, "Cost Text").GetComponent<TextMesh>().text = "";
             else Tools.GetChildNamed(costButton, "Cost Text").GetComponent<TextMesh>().text = (unit.moneyCost / 4).ToString();
         }
+        for(int i=0; i< unitSpaces.Length; i++) {
+            GameObject unitSpace = unitSpaces[i];
+            if (unitSpace) {
+                unitSpace.GetComponent<UnitShopSpace>().UpdateUnit();
+            }
+        }
     }
     bool Dissectable(MapUnit unit) {
         if (Player.human.GetComponent<Player>().faction == Faction.Paratrophs) {
@@ -344,7 +350,7 @@ public class UnitShopManager : MonoBehaviour {
         peon.SetHealth(40);
         peon.maxDamage = 3;
         peon.attackRange = 1;
-        peon.attackSpeed = 60;
+        peon.attackSpeed = 55;
         peon.moneyCost = 5;
         peon.zealCost = 0;
         peon.power = 10;

@@ -37,7 +37,15 @@ public class Node : MonoBehaviour
     public Temple temple;
     public Altar altar;
 
-
+    private void Awake() {
+        if (homeBase == Faction.None) {
+            int randInt = Random.Range(0, 10);
+            if (randInt <= 2) difficulty = 1;
+            else if (randInt >= 3 && randInt <= 6) difficulty = 2;
+            else if (randInt >= 7 && randInt <= 9) difficulty = 3;
+            else difficulty = 4;
+        }
+    }
 
     // Start is called before the first frame update
     void Start(){
@@ -70,6 +78,70 @@ public class Node : MonoBehaviour
             Player.nodeRightClicked = gameObject;
         }
     }
+
+    private void Setup() {
+        //temple = new Temple(TempleName.None, 0, Faction.None);
+        //altar = new Altar(AltarName.None, 0);
+        if (homeBase != Faction.None) {
+            difficulty = 4;
+            faction = homeBase;
+            effigy = new Effigy();
+            effigy.faction = faction;
+        }
+        else if (faction == Faction.Independent) {
+            GameObject army = new GameObject();
+            army.AddComponent<Army>();
+            army.GetComponent<Army>().faction = Faction.Independent;
+            army.GetComponent<Army>().currentNode = gameObject;
+            army.GetComponent<Army>().owner = GameObject.Find("/Neutral Player");
+            army.transform.position = transform.position;
+            occupant = army;
+            occupied = true;
+            owner = GameObject.Find("/Neutral Player");
+            MapUnit peon = MakeNeutralUnit("peon");
+            MapUnit acolyte = MakeNeutralUnit("acolyte");
+            MapUnit shaman = MakeNeutralUnit("shaman");
+            MapUnit prelate = MakeNeutralUnit("prelate");
+            switch (difficulty) {
+                case 1:
+                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(1, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(2, true, peon);
+                    //occupant.GetComponent<Army>().AddUnit(3, true, peon);
+                    //occupant.GetComponent<Army>().AddUnit(0, false, peon);
+                    //occupant.GetComponent<Army>().AddUnit(1, false, peon);
+                    //occupant.GetComponent<Army>().AddUnit(2, false, peon);
+                    //occupant.GetComponent<Army>().AddUnit(3, false, peon);
+                    break;
+                case 2:
+                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(1, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(2, true, acolyte);
+                    break;
+                case 3:
+                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(1, true, peon);
+                    occupant.GetComponent<Army>().AddUnit(2, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(3, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(0, false, shaman);
+                    break;
+                case 4:
+                    occupant.GetComponent<Army>().AddUnit(0, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(1, true, acolyte);
+                    occupant.GetComponent<Army>().AddUnit(2, true, shaman);
+                    occupant.GetComponent<Army>().AddUnit(3, true, shaman);
+                    occupant.GetComponent<Army>().AddUnit(0, false, prelate);
+                    occupant.GetComponent<Army>().AddUnit(0, false, prelate);
+                    break;
+            }
+            occupant.transform.parent = GameObject.Find("/Neutral Armies").transform;
+        }
+        else if (faction != Faction.Independent && occupant != null) {
+            //owner = occupant.GetComponent<Army>().owner;
+        }
+
+    }
+
     public GameObject GetOccupant() {
         if (occupant) return occupant;
         else return null;
@@ -108,7 +180,7 @@ public class Node : MonoBehaviour
                 List<GameObject> goodPath = new List<GameObject>();
                 //print("let's ask a neighbour");
                 // if (neighbour.GetComponent<Node>().faction == player && !visited.Contains(neighbour)) { //For only checking friendlies
-                if (!visited.Contains(neighbour)) {
+                if (!visited.Contains(neighbour) && (neighbour.GetComponent<Node>().faction == player || neighbour == targetNode)) {
                     List<GameObject> deepCopyVisited = Tools.DeepCopyGameObjectList(visited);
                     //print("checking with a neighbour");
                     goodPath = neighbour.GetComponent<Node>().ExtendPathToNeighbours(targetNode, deepCopyVisited, currentDepth, player);
@@ -196,10 +268,10 @@ public class Node : MonoBehaviour
             Sprite newSprite = renderer.sprite;
 
 
-            if (neighbourDown && neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/"+faction.ToString()); 
-            else if (!neighbourDown && neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " B");
-            else if (neighbourDown && !neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " R");
-            else if (!neighbourDown && !neighbourDownRight) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " BR");
+            if (neighbourDown && neighbourDown.activeSelf && neighbourDownRight && neighbourDownRight.activeSelf) newSprite = Resources.Load<Sprite>("Nodes/"+faction.ToString()); 
+            else if ((!neighbourDown || !neighbourDown.activeSelf) && neighbourDownRight && neighbourDownRight.activeSelf) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " B");
+            else if (neighbourDown && neighbourDown.activeSelf && (!neighbourDownRight || !neighbourDownRight.activeSelf)) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " R");
+            else if ((!neighbourDown || !neighbourDown.activeSelf) && (!neighbourDownRight || !neighbourDownRight.activeSelf)) newSprite = Resources.Load<Sprite>("Nodes/" + faction.ToString() + " BR");
 
             renderer.sprite = newSprite;
         }
@@ -209,67 +281,6 @@ public class Node : MonoBehaviour
         }
     }
 
-    private void Setup() {
-        //temple = new Temple(TempleName.None, 0, Faction.None);
-        //altar = new Altar(AltarName.None, 0);
-        if (homeBase != Faction.None) {
-            difficulty = 4;
-            faction = homeBase;
-            effigy = new Effigy();
-            effigy.faction = faction;
-        }
-        else if (faction == Faction.Independent) {
-            GameObject army = new GameObject();
-            army.AddComponent<Army>();
-            army.GetComponent<Army>().faction = Faction.Independent;
-            army.GetComponent<Army>().currentNode = gameObject;
-            army.GetComponent<Army>().owner = GameObject.Find("/Neutral Player");
-            army.transform.position = transform.position;
-            occupant = army;
-            occupied = true;
-            MapUnit peon = MakeNeutralUnit("peon");
-            MapUnit acolyte = MakeNeutralUnit("acolyte");
-            MapUnit shaman = MakeNeutralUnit("shaman");
-            MapUnit prelate = MakeNeutralUnit("prelate");
-            switch (difficulty) {
-                case 1:
-                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
-                    occupant.GetComponent<Army>().AddUnit(1, true, peon);
-                    occupant.GetComponent<Army>().AddUnit(2, true, peon);
-                    occupant.GetComponent<Army>().AddUnit(3, true, peon);
-                    occupant.GetComponent<Army>().AddUnit(0, false, peon);
-                    //occupant.GetComponent<Army>().AddUnit(1, false, peon);
-                    //occupant.GetComponent<Army>().AddUnit(2, false, peon);
-                    //occupant.GetComponent<Army>().AddUnit(3, false, peon);
-                    break;
-                case 2:
-                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
-                    occupant.GetComponent<Army>().AddUnit(1, true, acolyte);
-                    occupant.GetComponent<Army>().AddUnit(2, true, acolyte);
-                    break;
-                case 3:
-                    occupant.GetComponent<Army>().AddUnit(0, true, peon);
-                    occupant.GetComponent<Army>().AddUnit(1, true, peon);
-                    occupant.GetComponent<Army>().AddUnit(2, true, acolyte);
-                    occupant.GetComponent<Army>().AddUnit(3, true, acolyte);
-                    occupant.GetComponent<Army>().AddUnit(0, false, shaman);
-                    break;
-                case 4:
-                    occupant.GetComponent<Army>().AddUnit(0, true, acolyte);
-                    occupant.GetComponent<Army>().AddUnit(1, true, acolyte);
-                    occupant.GetComponent<Army>().AddUnit(2, true, shaman);
-                    occupant.GetComponent<Army>().AddUnit(3, true, shaman);
-                    occupant.GetComponent<Army>().AddUnit(0, false, prelate);
-                    occupant.GetComponent<Army>().AddUnit(0, false, prelate);
-                    break;
-            }
-            occupant.transform.parent = GameObject.Find("/Neutral Armies").transform;
-        }
-        else if (faction != Faction.Independent && occupant != null) {
-            //owner = occupant.GetComponent<Army>().owner;
-        }
-        
-    }
 
     public void BuildAltar(Altar newAltar) {
         altar = newAltar.DeepCopy();

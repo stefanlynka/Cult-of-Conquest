@@ -388,10 +388,10 @@ public class AI : MonoBehaviour {
     void GetProphetUtility() {
         if (unallocatedMoney >= 30 && investInProphets == 0 && ownedNodes.Count>armies.Count) {
             float localNodesToConquer = 9;
-            float expandingUtility = localNodesToConquer / armies.Count;
+            float expandingUtility = localNodesToConquer / armies.Count + 0.1f;
             //print("expanding Util: " + expandingUtility);
 
-            float protectBordersUtility = (GetFrontierNodeCount() * 5) / (2 * armies.Count);
+            float protectBordersUtility = (GetFrontierNodeCount() * 5) / (2 * armies.Count + 0.1f);
             //print("protectborder Util: " + protectBordersUtility);
             float utility = Mathf.Max(expandingUtility, protectBordersUtility);
             AllocateOption option = new AllocateOption("prophet", utility, 30);

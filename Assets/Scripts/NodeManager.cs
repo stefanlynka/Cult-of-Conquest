@@ -7,6 +7,7 @@ public class NodeManager : MonoBehaviour
     public static List<GameObject> nodes = new List<GameObject>();
     public static GameObject highlightFog;
 
+    public List<GameObject> homeBases = new List<GameObject>();
     float nodeDistance = 0.7f;
     float nodeDistanceBuffer = 0.2f;
 
@@ -27,9 +28,13 @@ public class NodeManager : MonoBehaviour
     public void Startup() {
         CollectNodes();
         LabelNodes();
+        DisableNodes();
+        UpdateNodes();
         highlightFog = GameObject.Find("/Highlight");
         highlightFog.transform.position = new Vector3(0, 0, 10);
         highlightFog.SetActive(false);
+        if (AllBasesConnected()) print("Connected");
+        else print("Disconnected");
     }
 
     void LabelNodes() {
@@ -40,11 +45,18 @@ public class NodeManager : MonoBehaviour
         }
     }
 
+    void UpdateNodes() {
+        foreach(GameObject node in nodes) {
+            node.GetComponent<Node>().UpdateSprite();
+        }
+    }
+
     void CollectNodes() {
         for (int i = 0; i < transform.childCount; i++) {
             GameObject node = transform.GetChild(i).gameObject;
             if (node.GetComponent<Node>()) {
                 nodes.Add(node);
+                if (node.GetComponent<Node>().homeBase != Faction.None) homeBases.Add(node);
             }
         }
     }
@@ -57,6 +69,55 @@ public class NodeManager : MonoBehaviour
                 SituateNeighbours(node, otherNode);
             }
         }
+    }
+
+    void DisableNodes() {
+        print("Bases Connected: " + AllBasesConnected());
+        List<GameObject> unvisitedNodes = Tools.DeepCopyGameObjectList(nodes);
+        while (unvisitedNodes.Count > 0) {
+            GameObject node = unvisitedNodes[0];
+            unvisitedNodes.Remove(node);
+            if (node.GetComponent<Node>().homeBase == Faction.None) {
+                int randInt = Random.Range(0, 5);
+                if (randInt == 0) {
+                    node.SetActive(false);
+                    if (!AllBasesConnected()) {
+                        print("that disconnected it");
+                        node.SetActive(true);
+                    }
+                    else {
+                        DisableNeighbours(node);
+                        nodes.Remove(node);
+                        print("still connected");
+                    }
+                }
+            }
+        }
+    }
+    void DisableNeighbours(GameObject node) {
+        foreach(GameObject neighbour in node.GetComponent<Node>().neighbours) {
+            neighbour.GetComponent<Node>().neighbours.Remove(node);
+        }
+    }
+
+    bool AllBasesConnected() {
+        GameObject startingNode = homeBases[0];
+        List<GameObject> visitedNodes = new List<GameObject>();
+        List<GameObject> frontierNodes = new List<GameObject>();
+        frontierNodes.Add(startingNode);
+        while (frontierNodes.Count > 0) {
+            GameObject edgeNode = frontierNodes[0];
+            frontierNodes.Remove(edgeNode);
+            visitedNodes.Add(edgeNode);
+            foreach (GameObject neighbourNode in edgeNode.GetComponent<Node>().neighbours) {
+                if (neighbourNode.activeSelf && neighbourNode.GetComponent<Node>().homeBase==Faction.None && !frontierNodes.Contains(neighbourNode) && !visitedNodes.Contains(neighbourNode)) frontierNodes.Add(neighbourNode);
+                if (!(neighbourNode.GetComponent<Node>().homeBase == Faction.None)) visitedNodes.Add(neighbourNode);
+            }
+        }
+        foreach(GameObject homeBase in homeBases) {
+            if (!visitedNodes.Contains(homeBase)) return false;
+        }
+        return true;
     }
 
     void SituateNeighbours(GameObject node, GameObject otherNode) {

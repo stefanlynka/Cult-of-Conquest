@@ -113,7 +113,7 @@ public class UpgradeManager : MonoBehaviour{
         Upgrade upgrade1 = new Upgrade("Last One Standing", 5, 3, "Strengthen your\nlast unit\nin a battle");
         player.GetComponent<Player>().upgrades.Add(upgrade1.name, upgrade1);
         LoadPlayerUpgrade(0, upgrade1, player);
-        Upgrade upgrade2 = new Upgrade("Against Tyranny", 5, 3, "Increase damage\nwhen attacking strongest\nenemy faction");
+        Upgrade upgrade2 = new Upgrade("Against Tyranny", 5, 3, "Increase damage\nagainst strongest\nenemy faction");
         player.GetComponent<Player>().upgrades.Add(upgrade2.name, upgrade2);
         LoadPlayerUpgrade(1, upgrade2, player);
         Upgrade upgrade3 = new Upgrade("Reap Just Rewards", 5, 3, "Increase rewards\nfrom winning\na fair fight");

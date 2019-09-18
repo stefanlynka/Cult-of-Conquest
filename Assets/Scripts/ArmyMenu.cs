@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ArmyMenu : MonoBehaviour {
 
-    GameObject[] backRowSpaces = new GameObject[5];
-    GameObject[] frontRowSpaces = new GameObject[5];
+    GameObject[] backRowSpaces = new GameObject[4];
+    GameObject[] frontRowSpaces = new GameObject[4];
     public GameObject army;
 
     // Start is called before the first frame update
@@ -83,7 +83,18 @@ public class ArmyMenu : MonoBehaviour {
         }
     }
     */
-    void CleanUnitSpaces() {
+    public void CleanUnitSpaces() {
+        for (int i = 0; i < frontRowSpaces.Length; i++) {
+            if (frontRowSpaces[i] != null) {
+                GameObject nameText = Tools.GetChildNamed(frontRowSpaces[i], "Name Text");
+                GameObject healthText = Tools.GetChildNamed(frontRowSpaces[i], "Health Text");
+                GameObject portrait = Tools.GetChildNamed(frontRowSpaces[i], "Portrait");
+
+                nameText.GetComponent<TextMesh>().text = "";
+                healthText.GetComponent<TextMesh>().text = "";
+                portrait.GetComponent<SpriteRenderer>().sprite = null;
+            }
+        }
         for (int i = 0; i < backRowSpaces.Length; i++) {
             if (backRowSpaces[i] != null) {
                 GameObject nameText = Tools.GetChildNamed(backRowSpaces[i], "Name Text");

@@ -11,7 +11,6 @@ public class BattleMenu : MonoBehaviour{
     public bool inSimulation = false;
     GameObject attackArmy;
     GameObject defendArmy;
-    GameObject battleNode;
     public GameObject attackArmyMenu;
     public GameObject defendArmyMenu;
     public GameObject attackingPlayer, defendingPlayer, defendNode;
@@ -49,8 +48,9 @@ public class BattleMenu : MonoBehaviour{
     }
 
     void CheckAIDecision() {
-        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && !DefenderIsHuman(defendNode)) {
-            if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode)) {
+        if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && !DefenderIsHuman(defendNode)) {
+            //retreatButton.SetActive(false);
+            if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode) || !retreatAllowed) {
                 InstantBattle();
             }
             else if (retreatAllowed) Retreat();
@@ -58,7 +58,17 @@ public class BattleMenu : MonoBehaviour{
         }
     }
     bool DefenderIsHuman(GameObject node) {
-        if (node.GetComponent<Node>().owner && !node.GetComponent<Node>().owner.GetComponent<AI>()) return true;
+        if (node.GetComponent<Node>().owner && !node.GetComponent<Node>().owner.GetComponent<AI>() && node.GetComponent<Node>().faction != Faction.Independent) return true;
+        return false;
+    }
+
+    public bool AIAttackingHuman() {
+        if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && DefenderIsHuman(defendNode)) return true;
+        return false;
+    }
+
+    public bool AIWantsToFight() {
+        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode) || !retreatAllowed) return true;
         return false;
     }
 
@@ -79,7 +89,10 @@ public class BattleMenu : MonoBehaviour{
         Army.readyToMove = true;
         EnableButtons();
         inBattleMenu = false;
+        attackArmyMenu.GetComponent<ArmyMenu>().CleanUnitSpaces();
+        defendArmyMenu.GetComponent<ArmyMenu>().CleanUnitSpaces();
     }
+
 
     void DisableButtons() {
         simButton.SetActive(false);
@@ -106,16 +119,16 @@ public class BattleMenu : MonoBehaviour{
         defendersBuildings.Clear();
         defendersFrontRow.Clear();
         defendersBackRow.Clear();
+        attackArmy = null;
+        defendArmy = null;
+        defendNode = null;
+        attackingPlayer = null;
+        defendingPlayer = null;
     }
 
-    void SetupArmies(GameObject attackingArmy, GameObject defendingNode) {
-        ClearRows();
-        defendNode = defendingNode;
-        attackingPlayer = attackingArmy.GetComponent<Army>().owner;
-        defendingPlayer = defendingNode.GetComponent<Node>().owner;
-        if (defendingNode.GetComponent<Node>().occupant) {
-            defendArmy = defendingNode.GetComponent<Node>().occupant;
-            defendingPlayer = defendArmy.GetComponent<Army>().owner;
+    void SetupRows() {
+        if (defendNode.GetComponent<Node>().occupant) {
+            defendArmy = defendNode.GetComponent<Node>().occupant;
             MapUnit[] DFrontRow = defendArmy.GetComponent<Army>().frontRow;
             MapUnit[] DBackRow = defendArmy.GetComponent<Army>().backRow;
             for (int i = 0; i < DFrontRow.Length; i++) {
@@ -133,9 +146,8 @@ public class BattleMenu : MonoBehaviour{
                 }
             }
         }
-        attackArmy = attackingArmy;
-        MapUnit[] AFrontRow = attackingArmy.GetComponent<Army>().frontRow;
-        MapUnit[] ABackRow = attackingArmy.GetComponent<Army>().backRow;
+        MapUnit[] AFrontRow = attackArmy.GetComponent<Army>().frontRow;
+        MapUnit[] ABackRow = attackArmy.GetComponent<Army>().backRow;
 
         for (int i = 0; i < AFrontRow.Length; i++) {
             if (AFrontRow[i] != null) {
@@ -151,37 +163,48 @@ public class BattleMenu : MonoBehaviour{
                 attackersBackRow.Add(ABackRow[i]);
             }
         }
-
-
-        Temple temple = defendingNode.GetComponent<Node>().temple;
-        Altar altar = defendingNode.GetComponent<Node>().altar;
-        if (temple != null) {
+        Temple temple = defendNode.GetComponent<Node>().temple;
+        Altar altar = defendNode.GetComponent<Node>().altar;
+        if (temple != null && temple.name == TempleName.Protection) {
             units.Add(temple.unit);
             defenders.Add(temple.unit);
             defendersBuildings.Add(temple.unit);
         }
-        if (altar != null) {
+        if (altar != null && altar.name == AltarName.Conflict) {
             units.Add(altar.unit);
             defenders.Add(altar.unit);
             defendersBuildings.Add(altar.unit);
         }
+    }
+
+    void SetupArmies(GameObject attackingArmy, GameObject defendingNode) {
+        ClearRows();
+
+        attackArmy = attackingArmy;
+        defendNode = defendingNode;
+        attackingPlayer = attackingArmy.GetComponent<Army>().owner;
+        defendingPlayer = defendingNode.GetComponent<Node>().owner;
+
+        SetupRows();
+
         attackArmy.GetComponent<Army>().PrebattleSetup();
-        if (defendArmy) defendArmy.GetComponent<Army>().PrebattleSetup();
-        if (defendArmy) {
+        if (defendArmy != null) {
+            defendArmy.GetComponent<Army>().PrebattleSetup();
             attackingPlayer.GetComponent<Player>().factionTraits.Precombat(attackArmy, defendArmy);
-            if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendArmy, attackArmy);
+            defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendArmy, attackArmy);
         }
+
         else {
             attackingPlayer.GetComponent<Player>().factionTraits.Precombat(attackArmy, defendingNode);
             if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendingNode, attackArmy);
         }
-        attackingPlayer.GetComponent<Player>().factionTraits.PrecombatAttacker(attackArmy, defendArmy);
+        if (defendArmy) attackingPlayer.GetComponent<Player>().factionTraits.PrecombatAttacker(attackArmy, defendArmy);
     }
 
     public void SetupBattle(GameObject attackingArmy, GameObject defendingNode) {
         SetupArmies(attackingArmy, defendingNode);
         StartingCooldowns();
-        battleNode = defendingNode;
+        defendNode = defendingNode;
     }
 
     void StartingCooldowns() {
@@ -212,7 +235,7 @@ public class BattleMenu : MonoBehaviour{
     bool AIRetreatCheck() {
         if (attackingPlayer.GetComponent<AI>()) {
             if (attackArmy.GetComponent<Army>().units.Count <= 3) {
-                if (attackArmy.GetComponent<Army>().GetOffensivePower() < battleNode.GetComponent<Node>().GetDefensivePower()) {
+                if (attackArmy.GetComponent<Army>().GetOffensivePower() < defendNode.GetComponent<Node>().GetDefensivePower()) {
                     return true;
                 }
             }
@@ -224,7 +247,7 @@ public class BattleMenu : MonoBehaviour{
         timer++;
         if (!retreating && AIRetreatCheck()) Retreat();
         if (cooldowns.Count != 0) {
-            while (cooldowns.Count > 0 && timer == cooldowns[0].timeToAct) {
+            while (cooldowns.Count > 0 && timer == cooldowns[0].timeToAct && !IsBattleOver()) {
                 // Run Next Attack
                 inSimulation = !NextAttack(retreating);
                 if (!inSimulation) {
@@ -233,7 +256,7 @@ public class BattleMenu : MonoBehaviour{
                 }
                 attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
                 if (defendArmy) defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
-                defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(battleNode);
+                defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendNode);
             }
         }
         else BattleOver();
@@ -258,7 +281,7 @@ public class BattleMenu : MonoBehaviour{
         }
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackArmy);
         if (defendArmy) defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendArmy);
-        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(battleNode);
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendNode);
         timer = 0;
         if (retreating) BattleOver();
     }
@@ -352,6 +375,7 @@ public class BattleMenu : MonoBehaviour{
         if (defenders.Count == 0) attackingPlayer.GetComponent<Player>().factionTraits.WonBattle(attackArmy);
         if (attackers.Count == 0) {
             attackArmy.GetComponent<Army>().Defeated();
+            Army.readyToMove = true;
         }
         else if (defenders.Count == 0) {
             AttackerWins();
@@ -375,14 +399,14 @@ public class BattleMenu : MonoBehaviour{
 
     public void AttackerWins() {
         AttackerClaimsEffigy();
-        if (defendingPlayer) defendingPlayer.GetComponent<Player>().RemoveNode(battleNode);
+        if (defendingPlayer) defendingPlayer.GetComponent<Player>().RemoveNode(defendNode);
         if (defendArmy && defendArmy.GetComponent<Army>().faction != Faction.Independent) defendArmy.GetComponent<Army>().Defeated();
 
-        attackingPlayer.GetComponent<Player>().AddNode(battleNode);
-        attackArmy.GetComponent<Army>().MoveToNode(battleNode);
+        attackingPlayer.GetComponent<Player>().AddNode(defendNode);
+        attackArmy.GetComponent<Army>().MoveToNode(defendNode);
         if (!AttackerCanAssimilate()) {
-            battleNode.GetComponent<Node>().temple = null;
-            battleNode.GetComponent<Node>().altar = null;
+            defendNode.GetComponent<Node>().temple = null;
+            defendNode.GetComponent<Node>().altar = null;
         }
     }
 
@@ -391,7 +415,7 @@ public class BattleMenu : MonoBehaviour{
             if (defendArmy.GetComponent<Army>().effigy != null) {
                 Effigy displacedEffigy = defendArmy.GetComponent<Army>().effigy;
                 if (attackArmy.GetComponent<Army>().effigy == null) attackArmy.GetComponent<Army>().effigy = displacedEffigy;
-                else if (battleNode.GetComponent<Node>().effigy != null) battleNode.GetComponent<Node>().effigy = displacedEffigy;
+                else if (defendNode.GetComponent<Node>().effigy != null) defendNode.GetComponent<Node>().effigy = displacedEffigy;
                 else {
                     while (displacedEffigy != null) {
                         List<GameObject> playerNodes = attackingPlayer.GetComponent<Player>().ownedNodes;
@@ -406,8 +430,8 @@ public class BattleMenu : MonoBehaviour{
         }
     }
     public void RefreshBuildings() {
-        if (battleNode.GetComponent<Node>().temple != null) battleNode.GetComponent<Node>().temple.ResetUnit();
-        if (battleNode.GetComponent<Node>().altar != null) battleNode.GetComponent<Node>().altar.ResetUnit();
+        if (defendNode.GetComponent<Node>().temple != null) defendNode.GetComponent<Node>().temple.ResetUnit();
+        if (defendNode.GetComponent<Node>().altar != null) defendNode.GetComponent<Node>().altar.ResetUnit();
     }
     public bool AttackerCanAssimilate() {
         if (attackingPlayer.GetComponent<Player>().upgrades.ContainsKey("Assimilate") && attackingPlayer.GetComponent<Player>().upgrades["Assimilate"].currentLevel >= 1) return true;

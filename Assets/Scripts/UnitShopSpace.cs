@@ -44,7 +44,8 @@ public class UnitShopSpace : MonoBehaviour
 
 
     private void OnMouseDown() {
-        if (human.GetComponent<Player>().money >= unit.moneyCost && human.GetComponent<Player>().zeal >= unit.zealCost) {
+        int unitCost = NodeMenu.currentNode.GetComponent<Node>().GetUnitCost(Tools.UnitToIndex(unit));
+        if (human.GetComponent<Player>().money >= unitCost && human.GetComponent<Player>().zeal >= unit.zealCost) {
             BuyUnit(NodeMenu.currentArmy, UnitSpace.currentUnitPos);
         }
         else Tools.CreatePopup(gameObject, "Not Enough Money", 40, Color.yellow);
@@ -75,9 +76,8 @@ public class UnitShopSpace : MonoBehaviour
 
     public void UpdateUnit() {
         portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + unit.faction + "/Portrait/" + unit.name);
-        int cost = unit.moneyCost;
-        if (NodeMenu.currentNode.GetComponent<Node>().temple.name == TempleName.Armaments) cost = (int)(cost * 0.6f);
-        moneyCost.GetComponent<TextMesh>().text = unit.moneyCost.ToString();
+        int unitCost = NodeMenu.currentNode.GetComponent<Node>().GetUnitCost(Tools.UnitToIndex(unit));
+        moneyCost.GetComponent<TextMesh>().text = unitCost.ToString();
         zealCost.GetComponent<TextMesh>().text = unit.zealCost.ToString();
         unitName.GetComponent<TextMesh>().text = unit.name;
         unitPower.GetComponent<TextMesh>().text = unit.power.ToString();

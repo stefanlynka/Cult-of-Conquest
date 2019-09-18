@@ -28,6 +28,7 @@ public class Temple {
     public Temple DeepCopy() {
         Temple newTemple = new Temple(name, cost, description, faction);
         newTemple.portrait = portrait;
+        newTemple.faction = faction;
         newTemple.unit = unit.DeepCopy();
         return newTemple;
     }

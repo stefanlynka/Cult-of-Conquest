@@ -169,10 +169,12 @@ public class FactionManager : MonoBehaviour{
         else army.GetComponent<Army>().marredBattle = false;
     }
     public void StoreEnemy(GameObject army, MapUnit unit) {
-        MapUnit newUnit = unit.DeepCopy();
-        newUnit.currentHealth = newUnit.maxHealth/4;
-        newUnit.currentShield = newUnit.maxShield;
-        army.GetComponent<Army>().defeatedEnemies.Add(newUnit);
+        if (!unit.name.Contains("Temple") && !unit.name.Contains("Altar")) {
+            MapUnit newUnit = unit.DeepCopy();
+            newUnit.currentHealth = newUnit.maxHealth / 4;
+            newUnit.currentShield = newUnit.maxShield;
+            army.GetComponent<Army>().defeatedEnemies.Add(newUnit);
+        }
     }
     public void ReassembleEnemies(GameObject army) {
         List<MapUnit> deadUnits = army.GetComponent<Army>().defeatedEnemies;
@@ -223,19 +225,33 @@ public class FactionManager : MonoBehaviour{
         player.GetComponent<Player>().zeal += score;
     }
     public void RewardsForFairness(GameObject army) {
-        float allyLostPower = army.GetComponent<Army>().precombatPower - army.GetComponent<Army>().GetOffensivePower();
-        List<MapUnit> defeatedEnemies = army.GetComponent<Army>().defeatedEnemies;
-        int enemyLostPower = 0;
-        for (int i = 0; i < defeatedEnemies.Count; i++) {
-            enemyLostPower += defeatedEnemies[i].power;
+        
+        if (army && army.GetComponent<Army>().owner) {
+            print("rewards triggering");
+
+            // twice(or more) as powerful= 0.0   same power = 1.0
+            float differenceInPower = 2 - Mathf.Max(army.GetComponent<Army>().precombatPower, army.GetComponent<Army>().enemyPower) / Mathf.Min(army.GetComponent<Army>().precombatPower, army.GetComponent<Army>().enemyPower);
+            if (differenceInPower < 0) differenceInPower = 0;
+            float powerLost = army.GetComponent<Army>().precombatPower - army.GetComponent<Army>().GetOffensivePower();
+            int rewardMoney = (int)(powerLost * differenceInPower);
+            /*
+            float allyLostPower = army.GetComponent<Army>().precombatPower - army.GetComponent<Army>().GetOffensivePower();
+            List<MapUnit> defeatedEnemies = army.GetComponent<Army>().defeatedEnemies;
+            int enemyLostPower = 0;
+            for (int i = 0; i < defeatedEnemies.Count; i++) {
+                enemyLostPower += defeatedEnemies[i].power;
+            }
+            float minLostPower = Mathf.Min(allyLostPower, enemyLostPower);
+            int rewardMoney = (int)minLostPower / 2;
+            rewardMoney *= (int)(1 + (0.15f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Reap Just Rewards"].currentLevel));
+            */
+            print("Reward Money:" +rewardMoney);
+            army.GetComponent<Army>().owner.GetComponent<Player>().money += rewardMoney;
         }
-        float minLostPower = Mathf.Min(allyLostPower,enemyLostPower);
-        int rewardMoney = (int)minLostPower / 2;
-        rewardMoney *= (int)(1 + (0.15f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Reap Just Rewards"].currentLevel));
-        army.GetComponent<Army>().owner.GetComponent<Player>().money += rewardMoney;
     }
     public void BalanceAdvantage(GameObject samataArmy, GameObject otherArmy) {
         if (samataArmy.GetComponent<Army>() && otherArmy.GetComponent<Army>()) {
+            samataArmy.GetComponent<Army>().enemyPower = otherArmy.GetComponent<Army>().GetOffensivePower();
             float vulnerability = 1.0f;
             float overPoweredRatio = (samataArmy.GetComponent<Army>().GetOffensivePower() / otherArmy.GetComponent<Army>().GetOffensivePower()) - 1;
             if (overPoweredRatio > 0) {
@@ -247,13 +263,15 @@ public class FactionManager : MonoBehaviour{
         }
     }
     public void PunishDisadvantage(GameObject noumenonArmy, GameObject otherArmy) {
-        float vulnerability = 1.0f;
-        float overPoweredRatio = (otherArmy.GetComponent<Army>().GetOffensivePower() / noumenonArmy.GetComponent<Army>().GetOffensivePower()) - 1;
-        if (overPoweredRatio > 0) {
-            vulnerability += overPoweredRatio * 0.75f;
-        }
-        for (int i = 0; i < noumenonArmy.GetComponent<Army>().units.Count; i++) {
-            noumenonArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+        if (noumenonArmy && otherArmy) {
+            float vulnerability = 1.0f;
+            float overPoweredRatio = (otherArmy.GetComponent<Army>().GetOffensivePower() / noumenonArmy.GetComponent<Army>().GetOffensivePower()) - 1;
+            if (overPoweredRatio > 0) {
+                vulnerability += overPoweredRatio * 0.75f;
+            }
+            for (int i = 0; i < noumenonArmy.GetComponent<Army>().units.Count; i++) {
+                noumenonArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
+            }
         }
     }
     public void PunishSafety(GameObject carnotArmy, GameObject otherArmy) {
@@ -320,7 +338,8 @@ public class FactionManager : MonoBehaviour{
     public void BoostMarred(GameObject unmarArmy, GameObject otherArmy) {
         for(int i = 0; i< unmarArmy.GetComponent<Army>().units.Count;i++) {
             MapUnit unit = unmarArmy.GetComponent<Army>().units[i];
-            if (unit.marred) unit.damageMod += unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Doomed Power"].currentLevel * 0.15f;
+
+            if (unit != null && unit.marred) unit.damageMod += unmarArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Doomed Power"].currentLevel * 0.15f;
         }
     }
     public void BoostDefense(GameObject unmarArmy, GameObject otherArmy) {
@@ -349,9 +368,10 @@ public class FactionManager : MonoBehaviour{
             }
         }
     }
-    public void StolenPrecombatAttack(GameObject paratrophArmy, GameObject defendingNode) {
+    public void StolenPrecombatAttack(GameObject paratrophArmy, GameObject defendingArmy) {
+        GameObject defendingNode = defendingArmy.GetComponent<Army>().currentNode;
         if (paratrophArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Against Tyranny")) {
-            if (defendingNode.GetComponent<Node>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
+            if (defendingNode.GetComponent<Node>().owner && defendingNode.GetComponent<Node>().owner.GetComponent<Player>().ownedNodes.Count >= Tools.StrongestFactionNodeCount()) {
                 paratrophArmy.GetComponent<Army>().AddToDamageMod(0.1f * paratrophArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Against Tyranny"].currentLevel);
                 print("against the strongest");
             }

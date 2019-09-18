@@ -17,6 +17,7 @@ public class Army : MonoBehaviour {
     public int movesLeft = 2;
     public int sight = 2;
     public bool marredBattle = false;
+    public float enemyPower = 0;
 
     public List<MapUnit> units = new List<MapUnit>();
     public MapUnit[] backRow = new MapUnit[4];
@@ -24,7 +25,7 @@ public class Army : MonoBehaviour {
     public List<MapUnit> defeatedEnemies = new List<MapUnit>();
     public Temple conqueredTemple;
     public Altar conqueredAltar;
-    public int precombatPower;
+    public float precombatPower;
     public Effigy effigy;
     public int allocatedMoney = 0;
     public int allocatedReplenish = 0;
@@ -53,7 +54,7 @@ public class Army : MonoBehaviour {
         mouseOverArmy = false;
     }
     private void OnMouseOver() {
-        if (Input.GetMouseButtonDown(0) && TurnManager.currentPlayer.GetComponent<Player>().faction == faction) {
+        if (Input.GetMouseButtonDown(0)) {
             Player.armyLeftClicked = gameObject;
         }
         if (Input.GetMouseButtonDown(1) && TurnManager.currentPlayer.GetComponent<Player>().faction == faction) {
@@ -67,7 +68,7 @@ public class Army : MonoBehaviour {
             Intent move = movesToDo[0];
             movesToDo.Remove(move);
             print("Army: " + move.armyMoving.name + " moving to: " + move.targetNode);
-            move.armyMoving.GetComponent<Army>().EnterNode(move.targetNode);
+            if (move.armyMoving) move.armyMoving.GetComponent<Army>().EnterNode(move.targetNode);
         }
     }
 
@@ -75,22 +76,17 @@ public class Army : MonoBehaviour {
         owner = TurnManager.human;
         GameObject playerList = GameObject.Find("/Players");
         owner = transform.parent.gameObject;
-        AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[2]);
-        //AddUnit(1, true, owner.GetComponent<Player>().unitBlueprints[0]);
-        //AddUnit(2, true, owner.GetComponent<Player>().unitBlueprints[0]);
-        //AddUnit(3, true, owner.GetComponent<Player>().unitBlueprints[0]);
+        AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[1]);
+        AddUnit(1, true, owner.GetComponent<Player>().unitBlueprints[0]);
+        AddUnit(2, true, owner.GetComponent<Player>().unitBlueprints[2]);
+        AddUnit(3, true, owner.GetComponent<Player>().unitBlueprints[3]);
         //AddUnit(0, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(1, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(2, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(3, false, owner.GetComponent<Player>().unitBlueprints[0]);
     }
 
-    public void SetPrecombatPower() {
-        precombatPower = 0;
-        for (int i = 0; i < units.Count; i++) {
-            precombatPower += units[i].power;
-        }
-    }
+
     public void AddToDamageMod(float modifier) {
         for (int i = 0; i < units.Count; i++) {
             MapUnit unit = units[i];
@@ -208,7 +204,7 @@ public class Army : MonoBehaviour {
     public void DissectUnit(MapUnit unit) {
         RemoveUnit(unit);
         owner.GetComponent<Player>().zeal++;
-        owner.GetComponent<Player>().dissections[unit.faction]++;
+        if (owner.GetComponent<Player>().dissections.ContainsKey(unit.faction)) owner.GetComponent<Player>().dissections[unit.faction]++;
     }
     public void SellUnit(MapUnit unit) {
         owner.GetComponent<Player>().money += unit.moneyCost / 4;
@@ -246,6 +242,7 @@ public class Army : MonoBehaviour {
 
     public void Defeated() {
         print("defeated");
+        Army.readyToMove = true;
         currentNode.GetComponent<Node>().occupant = null;
         currentNode.GetComponent<Node>().occupied = false;
         owner.GetComponent<Player>().armies.Remove(gameObject);
@@ -396,7 +393,9 @@ return power;
         ResetArmy();
         SetPrecombatPower();
     }
-
+    public void SetPrecombatPower() {
+        precombatPower = GetOffensivePower();
+    }
     public bool IsPure() {
         for (int i = 0; i < units.Count; i++) {
             if(units[i].marred) return false;
