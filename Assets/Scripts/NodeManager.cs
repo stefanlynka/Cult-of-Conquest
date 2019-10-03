@@ -33,8 +33,8 @@ public class NodeManager : MonoBehaviour
         highlightFog = GameObject.Find("/Highlight");
         highlightFog.transform.position = new Vector3(0, 0, 10);
         highlightFog.SetActive(false);
-        if (AllBasesConnected()) print("Connected");
-        else print("Disconnected");
+        //if (AllBasesConnected()) print("Connected");
+        //else print("Disconnected");
     }
 
     void LabelNodes() {

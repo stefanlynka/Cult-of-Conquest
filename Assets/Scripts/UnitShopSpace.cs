@@ -12,7 +12,6 @@ public class UnitShopSpace : MonoBehaviour
     GameObject army;
     GameObject nodeMenu;
     GameObject unitShop;
-    GameObject human;
     //Faction currentFaction;
     int unitNumber;
 
@@ -38,14 +37,13 @@ public class UnitShopSpace : MonoBehaviour
         unitNumber = int.Parse(name.Substring(name.Length - 1));
         nodeMenu = GameObject.Find("/Node Menu");
         unitShop = GameObject.Find("/Unit Buying Menu");
-        human = Player.human;
     }
 
 
 
     private void OnMouseDown() {
         int unitCost = NodeMenu.currentNode.GetComponent<Node>().GetUnitCost(Tools.UnitToIndex(unit));
-        if (human.GetComponent<Player>().money >= unitCost && human.GetComponent<Player>().zeal >= unit.zealCost) {
+        if (Player.human.GetComponent<Player>().money >= unitCost && Player.human.GetComponent<Player>().zeal >= unit.zealCost) {
             BuyUnit(NodeMenu.currentArmy, UnitSpace.currentUnitPos);
         }
         else Tools.CreatePopup(gameObject, "Not Enough Money", 40, Color.yellow);

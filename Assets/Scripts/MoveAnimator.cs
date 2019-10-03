@@ -17,7 +17,7 @@ public class MoveAnimator : MonoBehaviour{
 
     // Update is called once per frame
     void Update() {
-        MoveToTarget();
+        if (Vector3.Distance(transform.position, target)>0.01) MoveToTarget();
     }
     public void SetTarget(Vector3 targetPos, bool isAttacking) {
         target = targetPos;

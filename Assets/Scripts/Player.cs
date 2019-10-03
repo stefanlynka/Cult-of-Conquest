@@ -33,10 +33,6 @@ public class Player : MonoBehaviour
     public GameObject randomPanel;
 
     public void Awake() {
-        if (!GetComponent<AI>() && !name.Contains("Neutral")) {
-            human = gameObject;
-            //print("I'm spartacus " + gameObject.name);
-        }
     }
 
     // Start is called before the first frame update

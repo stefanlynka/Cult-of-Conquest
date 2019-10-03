@@ -13,7 +13,7 @@ public class Controller : MonoBehaviour{
     }
     // Start is called before the first frame update
     void Start(){
-        CallStartupFunctions();
+        PreFactionStartup();
     }
 
     // Update is called once per frame
@@ -37,6 +37,19 @@ public class Controller : MonoBehaviour{
         turnManager = GameObject.Find("/Turn Manager");
     }
     void CallStartupFunctions() {
+
+    }
+    void PreFactionStartup() {
+
+
+    }
+    public void PostFactionStartup(Faction humanFaction) {
+        GameObject human = Tools.GetChildNameContains(playerMenu, humanFaction.ToString());
+        print("human name: " + human.name);
+        Destroy(human.GetComponent<AI>());
+        Player.human = human;
+
+        turnManager.GetComponent<TurnManager>().InitializeMembers();
         nodeManager.GetComponent<NodeManager>().Startup();
         unitShopManager.GetComponent<UnitShopManager>().Startup();
         ritualManager.GetComponent<RitualManager>().Startup();
@@ -50,13 +63,12 @@ public class Controller : MonoBehaviour{
                 }
             }
         }
-        turnManager.GetComponent<TurnManager>().InitializeMembers();
         unitShopManager.GetComponent<UnitShopManager>().SetupUnitShopSpaces();
         randomPanel.GetComponent<RandomPanel>().Setup();
         altarShopManager.GetComponent<AltarShopManager>().Setup();
         templeShopManager.GetComponent<TempleShopManager>().Setup();
         upgradeManager.GetComponent<UpgradeManager>().Startup();
-        foreach(GameObject player in players) {
+        foreach (GameObject player in players) {
             player.GetComponent<Player>().StartGameSetup();
         }
     }

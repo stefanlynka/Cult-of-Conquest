@@ -96,6 +96,7 @@ public class Tools {
         return Faction.None;
     }
 
+
     public static void CreatePopup(GameObject origin, string text, int textSize, Color colour) {
         GameObject popup = new GameObject();
         popup.AddComponent<Popup>();

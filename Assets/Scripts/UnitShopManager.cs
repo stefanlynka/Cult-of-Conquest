@@ -42,14 +42,14 @@ public class UnitShopManager : MonoBehaviour {
         //army = NodeMenu.currentArmy;
         //if (army) currentFaction = army.GetComponent<Army>().faction;
         List<GameObject> players = Controller.players;
+        print("player count: " + players.Count);
+        
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
             MakeUnits(player.GetComponent<Player>().faction, player);
-            if (!player.GetComponent<AI>()) {
-                AssignUnits(player);
-                //SetupUnitShopSpaces();
-            }
         }
+        AssignUnits(Player.human);
+
     }
 
     public void SetupUnitShopSpaces() {
@@ -132,6 +132,7 @@ public class UnitShopManager : MonoBehaviour {
     public void AssignUnits(GameObject player) {
         for (int i =0 ; i < unitSpaces.Length; i++) {
             MapUnit unit = player.GetComponent<Player>().unitBlueprints[i];
+            print("Unit name:" + unit.name);
             unitSpaces[i].GetComponent<UnitShopSpace>().AddUnit(unit);
             //print("assigning new unit: "+unit.faction);
         }

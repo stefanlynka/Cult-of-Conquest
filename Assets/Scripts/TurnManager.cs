@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour{
 
-    public static GameObject human;
     public static GameObject currentPlayer;
     public static List<GameObject> players = new List<GameObject>();
     List<GameObject> nodes = new List<GameObject>();
@@ -31,21 +30,22 @@ public class TurnManager : MonoBehaviour{
         bool foundHuman = false;
         GameObject playerHolder = GameObject.Find("/Players");
         for (int i = 0; i < playerHolder.transform.childCount; i++) {
-            GameObject child = playerHolder.transform.GetChild(i).gameObject;
-            if (!child.GetComponent<AI>()) foundHuman = true;
-            if (child.GetComponent<Player>() && foundHuman && !players.Contains(child)) players.Add(child);
+            GameObject player = playerHolder.transform.GetChild(i).gameObject;
+            if (player == Player.human) foundHuman = true;
+            if (player.GetComponent<Player>() && foundHuman && !players.Contains(player)) players.Add(player);
         }
         for (int i = 0; i < playerHolder.transform.childCount; i++) {
-            GameObject child = playerHolder.transform.GetChild(i).gameObject;
-            if (!child.GetComponent<AI>()) foundHuman = true;
-            if (child.GetComponent<Player>() && foundHuman && !players.Contains(child)) players.Add(child);
+            GameObject player = playerHolder.transform.GetChild(i).gameObject;
+            if (player.GetComponent<Player>() && foundHuman && !players.Contains(player)) players.Add(player);
         }
 
         for (int i =0; i < players.Count; i++) {
             playerDict.Add(players[i].GetComponent<Player>().faction, players[i]);
         }
-        human = Player.human;
-        currentPlayer = human;
+        currentPlayer = Player.human;
+        for(int i=0; i< players.Count; i++) {
+            print("Player: " + players[i].name);
+        }
     }
 
     public void NextTurn() {

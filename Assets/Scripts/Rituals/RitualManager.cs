@@ -5,7 +5,6 @@ using UnityEngine;
 public class RitualManager : MonoBehaviour {
 
     List<GameObject> players = new List<GameObject>();
-    GameObject human;
     public static bool ritualSelected = false;
     public Ritual selectedRitual, previousRitual;
     public List<GameObject> selectedNodes;
@@ -32,7 +31,6 @@ public class RitualManager : MonoBehaviour {
             GameObject child = playerList.transform.GetChild(i).gameObject;
             if (child.GetComponent<Player>()) players.Add(child);
         }
-        human = Player.human;
         SetupRituals();
     }
 
@@ -109,10 +107,10 @@ public class RitualManager : MonoBehaviour {
     }
 
     public void LoadPlayerRituals() {
-        for (int j = 0; j < human.GetComponent<Player>().ritualBlueprints.Count; j++) {
+        for (int j = 0; j < Player.human.GetComponent<Player>().ritualBlueprints.Count; j++) {
             GameObject ritualSlot = Tools.GetChildNamed(gameObject, "Ritual Slot " + j.ToString());
             if (ritualSlot != null) {
-                Ritual blueprint = human.GetComponent<Player>().ritualBlueprints[j];
+                Ritual blueprint = Player.human.GetComponent<Player>().ritualBlueprints[j];
                 ritualSlot.GetComponent<RitualSlot>().ritualBlueprint = blueprint;
                 Tools.GetChildNamed(ritualSlot, "Ritual Name Text").GetComponent<TextMesh>().text = "Ritual of " + blueprint.name;
                 Tools.GetChildNamed(ritualSlot, "Ritual Zeal Cost Text").GetComponent<TextMesh>().text = blueprint.zealCost.ToString();

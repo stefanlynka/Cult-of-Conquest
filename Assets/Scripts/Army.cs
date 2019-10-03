@@ -73,7 +73,7 @@ public class Army : MonoBehaviour {
     }
 
     void SetStartingUnits() {
-        owner = TurnManager.human;
+        owner = Player.human;
         GameObject playerList = GameObject.Find("/Players");
         owner = transform.parent.gameObject;
         AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[1]);

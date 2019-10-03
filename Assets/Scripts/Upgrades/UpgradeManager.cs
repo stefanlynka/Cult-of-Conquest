@@ -5,7 +5,6 @@ using UnityEngine;
 public class UpgradeManager : MonoBehaviour{
 
     List<GameObject> players = new List<GameObject>();
-    GameObject human;
 
     // Start is called before the first frame update
     void Start(){
@@ -27,7 +26,6 @@ public class UpgradeManager : MonoBehaviour{
             GameObject child = playerList.transform.GetChild(i).gameObject;
             if (child.GetComponent<Player>()) players.Add(child);
         }
-        human = Player.human;
         SetupUpgrades();
     }
 
