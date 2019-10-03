@@ -6,7 +6,7 @@ public class ChooseFactionButton : MonoBehaviour{
 
     // Start is called before the first frame update
     void Start(){
-        
+        transform.parent.GetComponent<Panner>().SetTarget(new Vector3(0, 0, -30));
     }
 
     // Update is called once per frame

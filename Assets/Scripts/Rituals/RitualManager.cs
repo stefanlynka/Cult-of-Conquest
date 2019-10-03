@@ -164,8 +164,10 @@ public class RitualManager : MonoBehaviour {
                 targetArmy.GetComponent<Army>().units[i].currentHealth /= 2;
             }
         }
+        MakeAnimation(targetArmy);
     }
     void HideArea(List<GameObject> targets) {
+        
         GameObject targetArmy = targets[0].GetComponent<Node>().occupant;
         GameObject targetNode = targets[0];
         targetNode.GetComponent<Node>().concealment = 5;
@@ -173,6 +175,7 @@ public class RitualManager : MonoBehaviour {
             targetNode.GetComponent<Node>().neighbours[i].GetComponent<Node>().concealment = 5;
         }
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
+        MakeAnimation(targetNode);
     }
     void HideMap(List<GameObject> targets) {
         List<GameObject> nodes = NodeManager.nodes;
@@ -206,6 +209,7 @@ public class RitualManager : MonoBehaviour {
                     targetArmy.GetComponent<Army>().units[i] = null;
                 }
             }
+            MakeAnimation(targetArmy);
         }
     }
     void RewardPurity(List<GameObject> targets) {
@@ -217,6 +221,7 @@ public class RitualManager : MonoBehaviour {
                 unit.currentHealth = unit.maxHealth;
                 unit.maxDamage = (int)(unit.maxDamage * 1.2);
             }
+            MakeAnimation(targetArmy);
         }
     }
     void BalanceHealth(List<GameObject> targets) {
@@ -242,6 +247,7 @@ public class RitualManager : MonoBehaviour {
                     }
                 }
             }
+            MakeAnimation(targetArmy);
         }
     }
     void PerfectMatch(List<GameObject> targets) {
@@ -256,6 +262,8 @@ public class RitualManager : MonoBehaviour {
                 MapUnit copy = copiedArmy.GetComponent<Army>().backRow[i].DeepCopy();
                 changedArmy.GetComponent<Army>().backRow[i] = copy;
             }
+            MakeAnimation(copiedArmy);
+            MakeAnimation(changedArmy);
         }
     }
     void RandomStep(List<GameObject> targets) {
@@ -264,13 +272,16 @@ public class RitualManager : MonoBehaviour {
             List<GameObject> neighbours = movingArmy.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours;
             int randInt = Random.Range(0, neighbours.Count);
             movingArmy.GetComponent<Army>().NoRetreatEnterNode(neighbours[randInt]);
+            MakeAnimation(movingArmy);
         }
+
     }
     void RandomWarp(List<GameObject> targets) {
         GameObject targetArmy = targets[0].GetComponent<Node>().occupant;
         if (targetArmy != null) {
             GameObject targetNode = GameObject.Find("/Node Manager").GetComponent<NodeManager>().GetRandomNode();
             targetArmy.GetComponent<Army>().NoRetreatEnterNode(targetNode);
+            MakeAnimation(targetNode);
         }
     }
 
@@ -279,5 +290,11 @@ public class RitualManager : MonoBehaviour {
         if (targetArmy != null) {
 
         }
+    }
+    void MakeAnimation(GameObject target) {
+        GameObject animationPrefab = Resources.Load<GameObject>("Animations/Ritual/Ritual Animation");
+        GameObject anim = Instantiate(animationPrefab, target.transform);
+        Vector3 newPos = new Vector3(target.transform.position.x, target.transform.position.y, -20);
+        anim.GetComponent<AnimationScript>().Setup(newPos, 180);
     }
 }
