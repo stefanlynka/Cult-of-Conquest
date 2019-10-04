@@ -33,6 +33,7 @@ public class Node : MonoBehaviour
     public int concealment = 1;
     public Ritual ritual;
     public Effigy effigy;
+    public Color defaultColour;
 
     public Temple temple;
     public Altar altar;
@@ -82,6 +83,7 @@ public class Node : MonoBehaviour
     private void Setup() {
         //temple = new Temple(TempleName.None, 0, Faction.None);
         //altar = new Altar(AltarName.None, 0);
+        defaultColour = GetComponent<SpriteRenderer>().color;
         if (homeBase != Faction.None) {
             difficulty = 4;
             faction = homeBase;
@@ -279,6 +281,7 @@ public class Node : MonoBehaviour
             Sprite newSprite = Resources.Load<Sprite>("Nodes/Home Node " + faction.ToString());
             renderer.sprite = newSprite;
         }
+        GetComponent<SpriteRenderer>().color = defaultColour;
     }
 
 

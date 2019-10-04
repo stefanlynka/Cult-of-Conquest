@@ -23,6 +23,7 @@ public class Army : MonoBehaviour {
     public MapUnit[] backRow = new MapUnit[4];
     public MapUnit[] frontRow = new MapUnit[4];
     public List<MapUnit> defeatedEnemies = new List<MapUnit>();
+    public Dictionary<string, int> precombatUnits = new Dictionary<string, int>();
     public Temple conqueredTemple;
     public Altar conqueredAltar;
     public float precombatPower;
@@ -34,6 +35,7 @@ public class Army : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         nodeManager = GameObject.Find("/Node Manager");
+        ResetPrecombatUnits();
     }
 
     // Update is called once per frame
@@ -390,11 +392,25 @@ return power;
         }
     }
     public void PrebattleSetup() {
-        ResetArmy();
+        //ResetArmy();
         SetPrecombatPower();
+        SetPrecombatUnits();
     }
     public void SetPrecombatPower() {
         precombatPower = GetOffensivePower();
+    }
+    public void SetPrecombatUnits() {
+        ResetPrecombatUnits();
+        foreach (MapUnit unit in units) {
+            precombatUnits[unit.name]++;
+        }
+    }
+    void ResetPrecombatUnits() {
+        precombatUnits.Clear();
+        precombatUnits.Add("peon", 0);
+        precombatUnits.Add("acolyte", 0);
+        precombatUnits.Add("shaman", 0);
+        precombatUnits.Add("prelate", 0);
     }
     public bool IsPure() {
         for (int i = 0; i < units.Count; i++) {

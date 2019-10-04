@@ -134,11 +134,12 @@ public class Player : MonoBehaviour
         return false;
     }
     bool RightClickedOnNearbyEnemy() {
-        if (armyRightClicked && armyRightClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted) {
+        GameObject currentNode = selectedArmy.GetComponent<Army>().currentNode;
+        if (armyRightClicked && armyRightClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted && armyRightClicked.GetComponent<Army>().currentNode!= currentNode) {
             nodeRightClicked = armyRightClicked.GetComponent<Army>().currentNode;
             return true;
         }
-        if (nodeRightClicked && nodeRightClicked.GetComponent<Node>().highlighted && isArmySelected) return true;
+        if (nodeRightClicked && nodeRightClicked.GetComponent<Node>().highlighted && isArmySelected && nodeRightClicked != currentNode) return true;
         return false;
     }
     bool ClickingOnAnArmy() {
@@ -179,7 +180,7 @@ public class Player : MonoBehaviour
             }
 
             if (!selectedArmy) {
-                if (nodeRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
+                if (nodeRightClicked && notEnemyNode()) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
                 else if (armyRightClicked) {
                     //print("right clicked army");
                     nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
@@ -202,6 +203,11 @@ public class Player : MonoBehaviour
         armyRightClicked = null;
         nodeLeftClicked = null;
         nodeRightClicked = null;
+    }
+
+    bool notEnemyNode() {
+        if (nodeRightClicked.GetComponent<Node>().faction == faction || nodeRightClicked.GetComponent<Node>().faction == Faction.Independent) return true;
+        return false;
     }
 
     public void attackNode(GameObject army, GameObject node) {

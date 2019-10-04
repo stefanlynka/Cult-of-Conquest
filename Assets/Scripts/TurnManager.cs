@@ -43,9 +43,6 @@ public class TurnManager : MonoBehaviour{
             playerDict.Add(players[i].GetComponent<Player>().faction, players[i]);
         }
         currentPlayer = Player.human;
-        for(int i=0; i< players.Count; i++) {
-            print("Player: " + players[i].name);
-        }
     }
 
     public void NextTurn() {

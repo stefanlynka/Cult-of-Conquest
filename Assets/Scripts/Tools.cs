@@ -57,6 +57,14 @@ public class Tools {
         }
         return newList;
     }
+    public static List<MapUnit> DeepCopyMapUnitList(List<MapUnit> oldList) {
+        List<MapUnit> newList = new List<MapUnit>();
+        foreach(MapUnit oldUnit in oldList) {
+            MapUnit newUnit = oldUnit.DeepCopy();
+            newList.Add(newUnit);
+        }
+        return newList;
+    }
 
     public static int SortByTime(Cooldown c1, Cooldown c2) {
         return c1.timeToAct.CompareTo(c2.timeToAct);
@@ -226,5 +234,11 @@ public class Tools {
             }
         }
         return new UnitPos();
+    }
+    public static MapUnit GetUnitNamed(List<MapUnit> units, string unitName) {
+        foreach(MapUnit unit in units) {
+            if (unit.name == unitName) return unit.DeepCopy();
+        }
+        return null;
     }
 }

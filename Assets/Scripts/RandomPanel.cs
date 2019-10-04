@@ -18,6 +18,9 @@ public class RandomPanel : MonoBehaviour{
     void Update(){
         attackingArmy = Player.selectedArmy;
         if (attackingArmy == null) {
+            foreach (GameObject target in targets) {
+                target.GetComponent<Node>().UpdateSprite();
+            }
             targets.Clear();
             UpdateText();
         }
@@ -29,16 +32,23 @@ public class RandomPanel : MonoBehaviour{
     public void AddTarget(GameObject node) {
         if (!targets.Contains(node)) {
             targets.Add(node);
+            node.GetComponent<SpriteRenderer>().color = Color.grey;
             print("target added");
         }
         else {
             targets.Remove(node);
+            node.GetComponent<SpriteRenderer>().color = node.GetComponent<Node>().defaultColour;
             print("target removed");
         }
         UpdateText();
     }
     void UpdateText() {
-        infoText.GetComponent<TextMesh>().text = "Nodes Selected: " + targets.Count + "\nCombat Bonus: " + (targets.Count * 5).ToString() + "%";
+        float bonusPerTarget = 0.02f;
+        if (Player.human) {
+            if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assaulting Anarchy")) bonusPerTarget += 0.02f * Player.human.GetComponent<Player>().upgrades["Assaulting Anarchy"].currentLevel;
+            float modifier = targets.Count * bonusPerTarget;
+            infoText.GetComponent<TextMesh>().text = "Nodes Selected: " + targets.Count + "\nCombat Bonus: " + (modifier*100).ToString() + "%";
+        }
     }
 
     public void Attack() {
@@ -49,6 +59,7 @@ public class RandomPanel : MonoBehaviour{
         if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assaulting Anarchy")) bonusPerTarget += 0.02f * Player.human.GetComponent<Player>().upgrades["Assaulting Anarchy"].currentLevel;
         float modifier = targets.Count * bonusPerTarget;
         Player.selectedArmy.GetComponent<Army>().AddToDamageMod(modifier);
+        //print(armyMod: )
         Player.human.GetComponent<Player>().attackNode(Player.selectedArmy, target);
     }
 

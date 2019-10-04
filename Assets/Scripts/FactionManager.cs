@@ -227,36 +227,40 @@ public class FactionManager : MonoBehaviour{
     public void RewardsForFairness(GameObject army) {
         
         if (army && army.GetComponent<Army>().owner) {
-            print("rewards triggering");
-
-            // twice(or more) as powerful= 0.0   same power = 1.0
-            float differenceInPower = 2 - Mathf.Max(army.GetComponent<Army>().precombatPower, army.GetComponent<Army>().enemyPower) / Mathf.Min(army.GetComponent<Army>().precombatPower, army.GetComponent<Army>().enemyPower);
-            if (differenceInPower < 0) differenceInPower = 0;
-            float powerLost = army.GetComponent<Army>().precombatPower - army.GetComponent<Army>().GetOffensivePower();
-            int rewardMoney = (int)(powerLost * differenceInPower);
-            /*
-            float allyLostPower = army.GetComponent<Army>().precombatPower - army.GetComponent<Army>().GetOffensivePower();
-            List<MapUnit> defeatedEnemies = army.GetComponent<Army>().defeatedEnemies;
-            int enemyLostPower = 0;
-            for (int i = 0; i < defeatedEnemies.Count; i++) {
-                enemyLostPower += defeatedEnemies[i].power;
+            // Get total money lost in battle
+            int totalCostLost = 0;
+            foreach(MapUnit unit in army.GetComponent<Army>().units) {
+                army.GetComponent<Army>().precombatUnits[unit.name]--;
             }
-            float minLostPower = Mathf.Min(allyLostPower, enemyLostPower);
-            int rewardMoney = (int)minLostPower / 2;
-            rewardMoney *= (int)(1 + (0.15f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Reap Just Rewards"].currentLevel));
-            */
-            print("Reward Money:" +rewardMoney);
+            foreach (KeyValuePair<string,int> unitCount in army.GetComponent<Army>().precombatUnits) {
+                if (unitCount.Value > 0) {
+                    MapUnit blueprint = Tools.GetUnitNamed(army.GetComponent<Army>().owner.GetComponent<Player>().unitBlueprints, unitCount.Key);
+                    totalCostLost += unitCount.Value * blueprint.moneyCost;
+                }
+            }
+
+            // Get how fair the fight was
+            // Twice(or more) as powerful= 0.0   same power = 1.0
+            float differenceInPower = 2 - Mathf.Max(army.GetComponent<Army>().precombatPower, army.GetComponent<Army>().enemyPower) / Mathf.Min(army.GetComponent<Army>().precombatPower, army.GetComponent<Army>().enemyPower);
+            float modifier = 0.5f;
+            if (army.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Reap Just Rewards")) {
+                modifier += 0.2f * army.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Reap Just Rewards"].currentLevel;
+            }
+            int rewardMoney = (int)(totalCostLost * differenceInPower * modifier);
+
+            print("Reward Money:" + rewardMoney);
             army.GetComponent<Army>().owner.GetComponent<Player>().money += rewardMoney;
+            Tools.CreatePopup(GameObject.Find("/Resource HUD"), "Reward Money: +" + rewardMoney, 40, Color.yellow);
         }
     }
     public void BalanceAdvantage(GameObject samataArmy, GameObject otherArmy) {
-        if (samataArmy.GetComponent<Army>() && otherArmy.GetComponent<Army>()) {
+        if (samataArmy.GetComponent<Army>() && otherArmy.GetComponent<Army>()) { 
             samataArmy.GetComponent<Army>().enemyPower = otherArmy.GetComponent<Army>().GetOffensivePower();
             float vulnerability = 1.0f;
-            float overPoweredRatio = (samataArmy.GetComponent<Army>().GetOffensivePower() / otherArmy.GetComponent<Army>().GetOffensivePower()) - 1;
-            if (overPoweredRatio > 0) {
-                vulnerability += overPoweredRatio * 0.75f;
-            }
+            // OPRatio: 1 = twice as powerful.    0 = equal power
+            float overPoweredRatio = (samataArmy.GetComponent<Army>().GetOffensivePower() / Mathf.Max(otherArmy.GetComponent<Army>().GetOffensivePower(),1)) - 1;
+            // Twice as powerful: OPR = 1.   vulnerability = 1 + OPR*0.75.    vuln = 1.75 = 75% more damage taken
+            if (overPoweredRatio > 0) vulnerability += overPoweredRatio * 0.75f;
             for (int i = 0; i < samataArmy.GetComponent<Army>().units.Count; i++) {
                 samataArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
             }

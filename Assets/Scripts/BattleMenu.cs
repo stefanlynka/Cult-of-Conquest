@@ -202,9 +202,11 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void SetupBattle(GameObject attackingArmy, GameObject defendingNode) {
+        print("pre damage mod: " + attackingArmy.GetComponent<Army>().units[0].damageMod);
         SetupArmies(attackingArmy, defendingNode);
         StartingCooldowns();
         defendNode = defendingNode;
+        print("pre damage mod: " + attackingArmy.GetComponent<Army>().units[0].damageMod);
     }
 
     void StartingCooldowns() {
@@ -301,6 +303,7 @@ public class BattleMenu : MonoBehaviour{
 
         if (target != null && attacker != null) {
             int damage = (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
+            print("attackerDamage: " + attacker.currentDamage + " damageMod: " + attacker.damageMod + " vulnMod: " + target.vulnerableMod);
             if (attacker.fake) damage = 0;
             if (target.fake) damage *= 2;
             if (target.currentShield > 0 && damage > 0) target.currentShield--;
@@ -367,7 +370,8 @@ public class BattleMenu : MonoBehaviour{
             if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
             if (attackers.Count == 0) defendingPlayer.GetComponent<Player>().factionTraits.WonBattle(defendArmy);
         }
-        attackArmy.GetComponent<Army>().ResetArmy();
+        print("post damage mod: " + attackArmy.GetComponent<Army>().units[0].damageMod);
+        if (attackArmy) attackArmy.GetComponent<Army>().ResetArmy();
         attackingPlayer.GetComponent<Player>().factionTraits.BattleOver(attackArmy);
         RefreshBuildings();
         //GameObject winningArmy = defendArmy;
