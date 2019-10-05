@@ -21,12 +21,17 @@ public class BuyProphetButton : MonoBehaviour{
 
     public void SetTextByTemple(bool templeOfOriginPresent) {
         hasTempleOfOrigin = templeOfOriginPresent;
-        costText.SetActive(hasTempleOfOrigin);
-        costIcon.SetActive(hasTempleOfOrigin);
-        if (hasTempleOfOrigin) {
+        if (!costText || !costIcon || !buttonText) {
+            buttonText = Tools.GetChildNamed(gameObject, "Buy Prophet Button Text");
+            costText = Tools.GetChildNamed(gameObject, "Cost Text");
+            costIcon = Tools.GetChildNamed(gameObject, "Cost Icon");
+        }
+        if (costText) costText.SetActive(hasTempleOfOrigin);
+        if (costIcon) costIcon.SetActive(hasTempleOfOrigin);
+        if (hasTempleOfOrigin && buttonText) {
             buttonText.GetComponent<TextMesh>().text = "Buy Army\n";
         }
-        else {
+        else if (buttonText){
             buttonText.GetComponent<TextMesh>().text = "Build Temple Of\nOrigin To Create\nNew Armies";
         }
     }

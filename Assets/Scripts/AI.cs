@@ -36,8 +36,8 @@ public class AI : MonoBehaviour {
     // Update is called once per frame
 
     void Update() {
-        //print("Ready to Execute = :" + readyToExecute);
-        //print("Armies are ready: " + Army.readyToMove);
+        print("Ready to Execute = :" + readyToExecute);
+        print("Armies are ready: " + Army.readyToMove);
         if (TurnManager.currentPlayer == gameObject) {
             if (readyToExecute && Army.readyToMove && Army.movesToDo.Count == 0) {
                 if (turnPhase == TurnPhase.DefendAgainstThreats) {
@@ -70,6 +70,7 @@ public class AI : MonoBehaviour {
                 else if (turnPhase == TurnPhase.Attacks2) {
                     //print("Attacking 2 Phase");
                     Attack();
+                    MoveToFrontier();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Done;
                 }
                 else if (turnPhase == TurnPhase.Done) {
@@ -82,7 +83,11 @@ public class AI : MonoBehaviour {
     }
 
     public bool WantsToFight(GameObject army, GameObject defendingNode) {
-        if (army.GetComponent<Army>().GetOffensivePower() >= 1.25f * defendingNode.GetComponent<Node>().GetDefensivePower()) return true;
+        if (army.GetComponent<Army>().GetOffensivePower() >= 1.25f * defendingNode.GetComponent<Node>().GetDefensivePower()) {
+            print("AI attacking power: " + army.GetComponent<Army>().GetOffensivePower());
+            print("Human defending power: " + defendingNode.GetComponent<Node>().GetDefensivePower());
+            return true;
+        }
         return false;
     }
 
@@ -218,7 +223,7 @@ public class AI : MonoBehaviour {
         int totalMoneyNeeded = 0;
         investInProphets = 0;
         unallocatedMoney = GetComponent<Player>().money;
-        print("Unallocated Money (before matching): " + unallocatedMoney);
+        //print("Unallocated Money (before matching): " + unallocatedMoney);
         //Dictionary<GameObject, int> armyRequirements = new Dictionary<GameObject, int>();
         foreach (GameObject army in armies) {
             int moneyNeeded = GetMinMoneyNeeded(army);
@@ -227,7 +232,7 @@ public class AI : MonoBehaviour {
             //army.GetComponent<Army>().allocatedMoney = moneyNeeded;
             //print("money needed: " + moneyNeeded);
         }
-        print("Unallocated Money (after matching): " + unallocatedMoney);
+        //print("Unallocated Money (after matching): " + unallocatedMoney);
         //else print("Have enough money to allocate");
         //print("Total Money Needed: " + totalMoneyNeeded);
         while (unallocatedMoney >= 5) {
@@ -680,33 +685,33 @@ public class AI : MonoBehaviour {
         unallocatedMoney -= bestOption.cost;
     }
     void ExecuteOptions(List<AllocateOption> options) {
-        print(options.Count + " Actions to Execute");
+        //print(options.Count + " Actions to Execute");
         while (committedOptions.Count > 0) {
             AllocateOption option = options[0];
             committedOptions.RemoveAt(0);
             switch (option.type) {
                 case "unit":
-                    print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
+                    //print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
                     option.army.GetComponent<Army>().BuyUnit(option.army.GetComponent<Army>().GetOpenPosition(), GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
                 case "replace":
-                    print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos);
+                    //print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos);
                     option.army.GetComponent<Army>().BuyUnit(option.unitPos, GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
                 case "replenish":
-                    print("Saving " + option.cost + " for replenishing");
+                    //print("Saving " + option.cost + " for replenishing");
                     option.army.GetComponent<Army>().allocatedReplenish += option.cost;
                     break;
                 case "prophet":
-                    print("Saving " + option.cost + " for prophet");
+                    //print("Saving " + option.cost + " for prophet");
                     investInProphets += 30;
                     break;
                 case "temple":
-                    print("Building Temple of " + option.templeName);
+                    //print("Building Temple of " + option.templeName);
                     GetComponent<Player>().BuyTemple(option.node, option.templeName);
                     break;
                 case "altar":
-                    print("Building Altar of " + option.altarName);
+                    //print("Building Altar of " + option.altarName);
                     GetComponent<Player>().BuyAltar(option.node, option.altarName);
                     break;
             }
@@ -1068,15 +1073,128 @@ public class AI : MonoBehaviour {
         return true;
     }
 
+    void MoveToFrontier() {
+        moreToDoInPhase = false;
+        foreach(GameObject army in armies) {
+            if (army.GetComponent<Army>().movesLeft > 0) {
+                if (!IsOnFrontier(army.GetComponent<Army>().currentNode)) {
+                    MoveTowardsClosestFrontier(army);
+                }
+            }
+        }
+    }
+    bool IsOnFrontier(GameObject node) {
+        foreach (GameObject neighbour in node.GetComponent<Node>().neighbours) {
+            if (neighbour.GetComponent<Node>().faction != faction) return true;
+        }
+        return false;
+    }
+    void MoveTowardsClosestFrontier(GameObject army) {
+        Stack<GameObject> shortestPath = PathToClosestFrontierNode(army);
+        if (shortestPath.Count > 0) shortestPath.Pop();
+        int movesRemaining = army.GetComponent<Army>().movesLeft;
+        while (movesRemaining > 0 && shortestPath.Count>0) {
+            GameObject target = shortestPath.Pop();
+            print("moving to frontier:" + target.name);
+            GetComponent<Player>().attackNode(army, target);
+            movesRemaining--;
+            moreToDoInPhase = true;
+        }
+    }
+    Stack<GameObject> PathToClosestFrontierNode(GameObject army) {
+        Faction myFaction = faction;
+        GameObject startingNode = army.GetComponent<Army>().currentNode;
+        List<GameObject> visited = new List<GameObject>();
+        Stack<GameObject> goodPath = BFSFrontierNode(startingNode, visited, myFaction);
+        if (goodPath != null) return goodPath;
+        return null;
+    }
+    Stack<GameObject> BFSFrontierNode(GameObject currentNode, List<GameObject> visited, Faction faction) {
+        if (IsOnFrontier(currentNode)) {
+            Stack<GameObject> goodPath = new Stack<GameObject>();
+            goodPath.Push(currentNode);
+            return goodPath;
+        }
+        if (!visited.Contains(currentNode)) visited.Add(currentNode);
+        List<GameObject> neighbours = currentNode.GetComponent<Node>().neighbours;
+        Stack<GameObject> bestPath = new Stack<GameObject>();
+        int bestPathLength = 999;
+
+        foreach (GameObject neighbour in neighbours) {
+            if (!visited.Contains(neighbour) && neighbour.GetComponent<Node>().occupant == null) {
+                Stack<GameObject> newPath = BFSFrontierNode(neighbour, visited, faction);
+                if (newPath.Count < bestPathLength) {
+                    bestPath = newPath;
+                    bestPathLength = newPath.Count;
+                }
+            }
+        }
+        bestPath.Push(currentNode);
+        return bestPath;
+    }
+
+
+
+    /*
+    // ITERATIVE DEEPENING SEEEEAAAAAAAARCH
+    public List<GameObject> GetPathTo(GameObject node) {
+        int depth = 1;
+        Faction player = faction;
+        bool solved = false;
+        while (solved == false) {
+            List<GameObject> goodPath = new List<GameObject>();
+            goodPath = ExtendPathToNeighbours(node, goodPath, depth, player);
+            if (goodPath != null) return goodPath;
+            depth++;
+            if (depth > 8) {
+                //print("we couldn't find it");
+                return null;
+            }
+        }
+        //print("end of the line");
+        return null;
+    }
+    // Recursive path search used in GetPathTo()
+    List<GameObject> ExtendPathToNeighbours(GameObject targetNode, List<GameObject> visited, int currentDepth, Faction player) {
+        visited.Add(gameObject);
+        if (gameObject == targetNode) {
+            //print("found the one");
+            return visited;
+        }
+        if (currentDepth > 0) {
+            currentDepth--;
+            for (int i = 0; i < neighbours.Count; i++) {
+                GameObject neighbour = neighbours[i];
+                List<GameObject> goodPath = new List<GameObject>();
+                //print("let's ask a neighbour");
+                // if (neighbour.GetComponent<Node>().faction == player && !visited.Contains(neighbour)) { //For only checking friendlies
+                if (!visited.Contains(neighbour) && (neighbour.GetComponent<Node>().faction == player || neighbour == targetNode)) {
+                    List<GameObject> deepCopyVisited = Tools.DeepCopyGameObjectList(visited);
+                    //print("checking with a neighbour");
+                    goodPath = neighbour.GetComponent<Node>().ExtendPathToNeighbours(targetNode, deepCopyVisited, currentDepth, player);
+                    if (goodPath != null) {
+                        visited.Insert(0, gameObject);
+                        //print("part of the path");
+                        return goodPath;
+                    }
+                }
+            }
+        }
+        //print("not here");
+        return null;
+    }
+    */
+
+
 
 
     void SpendSavedMoney() {
-        print("invested in prophets: " + investInProphets);
+        //print("invested in prophets: " + investInProphets);
         if (investInProphets >= 30) {
             GameObject originNode = GetOriginNode();
             if (originNode) {
                 GetComponent<Player>().BuyProphet(originNode);
-                print("build Prophet step A");
+                //print("build Prophet step A");
             }
         }
         foreach(GameObject army in armies) {
@@ -1092,12 +1210,20 @@ public class AI : MonoBehaviour {
     }
     GameObject GetOriginNode() {
         foreach(GameObject node in ownedNodes) {
-            if (node.GetComponent<Node>().temple != null && node.GetComponent<Node>().temple.name == TempleName.Origin) {
+            if (node.GetComponent<Node>().temple != null && node.GetComponent<Node>().temple.name == TempleName.Origin && node.GetComponent<Node>().occupant == null) {
                 return node;
             }
         }
         return null;
     }
+
+
+    public void StartTurn() {
+        turnPhase = TurnPhase.DefendAgainstThreats;
+        readyToExecute = true;
+        unallocatedMoney = GetComponent<Player>().money;
+    }
+
 
 
     void TestIDS() {
@@ -1114,11 +1240,6 @@ public class AI : MonoBehaviour {
                 }
             }
         }
-    }
-    public void StartTurn() {
-        turnPhase = TurnPhase.DefendAgainstThreats;
-        readyToExecute = true;
-        unallocatedMoney = GetComponent<Player>().money;
     }
     void IncrementArmyInfo() {
         foreach (KeyValuePair<GameObject, ArmyInfo> info in enemyArmyInfo) {

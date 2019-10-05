@@ -51,6 +51,7 @@ public class BattleMenu : MonoBehaviour{
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && !DefenderIsHuman(defendNode)) {
             //retreatButton.SetActive(false);
             if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode) || !retreatAllowed) {
+                print("AI wants to fight AI");
                 InstantBattle();
             }
             else if (retreatAllowed) Retreat();
@@ -58,21 +59,27 @@ public class BattleMenu : MonoBehaviour{
         }
     }
     bool DefenderIsHuman(GameObject node) {
-        if (node.GetComponent<Node>().owner && !node.GetComponent<Node>().owner.GetComponent<AI>() && node.GetComponent<Node>().faction != Faction.Independent) return true;
+        if (node.GetComponent<Node>().owner && node.GetComponent<Node>().owner == Player.human) return true;
         return false;
     }
 
     public bool AIAttackingHuman() {
+        print("attacker:" + attackArmy);
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && DefenderIsHuman(defendNode)) return true;
         return false;
     }
 
     public bool AIWantsToFight() {
-        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode) || !retreatAllowed) return true;
+        if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode) || !retreatAllowed) {
+            print("AI wants to fight human");
+            return true;
+        }
+        print("AI doesn't want to fight human");
         return false;
     }
 
     public void EnterMenu() {
+        print("Enter. ReadyToMove: " + Army.readyToMove);
         GetComponent<Panner>().SetTarget(new Vector3(0, 0, -10));
         EnableButtons();
         SetBackButton(false);
@@ -87,6 +94,7 @@ public class BattleMenu : MonoBehaviour{
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
         else if (attackingPlayer && attackingPlayer.GetComponent<AI>()) attackingPlayer.GetComponent<AI>().readyToExecute = true;
         Army.readyToMove = true;
+        print("Exit. ReadyToMove: " + Army.readyToMove);
         EnableButtons();
         inBattleMenu = false;
         attackArmyMenu.GetComponent<ArmyMenu>().CleanUnitSpaces();
@@ -275,7 +283,7 @@ public class BattleMenu : MonoBehaviour{
                 retreating = true;
                 RemoveAttackCooldowns();
                 if (defendArmy) defendingPlayer.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
-                attackArmy.GetComponent<Army>().OrderToEnterNodeNow(attackArmy.GetComponent<Army>().currentNode);
+                //attackArmy.GetComponent<Army>().OrderToEnterNodeNow(attackArmy.GetComponent<Army>().currentNode);
             }
             // Run Next Attack
             armyDefeated = NextAttack(retreating);
@@ -303,7 +311,6 @@ public class BattleMenu : MonoBehaviour{
 
         if (target != null && attacker != null) {
             int damage = (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
-            print("attackerDamage: " + attacker.currentDamage + " damageMod: " + attacker.damageMod + " vulnMod: " + target.vulnerableMod);
             if (attacker.fake) damage = 0;
             if (target.fake) damage *= 2;
             if (target.currentShield > 0 && damage > 0) target.currentShield--;
@@ -340,7 +347,10 @@ public class BattleMenu : MonoBehaviour{
         if (retreatAllowed) {
             //if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
             if (defendArmy) defendingPlayer.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
-            attackArmy.GetComponent<Army>().OrderToEnterNodeNow(attackArmy.GetComponent<Army>().currentNode);
+            if (attackArmy) attackArmy.GetComponent<Army>().OrderToEnterNodeNow(attackArmy.GetComponent<Army>().currentNode);
+            else {
+                ExitMenu();
+            }
             //attackArmy.GetComponent<MoveAnimator>().SetTarget(attackArmy.GetComponent<Army>().currentNode.transform.position, false);
             if (inSimulation) {
                 RemoveAttackCooldowns();
@@ -370,7 +380,6 @@ public class BattleMenu : MonoBehaviour{
             if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.BattleOver(defendArmy);
             if (attackers.Count == 0) defendingPlayer.GetComponent<Player>().factionTraits.WonBattle(defendArmy);
         }
-        print("post damage mod: " + attackArmy.GetComponent<Army>().units[0].damageMod);
         if (attackArmy) attackArmy.GetComponent<Army>().ResetArmy();
         attackingPlayer.GetComponent<Player>().factionTraits.BattleOver(attackArmy);
         RefreshBuildings();
@@ -385,9 +394,10 @@ public class BattleMenu : MonoBehaviour{
             AttackerWins();
         }
         if (retreating) {
-            if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && defendArmy) {
+            if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && defendArmy) {
                 attackArmy.GetComponent<Army>().owner.GetComponent<AI>().RememberArmy(defendArmy);
             }
+            if (attackers.Count != 0) attackArmy.GetComponent<Army>().OrderToEnterNodeNow(attackArmy.GetComponent<Army>().currentNode);
             ExitMenu();
         }
         retreating = false;

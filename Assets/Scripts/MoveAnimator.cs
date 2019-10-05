@@ -22,6 +22,7 @@ public class MoveAnimator : MonoBehaviour{
     public void SetTarget(Vector3 targetPos, bool isAttacking) {
         target = targetPos;
         attacking = isAttacking;
+        atTarget = false;
     }
     void MoveToTarget() {
         if (Player.menuOpen != 0) {

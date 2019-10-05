@@ -66,11 +66,15 @@ public class Army : MonoBehaviour {
 
     void MakeMoves() {
         if (movesToDo.Count > 0 && readyToMove) {
-            readyToMove = false;
+            float randFloat = Random.Range(0, 10000);
             Intent move = movesToDo[0];
             movesToDo.Remove(move);
-            print("Army: " + move.armyMoving.name + " moving to: " + move.targetNode);
+            print("New Move: About to switch readyToMove from:" + readyToMove + " " + randFloat.ToString());
+            readyToMove = false;
+            print("New Move: Just switched readyToMove to:" + readyToMove + " " + randFloat.ToString());
+            print("Army: " + move.armyMoving.name + " moving to: " + move.targetNode + " " + randFloat.ToString());
             if (move.armyMoving) move.armyMoving.GetComponent<Army>().EnterNode(move.targetNode);
+            else readyToMove = true;
         }
     }
 
@@ -124,7 +128,7 @@ public class Army : MonoBehaviour {
                 owner.GetComponent<Player>().Invade(gameObject, targetNode);
             }
             else {
-                if (targetNode.GetComponent<Node>().occupied) {
+                if (targetNode.GetComponent<Node>().occupied && targetNode.GetComponent<Node>().occupant != gameObject) {
                     GameObject otherArmy = targetNode.GetComponent<Node>().occupant;
                     SwitchNodes(currentNode, otherArmy, targetNode);
                 }
@@ -244,7 +248,7 @@ public class Army : MonoBehaviour {
 
     public void Defeated() {
         print("defeated");
-        Army.readyToMove = true;
+        //readyToMove = true;
         currentNode.GetComponent<Node>().occupant = null;
         currentNode.GetComponent<Node>().occupied = false;
         owner.GetComponent<Player>().armies.Remove(gameObject);

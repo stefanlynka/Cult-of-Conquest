@@ -151,7 +151,6 @@ public class Node : MonoBehaviour
 
     // ITERATIVE DEEPENING SEEEEAAAAAAAARCH
     public List<GameObject> GetPathTo(GameObject node) {
-        List<GameObject> path = new List<GameObject>();
         int depth = 1;
         Faction player = faction;
         bool solved = false;
@@ -282,6 +281,9 @@ public class Node : MonoBehaviour
             renderer.sprite = newSprite;
         }
         GetComponent<SpriteRenderer>().color = defaultColour;
+        GameObject difficultyText = Tools.GetChildNamed(gameObject, "Difficulty Text");
+        difficultyText.GetComponent<TextMesh>().text = difficulty.ToString();
+        if (faction != Faction.Independent) difficultyText.GetComponent<TextMesh>().text = "";
     }
 
 
