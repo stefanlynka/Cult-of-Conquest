@@ -204,7 +204,7 @@ public class BattleMenu : MonoBehaviour{
 
         else {
             attackingPlayer.GetComponent<Player>().factionTraits.Precombat(attackArmy, defendingNode);
-            if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendingNode, attackArmy);
+            //if (defendingPlayer) defendingPlayer.GetComponent<Player>().factionTraits.Precombat(defendingNode, attackArmy);
         }
         if (defendArmy) attackingPlayer.GetComponent<Player>().factionTraits.PrecombatAttacker(attackArmy, defendArmy);
     }

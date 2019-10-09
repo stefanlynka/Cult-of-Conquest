@@ -82,10 +82,10 @@ public class Army : MonoBehaviour {
         owner = Player.human;
         GameObject playerList = GameObject.Find("/Players");
         owner = transform.parent.gameObject;
-        AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[1]);
-        AddUnit(1, true, owner.GetComponent<Player>().unitBlueprints[0]);
-        AddUnit(2, true, owner.GetComponent<Player>().unitBlueprints[2]);
-        AddUnit(3, true, owner.GetComponent<Player>().unitBlueprints[3]);
+        AddUnit(0, true, owner.GetComponent<Player>().unitBlueprints[2]);
+        //AddUnit(1, true, owner.GetComponent<Player>().unitBlueprints[0]);
+        //AddUnit(2, true, owner.GetComponent<Player>().unitBlueprints[2]);
+        //AddUnit(3, true, owner.GetComponent<Player>().unitBlueprints[3]);
         //AddUnit(0, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(1, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(2, false, owner.GetComponent<Player>().unitBlueprints[0]);

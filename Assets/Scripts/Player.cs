@@ -319,6 +319,9 @@ public class Player : MonoBehaviour
     }
     public bool BuyTemple(GameObject node, TempleName templeName) {
         if (node && templeBlueprints.ContainsKey(templeName) && money >= templeBlueprints[templeName].cost) {
+            print("node name:" + node.name);
+            print("temple name:" + templeName);
+            print("temple:" + templeBlueprints[templeName]);
             node.GetComponent<Node>().BuildTemple(templeBlueprints[templeName]);
             money -= templeBlueprints[templeName].cost;
             return true;
