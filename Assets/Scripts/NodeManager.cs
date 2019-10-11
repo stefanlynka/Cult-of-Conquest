@@ -163,13 +163,14 @@ public class NodeManager : MonoBehaviour
 
     public void HighlightNodes(GameObject node, int distance) {
         highlightFog.SetActive(true);
+        node.GetComponent<Node>().Highlight();
 
         print("Highlighting Nodes");
         List<GameObject> neighbours = node.GetComponent<Node>().neighbours;
         for (int i = 0; i < neighbours.Count; i++) {
             GameObject neighbour = neighbours[i];
-            neighbour.GetComponent<Node>().Highlight();
-            if (distance > 1) {
+            //neighbour.GetComponent<Node>().Highlight();
+            if (distance >= 1 && neighbour.GetComponent<Node>().highlighted==false) {
                 HighlightNodes(neighbour, distance - 1);
             }
         }

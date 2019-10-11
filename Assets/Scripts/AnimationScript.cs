@@ -17,6 +17,7 @@ public class AnimationScript : MonoBehaviour{
     }
     public void Setup(Vector3 position, int newTimer) {
         transform.position = position;
+        //transform.localScale = new Vector3(1, 1, 1);
         timer = newTimer;
     }
 }

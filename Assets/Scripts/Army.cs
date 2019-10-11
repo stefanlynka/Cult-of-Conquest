@@ -63,6 +63,11 @@ public class Army : MonoBehaviour {
             Player.armyRightClicked = gameObject;
         }
     }
+    private void OnMouseDown() {
+        if (RitualManager.ritualSelected) {
+            if (RitualManager.ritualSelected && currentNode.GetComponent<Node>().highlighted) GameObject.Find("/Ritual Menu").GetComponent<RitualManager>().SelectNode(currentNode);
+        }
+    }
 
     void MakeMoves() {
         if (movesToDo.Count > 0 && readyToMove) {
@@ -209,7 +214,7 @@ public class Army : MonoBehaviour {
     }
     public void DissectUnit(MapUnit unit) {
         RemoveUnit(unit);
-        owner.GetComponent<Player>().zeal++;
+        owner.GetComponent<Player>().IncreaseZeal(1);
         if (owner.GetComponent<Player>().dissections.ContainsKey(unit.faction)) owner.GetComponent<Player>().dissections[unit.faction]++;
     }
     public void SellUnit(MapUnit unit) {
@@ -234,8 +239,14 @@ public class Army : MonoBehaviour {
         RemoveUnitFromArray(frontRow, unit);
         RemoveUnitFromArray(backRow, unit);
         if (units.Count == 0) {
-            Destroy(gameObject);
+            DeleteArmy();
         }
+    }
+    public void DeleteArmy() {
+        currentNode.GetComponent<Node>().occupant = null;
+        currentNode.GetComponent<Node>().occupied = false;
+        owner.GetComponent<Player>().armies.Remove(gameObject);
+        Destroy(gameObject);
     }
 
     void RemoveUnitFromArray(MapUnit[] array, MapUnit unit) {

@@ -48,8 +48,10 @@ public class BattleMenu : MonoBehaviour{
     }
 
     void CheckAIDecision() {
+        print("check ai decision");
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && !DefenderIsHuman(defendNode)) {
             //retreatButton.SetActive(false);
+            print("attacker is AI, defender not human");
             if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode) || !retreatAllowed) {
                 print("AI wants to fight AI");
                 InstantBattle();
@@ -97,6 +99,7 @@ public class BattleMenu : MonoBehaviour{
         print("Exit. ReadyToMove: " + Army.readyToMove);
         EnableButtons();
         inBattleMenu = false;
+        retreatAllowed = true;
         attackArmyMenu.GetComponent<ArmyMenu>().CleanUnitSpaces();
         defendArmyMenu.GetComponent<ArmyMenu>().CleanUnitSpaces();
     }
@@ -210,11 +213,9 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void SetupBattle(GameObject attackingArmy, GameObject defendingNode) {
-        print("pre damage mod: " + attackingArmy.GetComponent<Army>().units[0].damageMod);
         SetupArmies(attackingArmy, defendingNode);
         StartingCooldowns();
         defendNode = defendingNode;
-        print("pre damage mod: " + attackingArmy.GetComponent<Army>().units[0].damageMod);
     }
 
     void StartingCooldowns() {
@@ -243,10 +244,12 @@ public class BattleMenu : MonoBehaviour{
     }
 
     bool AIRetreatCheck() {
-        if (attackingPlayer.GetComponent<AI>()) {
-            if (attackArmy.GetComponent<Army>().units.Count <= 3) {
-                if (attackArmy.GetComponent<Army>().GetOffensivePower() < defendNode.GetComponent<Node>().GetDefensivePower()) {
-                    return true;
+        if (retreatAllowed) {
+            if (attackingPlayer.GetComponent<AI>()) {
+                if (attackArmy.GetComponent<Army>().units.Count <= 3) {
+                    if (attackArmy.GetComponent<Army>().GetOffensivePower() < defendNode.GetComponent<Node>().GetDefensivePower()) {
+                        return true;
+                    }
                 }
             }
         }

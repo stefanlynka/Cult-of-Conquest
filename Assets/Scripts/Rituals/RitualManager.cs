@@ -121,9 +121,9 @@ public class RitualManager : MonoBehaviour {
     }
 
     void NoumenonRituals(GameObject player) {
-        Ritual ritual1 = new Ritual("Hide Area", 2, 1, "Hide target\nnode and\nits neighbours", 2, 1, HideArea);
+        Ritual ritual1 = new Ritual("Hide Area", 2, 1, "Hide target\nnode and\nits neighbours", 2, 1, HideArea); //1
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
-        Ritual ritual2 = new Ritual("Hide Map", 5, 3, "Cover the\nmap in\nfog of war", 1, 1, HideMap);
+        Ritual ritual2 = new Ritual("Hide Map", 5, 3, "Cover the\nmap in\nfog of war", 1, 1, HideMap); // 3
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void DukkhaRituals(GameObject player) {
@@ -133,27 +133,27 @@ public class RitualManager : MonoBehaviour {
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void ParatrophRituals(GameObject player) {
-        Ritual ritual1 = new Ritual("Prior Ritual", 3, 2, "Use the\nlast ritual\nused", 6, 1, PriorRitual);
+        Ritual ritual1 = new Ritual("Prior Ritual", 3, 2, "Use the\nlast ritual\nused", 6, 1, PriorRitual); // 2
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
-        Ritual ritual2 = new Ritual("Borrow Rituals", 2, 1, "Buy rituals from\nneighbour faction\nfor one round", 2, 1, BorrowRituals);
+        Ritual ritual2 = new Ritual("Borrow Rituals", 2, 1, "Buy rituals from\nneighbour faction\nfor one round", 2, 1, BorrowRituals); // 1
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void UnmarRituals(GameObject player) {
-        Ritual ritual1 = new Ritual("Sacrifice", 1, 2, "Sacrifice all\nmar units\nfor zeal", 5, 1, Sacrifice);
+        Ritual ritual1 = new Ritual("Sacrifice", 1, 0, "Sacrifice all\nmar units\nfor zeal", 5, 1, Sacrifice); // 2
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
-        Ritual ritual2 = new Ritual("Reward Purity", 6, 4, "Buff target\narmy with only\nUnmar units", 1, 1, RewardPurity);
+        Ritual ritual2 = new Ritual("Reward Purity", 6, 0, "Buff target\narmy with only\nUnmar units", 1, 1, RewardPurity); // 4
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void SamataRituals(GameObject player) {
-        Ritual ritual1 = new Ritual("Balance Health", 3, 2, "Average health of\narmies adjacent\nto target", 3, 1, BalanceHealth);
+        Ritual ritual1 = new Ritual("Balance Health", 3, 2, "Average health of\narmies adjacent\nto target", 3, 1, BalanceHealth); // 2
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
-        Ritual ritual2 = new Ritual("Perfect Match", 8, 4, "Army1 becomes\na copy of\nArmy2", 5, 2, PerfectMatch);
+        Ritual ritual2 = new Ritual("Perfect Match", 5, 3, "Army1 becomes\na copy of\nArmy2", 5, 2, PerfectMatch); // 3
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
     void CarnotRituals(GameObject player) {
-        Ritual ritual1 = new Ritual("Random Step", 2, 1, "Target army\ntakes one\nrandom move", 6, 1, RandomStep);
+        Ritual ritual1 = new Ritual("Random Step", 2, 1, "Target army\ntakes one\nrandom move", 6, 1, RandomStep); // 1
         player.GetComponent<Player>().ritualBlueprints.Add(ritual1);
-        Ritual ritual2 = new Ritual("Random Warp", 6, 2, "Warp target\narmy to a\nrandom location", 2, 1, RandomWarp);
+        Ritual ritual2 = new Ritual("Random Warp", 6, 2, "Warp target\narmy to a\nrandom location", 2, 1, RandomWarp); // 2
         player.GetComponent<Player>().ritualBlueprints.Add(ritual2);
     }
 
@@ -164,7 +164,7 @@ public class RitualManager : MonoBehaviour {
                 targetArmy.GetComponent<Army>().units[i].currentHealth /= 2;
             }
         }
-        MakeAnimation(targetArmy);
+        MakeAnimation(targets);
     }
     void HideArea(List<GameObject> targets) {
         
@@ -175,7 +175,7 @@ public class RitualManager : MonoBehaviour {
             targetNode.GetComponent<Node>().neighbours[i].GetComponent<Node>().concealment = 5;
         }
         TurnManager.currentPlayer.GetComponent<Player>().DisplayFog();
-        MakeAnimation(targetNode);
+        MakeAnimation(targets);
     }
     void HideMap(List<GameObject> targets) {
         List<GameObject> nodes = NodeManager.nodes;
@@ -200,16 +200,21 @@ public class RitualManager : MonoBehaviour {
         }
     }
     void Sacrifice(List<GameObject> targets) {
+        print("time to sacrifice");
         GameObject targetArmy = targets[0].GetComponent<Node>().occupant;
         if (targetArmy != null) {
+            List<MapUnit> unitsLabeledToDie = new List<MapUnit>();
             for (int i = 0; i < targetArmy.GetComponent<Army>().units.Count; i++) {
                 MapUnit unit = targetArmy.GetComponent<Army>().units[i];
                 if (unit.marred) {
-                    targetArmy.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
-                    targetArmy.GetComponent<Army>().units[i] = null;
+                    unitsLabeledToDie.Add(unit);
                 }
             }
-            MakeAnimation(targetArmy);
+            foreach(MapUnit unit in unitsLabeledToDie) {
+                targetArmy.GetComponent<Army>().RemoveUnit(unit);
+            }
+            targetArmy.GetComponent<Army>().owner.GetComponent<Player>().IncreaseZeal(unitsLabeledToDie.Count);
+            MakeAnimation(targets);
         }
     }
     void RewardPurity(List<GameObject> targets) {
@@ -221,7 +226,7 @@ public class RitualManager : MonoBehaviour {
                 unit.currentHealth = unit.maxHealth;
                 unit.maxDamage = (int)(unit.maxDamage * 1.2);
             }
-            MakeAnimation(targetArmy);
+            MakeAnimation(targets);
         }
     }
     void BalanceHealth(List<GameObject> targets) {
@@ -229,7 +234,13 @@ public class RitualManager : MonoBehaviour {
         if (targetArmy != null) {
             int totalHealth = 0;
             int totalUnits = 0;
-            for(int i = 0; i < targets[0].GetComponent<Node>().neighbours.Count; i++) {
+            // Compile target army's units' health
+            for (int i = 0; i < targetArmy.GetComponent<Army>().units.Count; i++) {
+                totalHealth += targetArmy.GetComponent<Army>().units[i].currentHealth;
+                totalUnits++;
+            }
+            // Compile target army's neighbours' units' health
+            for (int i = 0; i < targets[0].GetComponent<Node>().neighbours.Count; i++) {
                 GameObject neighbour = targets[0].GetComponent<Node>().neighbours[i];
                 if (neighbour.GetComponent<Node>().occupant) {
                     for(int j = 0; j < neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units.Count; j++) {
@@ -238,41 +249,54 @@ public class RitualManager : MonoBehaviour {
                     }
                 }
             }
+
+            // Set target army's units' health to average
             int averageHealth = totalHealth / totalUnits;
+            for (int j = 0; j < targetArmy.GetComponent<Army>().units.Count; j++) {
+                targetArmy.GetComponent<Army>().units[j].TrySetHealth(averageHealth);
+            }
+            List<GameObject> targetAndNeighbours = new List<GameObject>();
+            targetAndNeighbours.Add(targets[0]);
+            // Set target army's neighbours' units' health to average
             for (int i = 0; i < targets[0].GetComponent<Node>().neighbours.Count; i++) {
                 GameObject neighbour = targets[0].GetComponent<Node>().neighbours[i];
+                targetAndNeighbours.Add(neighbour);
                 if (neighbour.GetComponent<Node>().occupant) {
                     for (int j = 0; j < neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units.Count; j++) {
                         neighbour.GetComponent<Node>().occupant.GetComponent<Army>().units[j].TrySetHealth(averageHealth);
                     }
                 }
             }
-            MakeAnimation(targetArmy);
+            
+            MakeAnimation(targetAndNeighbours);
         }
     }
     void PerfectMatch(List<GameObject> targets) {
         GameObject changedArmy = targets[0].GetComponent<Node>().occupant;
-        GameObject copiedArmy = targets[0].GetComponent<Node>().occupant;
+        GameObject copiedArmy = targets[1].GetComponent<Node>().occupant;
         if (changedArmy != null && copiedArmy != null) {
             for(int i = 0; i < copiedArmy.GetComponent<Army>().frontRow.Length; i++) {
-                MapUnit copy = copiedArmy.GetComponent<Army>().frontRow[i].DeepCopy();
-                changedArmy.GetComponent<Army>().frontRow[i] = copy;
+                if (copiedArmy.GetComponent<Army>().frontRow[i] != null) {
+                    MapUnit copy = copiedArmy.GetComponent<Army>().frontRow[i].DeepCopy();
+                    changedArmy.GetComponent<Army>().frontRow[i] = copy;
+                }
             }
             for (int i = 0; i < copiedArmy.GetComponent<Army>().backRow.Length; i++) {
-                MapUnit copy = copiedArmy.GetComponent<Army>().backRow[i].DeepCopy();
-                changedArmy.GetComponent<Army>().backRow[i] = copy;
+                if (copiedArmy.GetComponent<Army>().backRow[i] != null) {
+                    MapUnit copy = copiedArmy.GetComponent<Army>().backRow[i].DeepCopy();
+                    changedArmy.GetComponent<Army>().backRow[i] = copy;
+                }
             }
-            MakeAnimation(copiedArmy);
-            MakeAnimation(changedArmy);
+            MakeAnimation(targets);
         }
     }
     void RandomStep(List<GameObject> targets) {
         GameObject movingArmy = targets[0].GetComponent<Node>().occupant;
-        if (movingArmy != null) {
+        if (movingArmy != null && movingArmy.GetComponent<Army>().faction != Faction.Independent) {
             List<GameObject> neighbours = movingArmy.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours;
             int randInt = Random.Range(0, neighbours.Count);
             movingArmy.GetComponent<Army>().NoRetreatEnterNode(neighbours[randInt]);
-            MakeAnimation(movingArmy);
+            MakeAnimation(targets);
         }
 
     }
@@ -281,7 +305,7 @@ public class RitualManager : MonoBehaviour {
         if (targetArmy != null) {
             GameObject targetNode = GameObject.Find("/Node Manager").GetComponent<NodeManager>().GetRandomNode();
             targetArmy.GetComponent<Army>().NoRetreatEnterNode(targetNode);
-            MakeAnimation(targetNode);
+            MakeAnimation(targets);
         }
     }
 
@@ -291,10 +315,12 @@ public class RitualManager : MonoBehaviour {
 
         }
     }
-    void MakeAnimation(GameObject target) {
-        GameObject animationPrefab = Resources.Load<GameObject>("Animations/Ritual/Ritual Animation");
-        GameObject anim = Instantiate(animationPrefab, target.transform);
-        Vector3 newPos = new Vector3(target.transform.position.x, target.transform.position.y, -20);
-        anim.GetComponent<AnimationScript>().Setup(newPos, 180);
+    void MakeAnimation(List<GameObject> targets) {
+        foreach (GameObject targetNode in targets) {
+            GameObject animationPrefab = Resources.Load<GameObject>("Animations/Ritual/Ritual Animation");
+            GameObject anim = Instantiate(animationPrefab, targetNode.transform);
+            Vector3 newPos = new Vector3(targetNode.transform.position.x, targetNode.transform.position.y, -20);
+            anim.GetComponent<AnimationScript>().Setup(newPos, 160);
+        }
     }
 }

@@ -184,7 +184,7 @@ MonoBehaviour:
   armies: []
   ownedNodes: []
   faction: 5
-  money: 20
+  money: 300
   zeal: 0
   isArmySelected: 0
   randomPanel: {fileID: 0}
@@ -3306,7 +3306,7 @@ MonoBehaviour:
   armies: []
   ownedNodes: []
   faction: 0
-  money: 20
+  money: 300
   zeal: 0
   isArmySelected: 0
   randomPanel: {fileID: 0}
@@ -3402,7 +3402,7 @@ MonoBehaviour:
   armies: []
   ownedNodes: []
   faction: 3
-  money: 100
+  money: 300
   zeal: 50
   isArmySelected: 0
   randomPanel: {fileID: 0}
@@ -19419,7 +19419,7 @@ MonoBehaviour:
   armies: []
   ownedNodes: []
   faction: 6
-  money: 20
+  money: 300
   zeal: 0
   isArmySelected: 0
   randomPanel: {fileID: 0}
@@ -21456,7 +21456,7 @@ MonoBehaviour:
   armies: []
   ownedNodes: []
   faction: 4
-  money: 20
+  money: 300
   zeal: 0
   isArmySelected: 0
   randomPanel: {fileID: 0}

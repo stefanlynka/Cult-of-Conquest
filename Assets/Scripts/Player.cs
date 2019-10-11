@@ -27,10 +27,11 @@ public class Player : MonoBehaviour
 
     public FactionTraits factionTraits;
     public Faction faction;
-    public int money = 20;
+    public int money = 0;
     public int zeal = 0;
     public bool isArmySelected = false;
     public GameObject randomPanel;
+    public static bool fogEnabled;
 
     public void Awake() {
     }
@@ -74,8 +75,9 @@ public class Player : MonoBehaviour
 
     void Setup() {
         SetupFactionTraits();
-        money = 30;
+        money = 300;
         zeal = 18;
+        fogEnabled = false;
     }
 
     void SetFaction() {
@@ -109,6 +111,61 @@ public class Player : MonoBehaviour
         dissections.Add(Faction.Zenteel, 0);
     }
 
+
+
+    public void ImplementClicks() {
+
+        if (menuOpen == 0 && !RitualManager.ritualSelected) {
+            if (LeftClickedOnNearbyEnemy()) {
+                attackNode(selectedArmy, nodeLeftClicked);
+                selectedArmy.GetComponent<Army>().Deselect();
+            }
+            else if (armyLeftClicked) {
+                if (ClickingOnAnArmy()) {
+                    armyLeftClicked.GetComponent<Army>().Select();
+                }
+                else if (selectedArmy) {
+                    selectedArmy.GetComponent<Army>().Deselect();
+                    if (ClickingOnDifferentArmy()) {
+                        armyLeftClicked.GetComponent<Army>().Select();
+                        selectedArmy = armyLeftClicked;
+                    }
+                }
+            }
+
+            else if (LeftClickedAnythingElse()) {
+                selectedArmy.GetComponent<Army>().Deselect();
+            }
+
+            if (!selectedArmy) {
+                if (nodeRightClicked && notEnemyNode()) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
+                else if (armyRightClicked) {
+                    //print("right clicked army");
+                    nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
+                }
+            }
+            else {
+                if (randomPanel.activeSelf && RightClickedOnNearbyEnemy()) {
+                    if (nodeRightClicked) randomPanel.GetComponent<RandomPanel>().AddTarget(nodeRightClicked);
+                    else if (armyRightClicked) randomPanel.GetComponent<RandomPanel>().AddTarget(armyRightClicked.GetComponent<Army>().currentNode);
+
+                }
+                //Add rightClickedNode to Randomizer
+            }
+        }
+        else if (menuOpen == 1 && Input.GetMouseButtonDown(1) && NodeMenu.nodeMenuOpen == true) {
+            nodeMenu.GetComponent<NodeMenu>().ExitMenu();
+        }
+
+        armyLeftClicked = null;
+        armyRightClicked = null;
+        nodeLeftClicked = null;
+        nodeRightClicked = null;
+    }
+
+
+
+
     void CheckSelected() {
         isArmySelected = false;
         for (int i = 0; i < armies.Count; i++) {
@@ -126,7 +183,7 @@ public class Player : MonoBehaviour
     }
 
     bool LeftClickedOnNearbyEnemy() {
-        if (armyLeftClicked && armyLeftClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted) {
+        if (armyLeftClicked && armyLeftClicked.GetComponent<Army>().currentNode.GetComponent<Node>().highlighted && selectedArmy) {
             nodeLeftClicked = armyLeftClicked.GetComponent<Army>().currentNode;
             return true;
         }
@@ -155,55 +212,6 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    public void ImplementClicks() {
-
-        if (menuOpen == 0) {
-            if (LeftClickedOnNearbyEnemy()) {
-                attackNode(selectedArmy, nodeLeftClicked);
-                selectedArmy.GetComponent<Army>().Deselect();
-            }
-            else if (armyLeftClicked) {
-                if (ClickingOnAnArmy()) {
-                    armyLeftClicked.GetComponent<Army>().Select();
-                }
-                else if (selectedArmy) {
-                    selectedArmy.GetComponent<Army>().Deselect();
-                    if (ClickingOnDifferentArmy()) {
-                        armyLeftClicked.GetComponent<Army>().Select();
-                        selectedArmy = armyLeftClicked;
-                    }
-                }
-            }
-        
-            else if (LeftClickedAnythingElse()) {
-                selectedArmy.GetComponent<Army>().Deselect();
-            }
-
-            if (!selectedArmy) {
-                if (nodeRightClicked && notEnemyNode()) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
-                else if (armyRightClicked) {
-                    //print("right clicked army");
-                    nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
-                }
-            }
-            else {
-                if (randomPanel.activeSelf && RightClickedOnNearbyEnemy()) {
-                    if (nodeRightClicked) randomPanel.GetComponent<RandomPanel>().AddTarget(nodeRightClicked);
-                    else if (armyRightClicked) randomPanel.GetComponent<RandomPanel>().AddTarget(armyRightClicked.GetComponent<Army>().currentNode);
-                    
-                }
-                //Add rightClickedNode to Randomizer
-            }
-        }
-        else if (menuOpen == 1 && Input.GetMouseButtonDown(1) && NodeMenu.nodeMenuOpen == true) {
-            nodeMenu.GetComponent<NodeMenu>().ExitMenu();
-        }
-
-        armyLeftClicked = null;
-        armyRightClicked = null;
-        nodeLeftClicked = null;
-        nodeRightClicked = null;
-    }
 
     bool notEnemyNode() {
         if (nodeRightClicked.GetComponent<Node>().faction == faction || nodeRightClicked.GetComponent<Node>().faction == Faction.Independent) return true;
@@ -244,18 +252,20 @@ public class Player : MonoBehaviour
     public void Invade(GameObject attackingArmy, GameObject defendingNode) {
         GameObject attackArmyMenu = Tools.GetChildNamed(battleMenu, "Attacking Army Menu");
         GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
-        attackingArmy.GetComponent<MoveAnimator>().SetTarget(defendingNode.transform.position, true);
 
         if (defendingNode.GetComponent<Node>().occupant) {
             GameObject defendingArmy = defendingNode.GetComponent<Node>().occupant;
             if (defendingArmy.GetComponent<Army>().owner && defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Defensive Discord")) {
                 int randInt = Random.Range(1, 11); //1 to 10
                 if (randInt <= defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Defensive Discord"].currentLevel) {
-                    defendingArmy = attackingArmy.GetComponent<Army>().GetRandomDifferentTarget(defendingArmy.GetComponent<Army>().currentNode);
+                    defendingNode = attackingArmy.GetComponent<Army>().GetRandomDifferentTarget(defendingArmy.GetComponent<Army>().currentNode);
                 }
             }
             defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
         }
+
+        attackingArmy.GetComponent<MoveAnimator>().SetTarget(defendingNode.transform.position, true);
+
         defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingNode);
         battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingNode);
         attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
@@ -413,16 +423,18 @@ public class Player : MonoBehaviour
         randomPanel.GetComponent<RandomPanel>().Attack();
     }
     public void DisplayFog() {
-        nodeManager.GetComponent<NodeManager>().SetNodesToHidden();
-        for(int i = 0; i < ownedNodes.Count; i++) {
-            GameObject node = ownedNodes[i];
-            node.GetComponent<Node>().RevealNode(node.GetComponent<Node>().sight);
+        if (fogEnabled) {
+            nodeManager.GetComponent<NodeManager>().SetNodesToHidden();
+            for (int i = 0; i < ownedNodes.Count; i++) {
+                GameObject node = ownedNodes[i];
+                node.GetComponent<Node>().RevealNode(node.GetComponent<Node>().sight);
+            }
+            for (int i = 0; i < armies.Count; i++) {
+                GameObject army = armies[i];
+                army.GetComponent<Army>().currentNode.GetComponent<Node>().RevealNode(army.GetComponent<Army>().sight);
+            }
+            nodeManager.GetComponent<NodeManager>().HideStillHiddenNodes();
         }
-        for(int i = 0; i < armies.Count; i++) {
-            GameObject army = armies[i];
-            army.GetComponent<Army>().currentNode.GetComponent<Node>().RevealNode(army.GetComponent<Army>().sight);
-        }
-        nodeManager.GetComponent<NodeManager>().HideStillHiddenNodes();
     }
 
     public void UpdateEffigies() {
@@ -469,5 +481,10 @@ public class Player : MonoBehaviour
                 node.GetComponent<Node>().BuildAltar(altarBlueprints[AltarName.Harvest]);
             }
         }
+    }
+
+    public void IncreaseZeal(int amount) {
+        zeal += amount;
+        Tools.CreatePopup(GameObject.Find("/Resource HUD"), "+" + amount.ToString(), 60, Color.yellow);
     }
 }
