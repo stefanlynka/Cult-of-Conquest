@@ -59,6 +59,8 @@ public class AI : MonoBehaviour {
                 }
                 else if (turnPhase == TurnPhase.Attacks1) {
                     //print("Attacking 1 Phase");
+                    Scout();
+                    MoveToFrontier();
                     Attack();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Spending2;
                 }
@@ -69,8 +71,10 @@ public class AI : MonoBehaviour {
                 }
                 else if (turnPhase == TurnPhase.Attacks2) {
                     //print("Attacking 2 Phase");
+                    Scout();
                     Attack();
                     MoveToFrontier();
+                    Attack();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Done;
                 }
                 else if (turnPhase == TurnPhase.Done) {
@@ -997,6 +1001,16 @@ public class AI : MonoBehaviour {
                 return;
             }
         }
+        foreach (GameObject currentArmy in armies) {
+            if (AttackNearbyUnprotected(currentArmy)) {
+                //print("Attack performed, waiting");
+                readyToExecute = false;
+                moreToDoInPhase = true;
+                //print("attacking, not ready to execute");
+                return;
+            }
+        }
+
         for (int i = 0; i < armies.Count; i++) {
             GameObject currentArmy = armies[i];
             if (AttackNeutral(currentArmy)) {
@@ -1034,6 +1048,33 @@ public class AI : MonoBehaviour {
                 return true;
             }
         }
+        return false;
+    }
+    bool AttackNearbyUnprotected(GameObject army) {
+        if (army.GetComponent<Army>().movesLeft <= 0) return false;
+        GameObject leastProtected = GetLeastProtectedEnemyNode(army);
+        if (leastProtected && ShouldAttack(army, leastProtected)) {
+            GetComponent<Player>().attackNode(army, leastProtected);
+            return true;
+        }
+
+        return false;
+    }
+    GameObject GetLeastProtectedEnemyNode(GameObject army) {
+        GameObject leastProtected = null;
+        float leastProtectedPower = 9999f;
+        foreach(GameObject neighbour in army.GetComponent<Army>().currentNode.GetComponent<Node>().neighbours) {
+            if (EnemyNodeIsUnoccupied(neighbour)) {
+                if (neighbour.GetComponent<Node>().GetDefensivePower() < leastProtectedPower) {
+                    leastProtected = neighbour;
+                    leastProtectedPower = neighbour.GetComponent<Node>().GetDefensivePower();
+                }
+            }
+        }
+        return leastProtected;
+    }
+    bool EnemyNodeIsUnoccupied(GameObject node) {
+        if (node.GetComponent<Node>().faction != faction && node.GetComponent<Node>().faction != Faction.Independent && node.GetComponent<Node>().occupant == null) return true;
         return false;
     }
     bool ShouldAttack(GameObject attackingArmy, GameObject defendingNode) {

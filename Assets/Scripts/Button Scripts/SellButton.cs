@@ -19,6 +19,6 @@ public class SellButton : MonoBehaviour {
         unitShop.GetComponent<Panner>().SetTarget(new Vector3(0, 11, -15));
         UnitSpace.buyingMenuOpen = false;
         Player.menuOpen = 1;
-        transform.parent.GetComponent<UnitShopManager>().LeaveMenu();
+        Tools.GetChildNamed(transform.parent.transform.parent.gameObject,"Unit Spaces").GetComponent<UnitShopManager>().LeaveMenu();
     }
 }

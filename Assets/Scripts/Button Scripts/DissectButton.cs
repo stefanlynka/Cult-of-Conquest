@@ -32,7 +32,7 @@ public class DissectButton : MonoBehaviour{
     void DissectUnit(GameObject army, MapUnit unit) {
         print("dissect!");
         army.GetComponent<Army>().DissectUnit(unit);
-        transform.parent.GetComponent<UnitShopManager>().LeaveMenu();
+        Tools.GetChildNamed(transform.parent.transform.parent.gameObject, "Unit Spaces").GetComponent<UnitShopManager>().LeaveMenu();
     }
 
 }

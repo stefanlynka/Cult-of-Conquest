@@ -217,7 +217,7 @@ public class FactionManager : MonoBehaviour{
         }
     }
     public void PunishDisadvantage(GameObject noumenonArmy, GameObject otherArmy) {
-        if (noumenonArmy && otherArmy) {
+        if (noumenonArmy && otherArmy && otherArmy.GetComponent<Army>()) {
             float vulnerability = 1.0f;
             float overPoweredRatio = (otherArmy.GetComponent<Army>().GetOffensivePower() / noumenonArmy.GetComponent<Army>().GetOffensivePower()) - 1;
             if (overPoweredRatio > 0) {

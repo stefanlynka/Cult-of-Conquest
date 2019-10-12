@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnitShopManager : MonoBehaviour {
 
-    GameObject army, nodeMenu, unitShop, dissectButton;
+    GameObject army, nodeMenu, unitShop, dissectButton, hideButton;
     //Faction currentFaction;
     int unitSpaceCount = 4;
     GameObject[] unitSpaces;
@@ -37,7 +37,9 @@ public class UnitShopManager : MonoBehaviour {
 
         nodeMenu = GameObject.Find("/Node Menu");
         unitShop = GameObject.Find("/Unit Buying Menu");
-        dissectButton = Tools.GetChildNamed(gameObject, "Dissect Button");
+        GameObject otherButtons = Tools.GetChildNamed(transform.parent.gameObject, "Other Buttons");
+        dissectButton =  Tools.GetChildNamed(otherButtons, "Dissect Button");
+        hideButton = Tools.GetChildNamed(otherButtons, "Hide Button");
 
         //army = NodeMenu.currentArmy;
         //if (army) currentFaction = army.GetComponent<Army>().faction;
@@ -72,7 +74,6 @@ public class UnitShopManager : MonoBehaviour {
             dissectButton.SetActive(false);
         }
 
-        GameObject hideButton = Tools.GetChildNamed(gameObject, "Hide Button");
         if (Player.human.GetComponent<Player>().faction != Faction.Noumenon) {
             hideButton.SetActive(false);
         }

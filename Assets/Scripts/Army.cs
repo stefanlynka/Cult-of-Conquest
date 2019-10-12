@@ -241,6 +241,11 @@ public class Army : MonoBehaviour {
         if (pos.frontRow) return frontRow[pos.position];
         else return backRow[pos.position];
     }
+    public bool IsSpotOpen(UnitPos pos) {
+        if (pos.frontRow && frontRow[pos.position] == null) return true;
+        else if (!pos.frontRow && backRow[pos.position] == null) return true;
+        return false;
+    }
     public void RemoveUnit(MapUnit unit) {
         units.Remove(unit);
         RemoveUnitFromArray(frontRow, unit);

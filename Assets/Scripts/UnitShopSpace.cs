@@ -56,6 +56,10 @@ public class UnitShopSpace : MonoBehaviour
         zealCost.GetComponent<TextMesh>().text = unit.zealCost.ToString();
         unitName.GetComponent<TextMesh>().text = unit.name;
         unitPower.GetComponent<TextMesh>().text = unit.power.ToString();
+        SetupBuyAllButton(newUnit);
+    }
+    void SetupBuyAllButton(MapUnit newUnit) {
+        Tools.GetChildNamed(gameObject, "Buy All Button").GetComponent<BuyAllButton>().SetUnit(newUnit);
     }
     public void BuyUnit(GameObject army, UnitPos unitPos) {
         //print("buying unit");

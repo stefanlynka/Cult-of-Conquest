@@ -22,6 +22,6 @@ public class HideButton : MonoBehaviour{
 
     void HideUnit(MapUnit unit) {
         Player.human.GetComponent<Player>().HideUnit(unit);
-        transform.parent.GetComponent<UnitShopManager>().LeaveMenu();
+        Tools.GetChildNamed(transform.parent.transform.parent.gameObject, "Unit Spaces").GetComponent<UnitShopManager>().LeaveMenu();
     }
 }
