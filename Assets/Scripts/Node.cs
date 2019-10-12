@@ -298,7 +298,12 @@ public class Node : MonoBehaviour
     public int GetNodeMoneyIncome() {
         int income = difficulty * 4 + 2;
         if (faction == Faction.Carnot) {
-            income = Mathf.RoundToInt(0.5f * income + income * GetExposure());
+            Dictionary<string, Upgrade> upgrades = owner.GetComponent<Player>().upgrades;
+            float modifier = 1.0f;
+            if (upgrades.ContainsKey("Fertile Frontier")) {
+                modifier += upgrades["Fertile Frontier"].currentLevel * 0.3f;
+            }
+            income = Mathf.RoundToInt(0.5f * income + modifier * income * GetExposure());
         }
         if (altar != null && altar.name == AltarName.Harvest) income =  (int)Mathf.Round(income * 1.4f);
         return income;
@@ -424,6 +429,7 @@ public class Node : MonoBehaviour
         return safety;
     }
 
+    // Range:[0,1] 0 = totally surrounded by friends     1 = totally exposed
     public float GetExposure() {
         float friendlyNeighbours = 0;
         for (int i = 0; i < neighbours.Count; i++) {

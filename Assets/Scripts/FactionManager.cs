@@ -117,7 +117,7 @@ public class FactionManager : MonoBehaviour{
         traits.NewUnit = Empty;
         traits.Precombat = Empty;
         traits.PrecombatAttacker = Empty;
-        traits.PrecombatDefender = ProtectExplorers;
+        traits.PrecombatDefender = PunishSafety;
         traits.TakeDamage = Empty;
         traits.ArmyLostUnit = Empty;
         traits.KilledEnemy = Empty;
@@ -163,7 +163,7 @@ public class FactionManager : MonoBehaviour{
     }
     public void WinUnmarred(GameObject army) {
         if (!army.GetComponent<Army>().marredBattle) {
-            army.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
+            army.GetComponent<Army>().owner.GetComponent<Player>().IncreaseZeal(3);
         }
         else army.GetComponent<Army>().marredBattle = false;
     }
@@ -245,7 +245,7 @@ public class FactionManager : MonoBehaviour{
         }
     }
     public void InducedVictory(GameObject army) {
-        army.GetComponent<Army>().owner.GetComponent<Player>().zeal++;
+        army.GetComponent<Army>().owner.GetComponent<Player>().IncreaseZeal(3);
     }
 
     public void BalanceAdvantage(GameObject samataArmy, GameObject otherArmy) {
@@ -309,32 +309,6 @@ public class FactionManager : MonoBehaviour{
             }
         }
     }
-
-    public void ProtectExplorers(GameObject carnotArmy, GameObject otherArmy) {
-        Dictionary<string, Upgrade> upgrades = carnotArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades;
-        if (upgrades.ContainsKey("Entropic Explorer")) {
-            float exposure = carnotArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetExposure();
-            if (upgrades.ContainsKey("Entropic Explorer") && exposure > 0.5f) {
-                carnotArmy.GetComponent<Army>().AddToDamageMod(exposure * 0.2f * upgrades["Entropic Explorer"].currentLevel);
-            }
-        }
-    }
-    public void PunishSafety(GameObject carnotArmy, GameObject otherArmy) {
-        float safetyRatio = carnotArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetSafety();
-        float vulnerability = 1.0f + (safetyRatio / 2);
-        for (int i = 0; i < carnotArmy.GetComponent<Army>().units.Count; i++) {
-            carnotArmy.GetComponent<Army>().units[i].vulnerableMod = vulnerability;
-        }
-    }
-    public void IsolationCheck(GameObject player) {
-        List<GameObject> armies = player.GetComponent<Player>().armies;
-        int numIsolated = 0;
-        for (int i = 0; i < armies.Count; i++) {
-            GameObject army = armies[i];
-            if (army.GetComponent<Army>().Isolated()) numIsolated++;
-        }
-        player.GetComponent<Player>().zeal += numIsolated;
-    }
     public void BalanceCheck(GameObject player) {
         List<int> nodeCounts = new List<int>();
         int totalNodes = 0;
@@ -350,7 +324,24 @@ public class FactionManager : MonoBehaviour{
             if (Mathf.Abs(averageNodes - nodeCounts[i]) < 1) score += 2;
             else if (Mathf.Abs(averageNodes - nodeCounts[i]) < 2) score += 1;
         }
-        player.GetComponent<Player>().zeal += score;
+        player.GetComponent<Player>().IncreaseZeal(score);
+    }
+
+
+    public void PunishSafety(GameObject carnotArmy, GameObject otherArmy) {
+        float exposure = carnotArmy.GetComponent<Army>().currentNode.GetComponent<Node>().GetExposure();
+        // 60% of neighbours are allies --> army takes ~60% more damage
+        float modifier = Mathf.Max(exposure - 0.2f, 0)*1.5f;
+        carnotArmy.GetComponent<Army>().AddToVulnerableMod(modifier);
+    }
+    public void IsolationCheck(GameObject player) {
+        List<GameObject> armies = player.GetComponent<Player>().armies;
+        int numIsolated = 0;
+        for (int i = 0; i < armies.Count; i++) {
+            GameObject army = armies[i];
+            if (!army.GetComponent<Army>().HasAllyInRange(2)) numIsolated++;
+        }
+        player.GetComponent<Player>().IncreaseZeal(numIsolated);
     }
 
     public void StoreEnemy(GameObject army, MapUnit unit) {

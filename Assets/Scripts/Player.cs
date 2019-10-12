@@ -75,9 +75,9 @@ public class Player : MonoBehaviour
 
     void Setup() {
         SetupFactionTraits();
-        money = 300;
+        money = 30;
         zeal = 18;
-        fogEnabled = false;
+        fogEnabled = true;
     }
 
     void SetFaction() {
@@ -350,7 +350,7 @@ public class Player : MonoBehaviour
     public void StartTurn() {
         print("Start Turn!");
         money += GetMoneyIncome();
-        print("Money: " + money);
+        //print("Money: " + money);
         zeal += GetZealIncome();
         RestUnits();
         UpdateNodes();

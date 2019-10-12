@@ -105,6 +105,13 @@ public class Army : MonoBehaviour {
             //print("new modifier = " + unit.damageMod);
         }
     }
+    public void AddToVulnerableMod(float modifier) {
+        for (int i = 0; i < units.Count; i++) {
+            MapUnit unit = units[i];
+            unit.vulnerableMod += modifier;
+            //print("new modifier = " + unit.damageMod);
+        }
+    }
 
     public void HighlightNodes(GameObject node, int distance) {
         nodeManager.GetComponent<NodeManager>().HighlightAttackableNodes(node, distance, faction);
@@ -373,16 +380,38 @@ return power;
         return new UnitPos(0, true);
     }
 
-    public bool Isolated() {
-        List<GameObject> nodes = GetConnectedNodes();
-        for (int i = 0; i < nodes.Count; i++) {
-            GameObject node = nodes[i];
-            if (node.GetComponent<Node>().occupied && node.GetComponent<Node>().occupant != gameObject) return false;
-        }
+    public bool HasAllyInRange(int range) {
+        List<GameObject> nodes = new List<GameObject>();
+        List<GameObject> currentFrontier = new List<GameObject>();
+        List<GameObject> nextFrontier = new List<GameObject>();
+        GameObject origin = currentNode;
+        currentFrontier.Add(origin);
+        nodes.Add(origin);
+        int distance = 1;
+        while(distance <= range) {
+            while (currentFrontier.Count > 0) {
+                GameObject currentNode = currentFrontier[0];
+                currentFrontier.Remove(currentNode);
+                foreach(GameObject neighbour in currentNode.GetComponent<Node>().neighbours) {
+                    if (neighbour.GetComponent<Node>().faction == faction) {
+                        if (neighbour.GetComponent<Node>().occupant != null && neighbour.GetComponent<Node>().occupant != gameObject) return true;
+                        if (!nodes.Contains(neighbour) && !currentFrontier.Contains(neighbour) && !nextFrontier.Contains(neighbour)) {
+                            nextFrontier.Add(neighbour);
+                            nodes.Add(neighbour);
+                        }
+                    }
+                }
 
-        return true;
+            }
+            currentFrontier = Tools.DeepCopyGameObjectList(nextFrontier);
+            nextFrontier.Clear();
+            distance++;
+        }
+        return false;
     }
-    public List<GameObject> GetConnectedNodes() {
+
+
+        public List<GameObject> GetConnectedNodes(int range) {
         List<GameObject> nodes = new List<GameObject>();
         List<GameObject> frontier = new List<GameObject>();
         GameObject origin = currentNode;
@@ -401,6 +430,7 @@ return power;
         }
         return nodes;
     }
+
     public void ResetArmy() {
         for (int i =0; i < units.Count; i++) {
             units[i].Reset();

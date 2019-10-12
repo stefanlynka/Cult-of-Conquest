@@ -42,7 +42,6 @@ public class UnitShopManager : MonoBehaviour {
         //army = NodeMenu.currentArmy;
         //if (army) currentFaction = army.GetComponent<Army>().faction;
         List<GameObject> players = Controller.players;
-        print("player count: " + players.Count);
         
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];

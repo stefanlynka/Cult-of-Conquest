@@ -88,7 +88,6 @@ public class NodeManager : MonoBehaviour
                     else {
                         DisableNeighbours(node);
                         nodes.Remove(node);
-                        print("still connected");
                     }
                 }
             }

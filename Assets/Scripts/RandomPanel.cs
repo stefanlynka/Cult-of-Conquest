@@ -6,6 +6,7 @@ public class RandomPanel : MonoBehaviour{
 
     public List<GameObject> targets = new List<GameObject>();
     public GameObject attackingArmy, infoText;
+    float randomTargetBonus = 0.035f;
 
     // Start is called before the first frame update
     void Start(){
@@ -44,9 +45,9 @@ public class RandomPanel : MonoBehaviour{
         UpdateText();
     }
     void UpdateText() {
-        float bonusPerTarget = 0.02f;
+        float bonusPerTarget = randomTargetBonus;
         if (Player.human) {
-            if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assaulting Anarchy")) bonusPerTarget += 0.02f * Player.human.GetComponent<Player>().upgrades["Assaulting Anarchy"].currentLevel;
+            if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assaulting Anarchy")) bonusPerTarget += randomTargetBonus * Player.human.GetComponent<Player>().upgrades["Assaulting Anarchy"].currentLevel;
             float modifier = targets.Count * bonusPerTarget;
             infoText.GetComponent<TextMesh>().text = "Nodes Selected: " + targets.Count + "\nCombat Bonus: " + (modifier*100).ToString() + "%";
         }
@@ -56,8 +57,8 @@ public class RandomPanel : MonoBehaviour{
         int randInt = Random.Range(0, targets.Count);
         GameObject target = targets[randInt];
 
-        float bonusPerTarget = 0.02f;
-        if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assaulting Anarchy")) bonusPerTarget += 0.02f * Player.human.GetComponent<Player>().upgrades["Assaulting Anarchy"].currentLevel;
+        float bonusPerTarget = randomTargetBonus;
+        if (Player.human.GetComponent<Player>().upgrades.ContainsKey("Assaulting Anarchy")) bonusPerTarget += randomTargetBonus * Player.human.GetComponent<Player>().upgrades["Assaulting Anarchy"].currentLevel;
         float modifier = targets.Count * bonusPerTarget;
         Player.selectedArmy.GetComponent<Army>().AddToDamageMod(modifier);
         //print(armyMod: )

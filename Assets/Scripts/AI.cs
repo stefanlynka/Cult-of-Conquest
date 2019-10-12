@@ -36,8 +36,8 @@ public class AI : MonoBehaviour {
     // Update is called once per frame
 
     void Update() {
-        print("Ready to Execute = :" + readyToExecute);
-        print("Armies are ready: " + Army.readyToMove);
+        //print("Ready to Execute = :" + readyToExecute);
+        //print("Armies are ready: " + Army.readyToMove);
         if (TurnManager.currentPlayer == gameObject) {
             if (readyToExecute && Army.readyToMove && Army.movesToDo.Count == 0) {
                 if (turnPhase == TurnPhase.DefendAgainstThreats) {

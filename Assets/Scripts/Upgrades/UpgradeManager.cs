@@ -32,7 +32,6 @@ public class UpgradeManager : MonoBehaviour{
 
 
     void SetupUpgrades() {
-        print("player count: " + players.Count);
         for (int i = 0; i < players.Count; i++) {
             GameObject player = players[i];
             SetPlayerUpgrades(player, player.GetComponent<Player>().faction);
@@ -119,7 +118,7 @@ public class UpgradeManager : MonoBehaviour{
         LoadPlayerUpgrade(2, upgrade3, player);
     }
     void CarnotUpgrades(GameObject player) {
-        Upgrade upgrade1 = new Upgrade("Entropic Explorer", 5, 3, "Increase defense\nbased on\nnode's exposure");
+        Upgrade upgrade1 = new Upgrade("Fertile Frontier", 5, 3, "Increase income\nbased on\nnode's exposure");
         player.GetComponent<Player>().upgrades.Add(upgrade1.name, upgrade1);
         LoadPlayerUpgrade(0, upgrade1, player);
         Upgrade upgrade2 = new Upgrade("Defensive Discord", 5, 3, "Enemies have\na chance to \nattack randomly");

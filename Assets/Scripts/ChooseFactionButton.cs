@@ -17,6 +17,6 @@ public class ChooseFactionButton : MonoBehaviour{
     private void OnMouseDown() {
         Faction faction = FactionSelectionButton.currentFaction;
         GameObject.Find("/Game Controller").GetComponent<Controller>().PostFactionStartup(faction);
-        transform.parent.GetComponent<Panner>().SetTarget(new Vector3(-20, 0, -30));
+        transform.parent.GetComponent<Panner>().SetTarget(new Vector3(-40, 0, -30));
     }
 }
