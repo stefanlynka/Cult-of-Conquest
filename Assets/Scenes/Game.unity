@@ -4388,12 +4388,12 @@ PrefabInstance:
     - target: {fileID: 528278849333287515, guid: d2c89193f86c6fd47965ae5396400759,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.556
+      value: 3.52
       objectReference: {fileID: 0}
     - target: {fileID: 528278849333287515, guid: d2c89193f86c6fd47965ae5396400759,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.102
+      value: 0.11
       objectReference: {fileID: 0}
     - target: {fileID: 528278849333287515, guid: d2c89193f86c6fd47965ae5396400759,
         type: 3}
@@ -25711,6 +25711,11 @@ PrefabInstance:
         type: 3}
       propertyPath: faction
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 817657357121588915, guid: d3583cd02f4db1e4680d295f82adc930,
+        type: 3}
+      propertyPath: homeBase
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 817657357121588914, guid: d3583cd02f4db1e4680d295f82adc930,
         type: 3}
