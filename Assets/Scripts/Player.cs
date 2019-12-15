@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
         SetupFactionTraits();
         money = 30;
         zeal = 18;
-        fogEnabled = true;
+        fogEnabled = false;
     }
 
     void SetFaction() {
@@ -328,7 +328,7 @@ public class Player : MonoBehaviour
         return false;
     }
     public bool BuyTemple(GameObject node, TempleName templeName) {
-        if (node.GetComponent<Node>().owner==gameObject && templeBlueprints.ContainsKey(templeName) && money >= templeBlueprints[templeName].cost) {
+        if (node && node.GetComponent<Node>() && node.GetComponent<Node>().owner==gameObject && templeBlueprints.ContainsKey(templeName) && money >= templeBlueprints[templeName].cost) {
             print("node name:" + node.name);
             print("temple name:" + templeName);
             print("temple:" + templeBlueprints[templeName]);

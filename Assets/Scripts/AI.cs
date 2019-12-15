@@ -88,8 +88,8 @@ public class AI : MonoBehaviour {
 
     public bool WantsToFight(GameObject army, GameObject defendingNode) {
         if (army.GetComponent<Army>().GetOffensivePower() >= 1.25f * defendingNode.GetComponent<Node>().GetDefensivePower()) {
-            print("AI attacking power: " + army.GetComponent<Army>().GetOffensivePower());
-            print("Human defending power: " + defendingNode.GetComponent<Node>().GetDefensivePower());
+            //print("AI attacking power: " + army.GetComponent<Army>().GetOffensivePower());
+            //print("Human defending power: " + defendingNode.GetComponent<Node>().GetDefensivePower());
             return true;
         }
         return false;
@@ -123,7 +123,7 @@ public class AI : MonoBehaviour {
                 nodesByThreat.Remove(node);
                 index--;
             }
-            if (nodesByThreat.Contains(node) && node.GetComponent<Node>().GetThreatToNode() <= 0) {
+            else if (nodesByThreat.Contains(node) && node.GetComponent<Node>().GetThreatToNode() <= 0) {
                 nodesByThreat.Remove(node);
                 index--;
             }
@@ -638,7 +638,7 @@ public class AI : MonoBehaviour {
         if (bestArmy != null) {
             float utility = mostMoneyToBeSpent / 7.5f;
             //print("temple Armaments Utility: " + utility);
-            AllocateOption option = new AllocateOption("temple", utility, 30, bestArmy, TempleName.Armaments);
+            AllocateOption option = new AllocateOption("temple", utility, 30, bestArmy.GetComponent<Army>().currentNode, TempleName.Armaments);
             bestOptions.Add(option);
         }
         return ;
@@ -730,7 +730,7 @@ public class AI : MonoBehaviour {
         }
     }
     GameObject GetBestOriginNode() {
-        GameObject bestNode = ownedNodes[0];
+        GameObject bestNode = null;
         foreach(GameObject node in ownedNodes) {
             if (node.GetComponent<Node>().temple == null) return node;
         }
