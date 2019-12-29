@@ -10,6 +10,9 @@ public class Temple {
     public string description;
     public Faction faction;
     public MapUnit unit;
+    int defaultHealth = 200;
+    int defaultDamage = 30;
+    int defaultSpeed = 100;
 
     public Temple(TempleName newName, int newCost, string desc, Faction newFaction) {
         name = newName;
@@ -17,11 +20,8 @@ public class Temple {
         description = desc;
         portrait = newName.ToString();
         faction = newFaction;
-        unit = new MapUnit("Temple", Faction.None, "");
-        unit.maxHealth = 200;
-        unit.currentHealth = 200;
-        unit.maxDamage = 30;
-        unit.attackSpeed = 300;
+        MakeUnit();
+
         unit.Reset();
     }
 
@@ -34,19 +34,15 @@ public class Temple {
     }
 
     public void ResetUnit() {
-        if (unit == null) {
-            unit = new MapUnit("Temple", Faction.None, "");
-            unit.maxHealth = 200;
-            unit.currentHealth = unit.maxHealth / 2;
-            unit.maxDamage = 50;
-            unit.attackSpeed = 100;
-        }
+        MakeUnit();
     }
-    public void SetNull() {
-        name = TempleName.None;
-        cost = 0;
-        description = "";
-        portrait = "";
-        unit = null;
+
+    public void MakeUnit() {
+        unit = new MapUnit("Temple", Faction.None, "");
+        unit.maxHealth = defaultHealth;
+        unit.currentHealth = defaultHealth;
+        unit.attackSpeed = defaultSpeed;
+        if (name == TempleName.Protection) unit.SetDamage(defaultDamage);
+        else unit.SetDamage(0);
     }
 }

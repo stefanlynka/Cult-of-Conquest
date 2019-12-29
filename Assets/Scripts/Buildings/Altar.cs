@@ -8,6 +8,9 @@ public class Altar{
     public string portrait;
     public int cost;
     public string description;
+    int defaultHealth = 150;
+    int defaultDamage = 15;
+    int defaultSpeed = 60;
 
     public MapUnit unit;
 
@@ -16,11 +19,8 @@ public class Altar{
         cost = newCost;
         description = desc;
         portrait = newName.ToString();
-        unit = new MapUnit("Altar", Faction.None, "");
-        unit.maxHealth = 150;
-        unit.currentHealth = 150;
-        unit.maxDamage = 10;
-        unit.attackSpeed = 60;
+        MakeUnit();
+
         unit.Reset();
     }
 
@@ -33,18 +33,15 @@ public class Altar{
 
 
     public void ResetUnit() {
-        unit = new MapUnit("Altar", Faction.None, "");
-        unit.maxHealth = 100;
-        unit.currentHealth = 100;
-        unit.maxDamage = 10;
-        unit.attackSpeed = 20;
+        MakeUnit();
     }
 
-    public void SetNull() {
-        name = AltarName.None;
-        cost = 0;
-        description = "";
-        portrait = "";
-        unit = null;
+    public void MakeUnit() {
+        unit = new MapUnit("Altar", Faction.None, "");
+        unit.maxHealth = defaultHealth;
+        unit.currentHealth = defaultHealth;
+        unit.attackSpeed = defaultSpeed;
+        if (name == AltarName.Conflict) unit.SetDamage(defaultDamage);
+        else unit.SetDamage(0);
     }
 }

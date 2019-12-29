@@ -295,6 +295,13 @@ public class Node : MonoBehaviour
         temple = newTemple.DeepCopy();
     }
 
+    public void DestroyTemple() {
+        temple = null;
+    }
+    public void DestroyAltar() {
+        altar = null;
+    }
+
     public int GetNodeMoneyIncome() {
         int income = difficulty * 4 + 2;
         if (faction == Faction.Carnot) {

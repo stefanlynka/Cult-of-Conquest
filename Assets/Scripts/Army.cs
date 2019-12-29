@@ -13,11 +13,12 @@ public class Army : MonoBehaviour {
     public GameObject nodeManager;
     public GameObject owner;
     public bool mouseOverArmy = false;
-    public int maxMoves = 2;
-    public int movesLeft = 2;
+    public int maxMoves = 1;
+    public int movesLeft = 1;
     public int sight = 2;
     public bool marredBattle = false;
     public float enemyPower = 0;
+    int startingMoves = 1;
 
     public List<MapUnit> units = new List<MapUnit>();
     public MapUnit[] backRow = new MapUnit[4];
@@ -95,6 +96,8 @@ public class Army : MonoBehaviour {
         //AddUnit(1, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(2, false, owner.GetComponent<Player>().unitBlueprints[0]);
         //AddUnit(3, false, owner.GetComponent<Player>().unitBlueprints[0]);
+        maxMoves = startingMoves;
+        movesLeft = startingMoves;
     }
 
 
@@ -253,6 +256,11 @@ public class Army : MonoBehaviour {
         if (units.Count == 0) {
             DeleteArmy();
         }
+        if (unit.name == "Temple" || unit.name == "Altar") DestroyBuilding(unit);
+    }
+    void DestroyBuilding(MapUnit unit) {
+        if (unit.name == "Temple") currentNode.GetComponent<Node>().DestroyTemple();
+        if (unit.name == "Altar") currentNode.GetComponent<Node>().DestroyAltar();
     }
     public void DeleteArmy() {
         currentNode.GetComponent<Node>().occupant = null;

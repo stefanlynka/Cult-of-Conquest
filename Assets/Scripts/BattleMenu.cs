@@ -176,12 +176,12 @@ public class BattleMenu : MonoBehaviour{
         }
         Temple temple = defendNode.GetComponent<Node>().temple;
         Altar altar = defendNode.GetComponent<Node>().altar;
-        if (temple != null && temple.name == TempleName.Protection) {
+        if (temple != null) {
             units.Add(temple.unit);
             defenders.Add(temple.unit);
             defendersBuildings.Add(temple.unit);
         }
-        if (altar != null && altar.name == AltarName.Conflict) {
+        if (altar != null) {
             units.Add(altar.unit);
             defenders.Add(altar.unit);
             defendersBuildings.Add(altar.unit);
@@ -314,6 +314,11 @@ public class BattleMenu : MonoBehaviour{
 
         if (target != null && attacker != null) {
             int damage = (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
+            if (attacker.name == "Altar" || attacker.name == "Temple") {
+                print(attacker.name + ": maxDamage = " + attacker.maxDamage);
+                print(attacker.name + ": currentDamage = " + attacker.currentDamage);
+                print(attacker.name + ": calculatedDamage = " + damage);
+            }
             if (attacker.fake) damage = 0;
             if (target.fake) damage *= 2;
             if (target.currentShield > 0 && damage > 0) target.currentShield--;

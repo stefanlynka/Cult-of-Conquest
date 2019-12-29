@@ -9,10 +9,10 @@ public class MapUnit
     public string portraitName = "peon";
     public GameObject unitSpace;
 
-    public int maxHealth = 100;
+    public int maxHealth;
     public int currentHealth;
-    public int maxDamage = 10;
-    public int currentDamage = 10;
+    public int maxDamage;
+    public int currentDamage;
     public int attackRange = 2;
     public int attackSpeed = 60;
     public string ability = "Whack";
@@ -24,6 +24,9 @@ public class MapUnit
     public bool marred = false;
     public int marredCountdown = 0;
     public bool hidden = false;
+    int defaultDamage = 10;
+    int defaultHealth = 100;
+    int defaultPower = 10;
     //public int priorityForAttacking
 
     public int moneyCost = 10;
@@ -37,13 +40,22 @@ public class MapUnit
         faction = newFaction;
         portraitName = portrait;
         fake = false;
+        power = defaultPower;
+        visiblePower = defaultPower;
+        SetupStats();
     }
 
     // Start is called before the first frame update
     void Start(){
-        currentHealth = maxHealth;
-        currentDamage = maxDamage;
-        visiblePower = power;
+        //SetupStats();
+    }
+
+
+    void SetupStats() {
+        maxHealth = defaultHealth;
+        currentHealth = defaultHealth;
+        maxDamage = defaultDamage;
+        currentDamage = defaultDamage;
     }
 
     // Update is called once per frame
@@ -56,6 +68,10 @@ public class MapUnit
     }
     public void TrySetHealth(int newHealth) {
         currentHealth = Mathf.Min(maxHealth, newHealth);
+    }
+    public void SetDamage(int newDamage) {
+        maxDamage = newDamage;
+        currentDamage = newDamage;
     }
 
     public void Reset() {
@@ -76,6 +92,7 @@ public class MapUnit
         copy.currentHealth = currentHealth;
         copy.maxHealth = maxHealth;
         copy.maxDamage = maxDamage;
+        copy.currentDamage = currentDamage;
         copy.attackRange = attackRange;
         copy.attackSpeed = attackSpeed;
         copy.moneyCost = moneyCost;

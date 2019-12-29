@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
         SetupFactionTraits();
         money = 30;
         zeal = 18;
-        fogEnabled = false;
+        fogEnabled = true;
     }
 
     void SetFaction() {
@@ -303,29 +303,33 @@ public class Player : MonoBehaviour
     public bool BuyProphet(GameObject node) {
         if (money>= 20) {
             money -= 20;
-            GameObject newArmy = new GameObject();
-            newArmy.AddComponent<SpriteRenderer>();
-            newArmy.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + faction.ToString() + "/Prophets/Prophet");
-            newArmy.AddComponent<Army>();
-            newArmy.AddComponent<CircleCollider2D>();
-            newArmy.AddComponent<MoveAnimator>();
-            newArmy.GetComponent<MoveAnimator>().SetTarget(newArmy.transform.position, false);
-            newArmy.transform.position = new Vector3(node.transform.position.x, node.transform.position.y, -1);
-            newArmy.transform.parent = gameObject.transform;
-            newArmy.GetComponent<Army>().currentNode = node;
-            newArmy.GetComponent<Army>().owner = gameObject;
-            newArmy.GetComponent<Army>().faction = faction;
-            newArmy.name = "Army";
-            newArmy.GetComponent<Army>().AddUnit(0, true, unitBlueprints[2]);
-            newArmy.transform.localScale = new Vector3(0.075f, 0.075f, 1f);
-            armies.Add(newArmy);
-            node.GetComponent<Node>().occupied = true;
-            node.GetComponent<Node>().occupant = newArmy;
-            NodeMenu.currentArmy = newArmy;
-            nodeMenu.GetComponent<NodeMenu>().ProphetMenuCheck();
+            MakeProphet(node);
+
             return true;
         }
         return false;
+    }
+    public void MakeProphet(GameObject node){
+        GameObject newArmy = new GameObject();
+        newArmy.AddComponent<SpriteRenderer>();
+        newArmy.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Factions/" + faction.ToString() + "/Prophets/Prophet");
+        newArmy.AddComponent<Army>();
+        newArmy.AddComponent<CircleCollider2D>();
+        newArmy.AddComponent<MoveAnimator>();
+        newArmy.GetComponent<MoveAnimator>().SetTarget(newArmy.transform.position, false);
+        newArmy.transform.position = new Vector3(node.transform.position.x, node.transform.position.y, -1);
+        newArmy.transform.parent = gameObject.transform;
+        newArmy.GetComponent<Army>().currentNode = node;
+        newArmy.GetComponent<Army>().owner = gameObject;
+        newArmy.GetComponent<Army>().faction = faction;
+        newArmy.name = "Army";
+        newArmy.GetComponent<Army>().AddUnit(0, true, unitBlueprints[2]);
+        newArmy.transform.localScale = new Vector3(0.075f, 0.075f, 1f);
+        armies.Add(newArmy);
+        node.GetComponent<Node>().occupied = true;
+        node.GetComponent<Node>().occupant = newArmy;
+        NodeMenu.currentArmy = newArmy;
+        nodeMenu.GetComponent<NodeMenu>().ProphetMenuCheck();
     }
     public bool BuyTemple(GameObject node, TempleName templeName) {
         if (node && node.GetComponent<Node>() && node.GetComponent<Node>().owner==gameObject && templeBlueprints.ContainsKey(templeName) && money >= templeBlueprints[templeName].cost) {
@@ -451,7 +455,7 @@ public class Player : MonoBehaviour
             int randInt = Random.Range(0, ownedNodes.Count);
             while (ownedNodes[randInt].GetComponent<Node>().occupied) randInt = Random.Range(0, ownedNodes.Count);
             GameObject node = ownedNodes[randInt];
-            BuyProphet(node);
+            MakeProphet(node);
             GameObject godArmy = node.GetComponent<Node>().occupant;
             godArmy.GetComponent<Army>().frontRow[0] = CreateGodUnit();
         }
@@ -459,8 +463,8 @@ public class Player : MonoBehaviour
 
     public MapUnit CreateGodUnit() {
         MapUnit unit = new MapUnit("God", faction, "Prelate");
-        unit.maxDamage = 200;
-        unit.maxHealth = 10000;
+        unit.SetDamage(200);
+        unit.SetHealth(10000);
         unit.power = 1;
         unit.attackSpeed = 30;
     

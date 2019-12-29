@@ -116,10 +116,11 @@ public class ArmyMenu : MonoBehaviour {
         GameObject nameText = Tools.GetChildNamed(templeSpace, "Name Text");
         GameObject healthText = Tools.GetChildNamed(templeSpace, "Health Text");
         GameObject portrait = Tools.GetChildNamed(templeSpace, "Portrait");
-        if (defendingNode.GetComponent<Node>().temple != null && defendingNode.GetComponent<Node>().temple.name == TempleName.Protection) {
-            nameText.GetComponent<TextMesh>().text = "Temple of \nProtection";
+        if (defendingNode.GetComponent<Node>().temple != null) {
+            string templesName = defendingNode.GetComponent<Node>().temple.name.ToString();
+            nameText.GetComponent<TextMesh>().text = "Temple of \n"+ templesName;
             healthText.GetComponent<TextMesh>().text = "HP: " + defendingNode.GetComponent<Node>().temple.unit.currentHealth;
-            portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Temples/Temple of Protection");
+            portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Temples/Temple of "+ templesName);
         }
         else {
             nameText.GetComponent<TextMesh>().text = "Temple";
@@ -130,10 +131,11 @@ public class ArmyMenu : MonoBehaviour {
         nameText = Tools.GetChildNamed(altarSpace, "Name Text");
         healthText = Tools.GetChildNamed(altarSpace, "Health Text");
         portrait = Tools.GetChildNamed(altarSpace, "Portrait");
-        if (defendingNode.GetComponent<Node>().altar != null && defendingNode.GetComponent<Node>().altar.name == AltarName.Conflict) {
-            nameText.GetComponent<TextMesh>().text = "Altar of \nConflict";
+        if (defendingNode.GetComponent<Node>().altar != null) {
+            string altarsName = defendingNode.GetComponent<Node>().altar.name.ToString();
+            nameText.GetComponent<TextMesh>().text = "Altar of \n"+ altarsName;
             healthText.GetComponent<TextMesh>().text = "HP: " + defendingNode.GetComponent<Node>().altar.unit.currentHealth;
-            portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Altars/Altar of Conflict");
+            portrait.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Altars/Altar of "+ altarsName);
         }
         else {
             nameText.GetComponent<TextMesh>().text = "Altar";

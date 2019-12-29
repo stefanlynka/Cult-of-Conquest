@@ -17,10 +17,17 @@ public class EffigyInNodeButton : MonoBehaviour{
     }
 
     private void OnMouseDown() {
+        if (Player.menuOpen == 1 && NodeMenu.currentArmy != null && (NodeMenu.currentArmy.GetComponent<Army>().effigy != null || NodeMenu.currentNode.GetComponent<Node>().effigy != null)){
+            Effigy placeholder = NodeMenu.currentArmy.GetComponent<Army>().effigy;
+            NodeMenu.currentArmy.GetComponent<Army>().effigy = NodeMenu.currentNode.GetComponent<Node>().effigy;
+            NodeMenu.currentNode.GetComponent<Node>().effigy = placeholder;
+        }
+        /*
         if (Player.menuOpen == 1 && NodeMenu.currentArmy!= null && NodeMenu.currentArmy.GetComponent<Army>().effigy != null) {
             NodeMenu.currentNode.GetComponent<Node>().effigy = NodeMenu.currentArmy.GetComponent<Army>().effigy;
             NodeMenu.currentArmy.GetComponent<Army>().effigy = null;
             nodeMenu.GetComponent<NodeMenu>().LoadEffigy();
         }
+        */
     }
 }
