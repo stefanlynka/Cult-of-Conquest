@@ -59,11 +59,11 @@ public class Node : MonoBehaviour
 
     public void Highlight() {
         //print("highlighted: "+ gameObject);
-        if (!highlighted) transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z-10);
+        if (!highlighted) transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z-25);
         highlighted = true;
     }
     public void Unhighlight() {
-        if (highlighted) transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 10);
+        if (highlighted) transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 25);
         highlighted = false;
     }
 
@@ -487,7 +487,7 @@ public class Node : MonoBehaviour
     }
     public int GetUnitCost(int index) {
         int cost = owner.GetComponent<Player>().unitBlueprints[index].moneyCost;
-        if (temple != null && temple.name == TempleName.Armaments) cost = (int)(cost * 0.6);
+        if (temple != null && temple.name == TempleName.Armaments) cost = (int)(cost * 0.8);
         return cost;
     }
 

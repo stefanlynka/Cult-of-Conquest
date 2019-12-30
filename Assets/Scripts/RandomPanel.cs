@@ -27,7 +27,7 @@ public class RandomPanel : MonoBehaviour{
         }
     }
     public void Setup() {
-        if (Player.human.GetComponent<Player>().faction == Faction.Carnot) gameObject.GetComponent<Panner>().SetTarget(new Vector3(6.9f, 0, 0));
+        if (Player.human.GetComponent<Player>().faction == Faction.Carnot) gameObject.GetComponent<Panner>().SetTarget(new Vector3(6.9f, 0, -5));
         else gameObject.SetActive(false);
     }
 

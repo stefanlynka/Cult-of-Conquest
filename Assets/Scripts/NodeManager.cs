@@ -31,7 +31,7 @@ public class NodeManager : MonoBehaviour
         DisableNodes();
         UpdateNodes();
         highlightFog = GameObject.Find("/Highlight");
-        highlightFog.transform.position = new Vector3(0, 0, 10);
+        highlightFog.transform.position = new Vector3(0, 0, -2);
         highlightFog.SetActive(false);
         //if (AllBasesConnected()) print("Connected");
         //else print("Disconnected");

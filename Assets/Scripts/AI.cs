@@ -328,7 +328,7 @@ public class AI : MonoBehaviour {
         if (templeSimulated == null) {
             print("build a temple");
             templeSimulated = GetComponent<Player>().templeBlueprints[TempleName.Protection].DeepCopy();
-            MapUnit templeStandIn = new MapUnit("temple", Faction.None, "");
+            MapUnit templeStandIn = new MapUnit("Temple", Faction.None, "");
             templeStandIn.moneyCost = 30;//GetComponent<Player>().templeBlueprints[TempleName.Protection].cost;
             unitsNeeded.Add(templeStandIn);
             if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
@@ -338,7 +338,7 @@ public class AI : MonoBehaviour {
         if (altarSimulated == null) {
             print("build an altar");
             altarSimulated = GetComponent<Player>().altarBlueprints[AltarName.Conflict].DeepCopy();
-            MapUnit altarStandIn = new MapUnit("altar", Faction.None, "");
+            MapUnit altarStandIn = new MapUnit("Altar", Faction.None, "");
             altarStandIn.moneyCost = 20;//GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost;
             unitsNeeded.Add(altarStandIn);
             if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
@@ -375,7 +375,7 @@ public class AI : MonoBehaviour {
 
         if (templeSimulated == null) {
             templeSimulated = GetComponent<Player>().templeBlueprints[TempleName.Protection].DeepCopy();
-            MapUnit templeStandIn = new MapUnit("temple", Faction.None, "");
+            MapUnit templeStandIn = new MapUnit("Temple", Faction.None, "");
             templeStandIn.moneyCost = 30;//GetComponent<Player>().templeBlueprints[TempleName.Protection].cost;
             unitsNeeded.Add(templeStandIn);
             if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
@@ -384,7 +384,7 @@ public class AI : MonoBehaviour {
         }
         if (altarSimulated == null) {
             altarSimulated = GetComponent<Player>().altarBlueprints[AltarName.Conflict].DeepCopy();
-            MapUnit altarStandIn = new MapUnit("altar", Faction.None, "");
+            MapUnit altarStandIn = new MapUnit("Altar", Faction.None, "");
             altarStandIn.moneyCost = 20;// GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost;
             unitsNeeded.Add(altarStandIn);
             if (GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) > threatLevel) {
@@ -394,6 +394,7 @@ public class AI : MonoBehaviour {
 
         return new List<MapUnit>();
     }
+
     void GetProphetUtility() {
         if (unallocatedMoney >= 30 && investInProphets == 0 && ownedNodes.Count>armies.Count) {
             float localNodesToConquer = 9;
@@ -403,7 +404,7 @@ public class AI : MonoBehaviour {
             float protectBordersUtility = (GetFrontierNodeCount() * 5) / (2 * armies.Count + 0.1f);
             //print("protectborder Util: " + protectBordersUtility);
             float utility = Mathf.Max(expandingUtility, protectBordersUtility);
-            AllocateOption option = new AllocateOption("prophet", utility, 30);
+            AllocateOption option = new AllocateOption(OptionType.Prophet, utility, 30);
             bestOptions.Add(option);
             //print("Prophet Utility: " + utility);
             return;
@@ -415,7 +416,7 @@ public class AI : MonoBehaviour {
         GameObject armyToImprove = null;
         int unitIndex = 0;
         int bestUnitCost = 0;
-        string buildType = "";
+        OptionType buildType = OptionType.None;
         UnitPos bestUnitPos = new UnitPos();
         int oldUnitIndex = 0;
 
@@ -451,7 +452,7 @@ public class AI : MonoBehaviour {
             MapUnit[] backRowSimulated = Tools.DeepCopyMapUnitArray(army.GetComponent<Army>().backRow);
             List<MapUnit> simulatedUnits = new List<MapUnit>();
             foreach(AllocateOption option in committedOptions) {
-                if (option.type == "unit" && option.army == army) {
+                if (option.type == OptionType.Unit && option.army == army) {
                     MapUnit simulatedUnit = GetComponent<Player>().unitBlueprints[option.unitIndex].DeepCopy();
                     simulatedUnits.Add(simulatedUnit);
                     Tools.AddUnitToRows(frontRowSimulated, backRowSimulated, simulatedUnit);
@@ -486,7 +487,7 @@ public class AI : MonoBehaviour {
                         armyToImprove = army;
                         unitIndex = i;
                         bestUnitCost = unitCost;
-                        buildType = "unit";
+                        buildType = OptionType.Unit;
                     }
                 }
             }
@@ -512,11 +513,11 @@ public class AI : MonoBehaviour {
                             unitIndex = i;
                             bestUnitCost = unitCost;
                             if (replacingSimulated) {
-                                buildType = "upgrade";
+                                buildType = OptionType.Upgrade;
                                 oldUnitIndex = Tools.UnitToIndex(unitToBeReplaced);
                             }
                             else {
-                                buildType = "replace";
+                                buildType = OptionType.Replace;
                                 bestUnitPos = Tools.GetUnitPosition(frontRowSimulatedUpgrade, backRowSimulatedUpgrade, unitToBeReplaced);
                             }
                         }
@@ -542,11 +543,11 @@ public class AI : MonoBehaviour {
                             unitIndex = i;
                             bestUnitCost = unitCost;
                             if (replacingSimulated) {
-                                buildType = "upgrade";
+                                buildType = OptionType.Upgrade;
                                 oldUnitIndex = Tools.UnitToIndex(unitToBeReplaced);
                             }
                             else {
-                                buildType = "replace";
+                                buildType = OptionType.Replace;
                                 bestUnitPos = Tools.GetUnitPosition(frontRowSimulatedUpgrade, backRowSimulatedUpgrade, unitToBeReplaced);
                             }
                         }
@@ -555,15 +556,15 @@ public class AI : MonoBehaviour {
             }
         }
         if (armyToImprove != null) {
-            if (buildType == "unit") {
+            if (buildType == OptionType.Unit) {
                 AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, unitIndex);
                 bestOptions.Add(option);
             }
-            else if (buildType == "upgrade") {
+            else if (buildType == OptionType.Upgrade) {
                 AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, unitIndex, oldUnitIndex);
                 bestOptions.Add(option);
             }
-            else if (buildType == "replace"){
+            else if (buildType == OptionType.Replace) {
                 AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, unitIndex, bestUnitPos);
                 bestOptions.Add(option);
             }
@@ -602,18 +603,20 @@ public class AI : MonoBehaviour {
             int replenishCost = 0;
             if (firstReplenish) replenishCost = 30;
             else if (!firstReplenish) replenishCost = 20;
-            AllocateOption option = new AllocateOption("replenish", maxUtility, replenishCost, bestArmyToReplenish);
+            AllocateOption option = new AllocateOption(OptionType.Replenish, maxUtility, replenishCost, bestArmyToReplenish);
             bestOptions.Add(option);
         }
         //print("Replenish Utility: " + maxUtility);
         return;
     }
     void GetBuildingUtility() {
-        if (unallocatedMoney >=30) GetTempleArmamentsUtility();
-        if (unallocatedMoney >= 30) GetTempleTraditionUtility();
-        if (unallocatedMoney >= 50) GetTempleOriginUtility();
-        if (unallocatedMoney >= 20) GetAltarDevotionUtility();
-        if (unallocatedMoney >= 20) GetAltarHarvestUtility();
+        Dictionary<AltarName, Altar> altarDict = GetComponent<Player>().altarBlueprints;
+        Dictionary<TempleName, Temple> templeDict = GetComponent<Player>().templeBlueprints;
+        if (unallocatedMoney >= templeDict[TempleName.Armaments].cost) GetTempleArmamentsUtility();
+        if (unallocatedMoney >= templeDict[TempleName.Tradition].cost) GetTempleTraditionUtility();
+        if (unallocatedMoney >= templeDict[TempleName.Origin].cost) GetTempleOriginUtility();
+        if (unallocatedMoney >= altarDict[AltarName.Devotion].cost) GetAltarDevotionUtility();
+        if (unallocatedMoney >= altarDict[AltarName.Harvest].cost) GetAltarHarvestUtility();
 
         return;
     }
@@ -625,7 +628,7 @@ public class AI : MonoBehaviour {
             if (armyNode.GetComponent<Node>().temple == null) {
                 int moneyToBeSpent = 0;
                 foreach (AllocateOption option in committedOptions) {
-                    if (option.type == "unit" && option.army == army) {
+                    if (option.type == OptionType.Unit && option.army == army) {
                         moneyToBeSpent += army.GetComponent<Army>().owner.GetComponent<Player>().unitBlueprints[option.unitIndex].moneyCost;
                     }
                 }
@@ -638,10 +641,10 @@ public class AI : MonoBehaviour {
         if (bestArmy != null) {
             float utility = mostMoneyToBeSpent / 7.5f;
             //print("temple Armaments Utility: " + utility);
-            AllocateOption option = new AllocateOption("temple", utility, 30, bestArmy.GetComponent<Army>().currentNode, TempleName.Armaments);
+            AllocateOption option = new AllocateOption(OptionType.Temple, utility, 30, bestArmy.GetComponent<Army>().currentNode, TempleName.Armaments);
             bestOptions.Add(option);
         }
-        return ;
+        return;
     }
     void GetTempleTraditionUtility() {
         //float utility = 0;
@@ -651,7 +654,7 @@ public class AI : MonoBehaviour {
     void GetTempleOriginUtility() {
         GameObject bestNode = GetBestOriginNode();
         if (!HasTempleOfOrigin() && !PlanToBuildOrigin()) {
-            AllocateOption option = new AllocateOption("temple", 7.5f, 50, bestNode, TempleName.Origin);
+            AllocateOption option = new AllocateOption(OptionType.Temple, 7.5f, 50, bestNode, TempleName.Origin);
             bestOptions.Add(option);
         }
         //print("temple Origin Utility: " + utility);
@@ -662,7 +665,7 @@ public class AI : MonoBehaviour {
         float utility = 6f;
         //print("altar Devotion Utility: " + utility);
         if (bestNode) {
-            AllocateOption option = new AllocateOption("altar", utility, 20, bestNode, AltarName.Devotion);
+            AllocateOption option = new AllocateOption(OptionType.Altar, utility, 20, bestNode, AltarName.Devotion);
             bestOptions.Add(option);
         }
         return;
@@ -672,19 +675,20 @@ public class AI : MonoBehaviour {
         if (bestNode != null) {
             float utility = (bestNode.GetComponent<Node>().GetNodeMoneyIncome()-2) / 1.5f;
             //print("altar Harvest Utility: " + utility);
-            AllocateOption option = new AllocateOption("altar", utility, 20, bestNode, AltarName.Harvest);
+            AllocateOption option = new AllocateOption(OptionType.Altar, utility, 20, bestNode, AltarName.Harvest);
             bestOptions.Add(option);
         }
         return;
     }
+
     void CommitBestOption(List<AllocateOption> options) {
         //print("Unallocated Money: " + unallocatedMoney);
         //print("Best Option: " + options[bestOptions.Count - 1].type + " utility: " + options[bestOptions.Count - 1].utility);
         //print("Worst Option: " + options[0].type + " utility: "+ options[0].utility);
         AllocateOption bestOption = options[bestOptions.Count - 1];
-        if (bestOption.type != "upgrade") committedOptions.Add(bestOption);
+        if (bestOption.type != OptionType.Upgrade) committedOptions.Add(bestOption);
         //if (bestOption.type == "prophet") investInProphets += 30;
-        if (bestOption.type == "upgrade") Replace(bestOption);
+        if (bestOption.type == OptionType.Upgrade) Replace(bestOption);
 
         unallocatedMoney -= bestOption.cost;
     }
@@ -694,27 +698,27 @@ public class AI : MonoBehaviour {
             AllocateOption option = options[0];
             committedOptions.RemoveAt(0);
             switch (option.type) {
-                case "unit":
+                case OptionType.Unit:
                     //print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
                     option.army.GetComponent<Army>().BuyUnit(option.army.GetComponent<Army>().GetOpenPosition(), GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
-                case "replace":
+                case OptionType.Replace:
                     //print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos);
                     option.army.GetComponent<Army>().BuyUnit(option.unitPos, GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
-                case "replenish":
+                case OptionType.Replenish:
                     //print("Saving " + option.cost + " for replenishing");
                     option.army.GetComponent<Army>().allocatedReplenish += option.cost;
                     break;
-                case "prophet":
+                case OptionType.Prophet:
                     //print("Saving " + option.cost + " for prophet");
                     investInProphets += 30;
                     break;
-                case "temple":
+                case OptionType.Temple:
                     //print("Building Temple of " + option.templeName);
                     GetComponent<Player>().BuyTemple(option.node, option.templeName);
                     break;
-                case "altar":
+                case OptionType.Altar:
                     //print("Building Altar of " + option.altarName);
                     GetComponent<Player>().BuyAltar(option.node, option.altarName);
                     break;
@@ -723,7 +727,7 @@ public class AI : MonoBehaviour {
     }
     void Replace(AllocateOption upgradedOption) {
         foreach(AllocateOption oldOption in committedOptions) {
-            if (oldOption.type == "unit" && oldOption.army == upgradedOption.army && oldOption.unitIndex == upgradedOption.oldUnitIndex) {
+            if (oldOption.type == OptionType.Unit && oldOption.army == upgradedOption.army && oldOption.unitIndex == upgradedOption.oldUnitIndex) {
                 oldOption.unitIndex = upgradedOption.oldUnitIndex;
                 return;
             }
@@ -731,7 +735,11 @@ public class AI : MonoBehaviour {
     }
     GameObject GetBestOriginNode() {
         GameObject bestNode = null;
-        foreach(GameObject node in ownedNodes) {
+        foreach (GameObject army in GetComponent<Player>().armies) {
+            GameObject armyNode = army.GetComponent<Army>().currentNode;
+            if (!PlanToUseNodesTemple(armyNode) && armyNode.GetComponent<Node>().temple == null) return armyNode;
+        }
+        foreach (GameObject node in ownedNodes) {
             if (node.GetComponent<Node>().temple == null) return node;
         }
         return bestNode;
@@ -742,7 +750,8 @@ public class AI : MonoBehaviour {
         foreach (GameObject node in ownedNodes) {
             if (!PlanToUseNodesAltar(node) && node.GetComponent<Node>().altar == null) {
                 int income = node.GetComponent<Node>().GetNodeMoneyIncome();
-                if (income > highestIncome) {
+                if ((income > highestIncome && (bestNode == null || !(bestNode.GetComponent<Node>().occupant != null && node.GetComponent<Node>().occupant == null )))
+                    || (income>=0.8*highestIncome && node.GetComponent<Node>().occupant != null && (bestNode == null || bestNode.GetComponent<Node>().occupant == null))) {
                     highestIncome = income;
                     bestNode = node;
                 }
@@ -753,6 +762,10 @@ public class AI : MonoBehaviour {
     GameObject GetBestDevotionNode() {
         GameObject bestNode = null;
         int lowestIncome = 9999;
+        foreach (GameObject army in GetComponent<Player>().armies) {
+            GameObject armyNode = army.GetComponent<Army>().currentNode;
+            if (armyNode.GetComponent<Node>().altar == null) return armyNode;
+        }
         foreach (GameObject node in ownedNodes) {
             if (!PlanToUseNodesAltar(node) && node.GetComponent<Node>().altar == null) {
                 int income = node.GetComponent<Node>().GetNodeMoneyIncome();
@@ -767,7 +780,7 @@ public class AI : MonoBehaviour {
     int ArmyReplenishCount(GameObject army) {
         int replenishCount = 0;
         foreach(AllocateOption option in bestOptions) {
-            if (option.type == "replenish" && option.army == army) replenishCount++;
+            if (option.type == OptionType.Replenish && option.army == army) replenishCount++;
         }
         return replenishCount;
     }
@@ -775,11 +788,11 @@ public class AI : MonoBehaviour {
         float totalHealth = 0;
         float totalDPS = 0;
         float power = 0;
-        if (temple != null && temple.name == TempleName.Protection) {
+        if (temple != null) {
             totalHealth += temple.unit.GetHealth();
             power += temple.unit.GetDPS() * totalHealth;
         }
-        if (altar != null && altar.name == AltarName.Conflict) {
+        if (altar != null) {
             totalHealth += altar.unit.GetHealth();
             power += altar.unit.GetDPS() * totalHealth;
         }
@@ -869,21 +882,21 @@ public class AI : MonoBehaviour {
     void UnitsToAllocateOptions(GameObject army, List<MapUnit> units) {
         foreach (MapUnit unit in units) {
             int unitCost = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(Tools.UnitToIndex(unit));
-            if (unit.name == "temple") unitCost = 30;
-            if (unit.name == "altar") unitCost = 20;
+            if (unit.name == "Temple") unitCost = GetComponent<Player>().templeBlueprints[TempleName.Protection].cost;
+            if (unit.name == "Altar") unitCost = GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost;
             if (unallocatedMoney >= unitCost) {
-                if (unit.name == "temple") {
-                    AllocateOption option = new AllocateOption("temple", 0f, unitCost, army.GetComponent<Army>().currentNode, TempleName.Protection);
+                if (unit.name == "Temple") {
+                    AllocateOption option = new AllocateOption(OptionType.Temple, 0f, unitCost, army.GetComponent<Army>().currentNode, TempleName.Protection);
                     committedOptions.Add(option);
                     unallocatedMoney -= unitCost;
                 }
-                else if (unit.name == "altar") {
-                    AllocateOption option = new AllocateOption("altar", 0f, unitCost, army.GetComponent<Army>().currentNode, AltarName.Conflict);
+                else if (unit.name == "Altar") {
+                    AllocateOption option = new AllocateOption(OptionType.Altar, 0f, unitCost, army.GetComponent<Army>().currentNode, AltarName.Conflict);
                     committedOptions.Add(option);
                     unallocatedMoney -= unitCost;
                 }
                 else {
-                    AllocateOption option = new AllocateOption("unit", 0f, unitCost, army, Tools.UnitToIndex(unit));
+                    AllocateOption option = new AllocateOption(OptionType.Unit, 0f, unitCost, army, Tools.UnitToIndex(unit));
                     committedOptions.Add(option);
                     unallocatedMoney -= unitCost;
                 }
@@ -898,19 +911,19 @@ public class AI : MonoBehaviour {
     }
     bool PlanToBuildOrigin() {
         foreach(AllocateOption option in committedOptions) {
-            if (option.type == "temple" && option.templeName == TempleName.Origin) return true;
+            if (option.type == OptionType.Temple && option.templeName == TempleName.Origin) return true;
         }
         return false;
     }
     bool PlanToUseNodesTemple(GameObject node) {
         foreach (AllocateOption option in committedOptions) {
-            if (option.type == "temple" && option.node == node) return true;
+            if (option.type == OptionType.Temple && option.node == node) return true;
         }
         return false;
     }
     bool PlanToUseNodesAltar(GameObject node) {
         foreach (AllocateOption option in committedOptions) {
-            if (option.type == "altar" && option.node == node) return true;
+            if (option.type == OptionType.Altar && option.node == node) return true;
         }
         return false;
     }
@@ -1238,14 +1251,14 @@ public class AI : MonoBehaviour {
                 //print("build Prophet step A");
             }
         }
-        foreach(GameObject army in armies) {
-            if (army.GetComponent<Army>().allocatedReplenish >= 30) {
+        foreach (GameObject army in armies) {
+            if (army.GetComponent<Army>().allocatedReplenish >= GetComponent<Player>().templeBlueprints[TempleName.Protection].cost) {
                 GetComponent<Player>().BuyTemple(army.GetComponent<Army>().currentNode, TempleName.Protection);
-                army.GetComponent<Army>().allocatedReplenish -= 30;
+                army.GetComponent<Army>().allocatedReplenish -= GetComponent<Player>().templeBlueprints[TempleName.Protection].cost;
             }
-            if (army.GetComponent<Army>().allocatedReplenish >= 20) {
+            if (army.GetComponent<Army>().allocatedReplenish >= GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost) {
                 GetComponent<Player>().BuyAltar(army.GetComponent<Army>().currentNode, AltarName.Conflict);
-                army.GetComponent<Army>().allocatedReplenish -= 20;
+                army.GetComponent<Army>().allocatedReplenish -= GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost;
             }
         }
     }

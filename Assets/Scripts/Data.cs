@@ -157,10 +157,20 @@ public struct ArmyInfo {
     public int timeSinceScout;
     public float expectedPower;
 }
+public enum OptionType {
+    Prophet,
+    Unit,
+    Upgrade,
+    Replace,
+    Replenish,
+    Temple,
+    Altar,
+    None
+}
 public class AllocateOption {
     public GameObject node;
     public GameObject army;
-    public string type;
+    public OptionType type;
     public float utility;
     public int unitIndex;
     public TempleName templeName;
@@ -168,7 +178,7 @@ public class AllocateOption {
     public int cost;
     public UnitPos unitPos;
     public int oldUnitIndex;
-    public AllocateOption(string prophetOption, float newUtility, int newCost) {
+    public AllocateOption(OptionType prophetOption, float newUtility, int newCost) {
         node = null;
         army = null;
         type = prophetOption;
@@ -180,7 +190,7 @@ public class AllocateOption {
         templeName = TempleName.None;
         altarName = AltarName.None;
     }
-    public AllocateOption(string unitOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex) {
+    public AllocateOption(OptionType unitOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex) {
         node = null;
         army = newArmy;
         type = unitOption;
@@ -192,7 +202,7 @@ public class AllocateOption {
         templeName = TempleName.None;
         altarName = AltarName.None;
     }
-    public AllocateOption(string upgradeOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex, int oldIndex) {
+    public AllocateOption(OptionType upgradeOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex, int oldIndex) {
         node = null;
         army = newArmy;
         type = upgradeOption;
@@ -204,7 +214,7 @@ public class AllocateOption {
         templeName = TempleName.None;
         altarName = AltarName.None;
     }
-    public AllocateOption(string replaceOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex, UnitPos position) {
+    public AllocateOption(OptionType replaceOption, float newUtility, int newCost, GameObject newArmy, int mapunitIndex, UnitPos position) {
         node = null;
         army = newArmy;
         type = replaceOption;
@@ -216,7 +226,7 @@ public class AllocateOption {
         templeName = TempleName.None;
         altarName = AltarName.None;
     }
-    public AllocateOption(string replenishOption, float newUtility, int newCost, GameObject armyToReplenish) {
+    public AllocateOption(OptionType replenishOption, float newUtility, int newCost, GameObject armyToReplenish) {
         node = null;
         army = armyToReplenish;
         type = replenishOption;
@@ -228,7 +238,7 @@ public class AllocateOption {
         templeName = TempleName.None;
         altarName = AltarName.None;
     }
-    public AllocateOption(string templeOption, float newUtility, int newCost, GameObject buildingNode, TempleName newname) {
+    public AllocateOption(OptionType templeOption, float newUtility, int newCost, GameObject buildingNode, TempleName newname) {
         node = buildingNode;
         army = null;
         type = templeOption;
@@ -240,7 +250,7 @@ public class AllocateOption {
         templeName = newname;
         altarName = AltarName.None;
     }
-    public AllocateOption(string altarOption, float newUtility, int newCost, GameObject buildingNode, AltarName newname) {
+    public AllocateOption(OptionType altarOption, float newUtility, int newCost, GameObject buildingNode, AltarName newname) {
         node = buildingNode;
         army = null;
         type = altarOption;

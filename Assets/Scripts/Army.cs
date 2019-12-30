@@ -126,13 +126,13 @@ public class Army : MonoBehaviour {
     public void Select() {
         selected = true;
         transform.localScale *= 2;
-        //transform.position = new Vector3(transform.position.x, transform.position.y, -20);
+        transform.position = new Vector3(transform.position.x, transform.position.y, -30);
         HighlightNodes(currentNode, movesLeft);
     }
     public void Deselect() {
         selected = false;
         transform.localScale *= 0.5f;
-        //transform.position = new Vector3(transform.position.x, transform.position.y, -1);
+        transform.position = new Vector3(transform.position.x, transform.position.y, -1);
         UnhighlightNodes();
     }
 
@@ -345,11 +345,11 @@ return power;
         float totalHealth = 0;
         float totalDPS = 0;
         float power = 0;
-        if (currentNode.GetComponent<Node>().temple != null && currentNode.GetComponent<Node>().temple.name == TempleName.Protection) {
+        if (currentNode.GetComponent<Node>().temple != null) {
             totalHealth += currentNode.GetComponent<Node>().temple.unit.GetHealth();
             power += currentNode.GetComponent<Node>().temple.unit.GetDPS() * totalHealth;
         }
-        if (currentNode.GetComponent<Node>().altar != null && currentNode.GetComponent<Node>().altar.name == AltarName.Conflict) {
+        if (currentNode.GetComponent<Node>().altar != null) {
             totalHealth += currentNode.GetComponent<Node>().altar.unit.GetHealth();
             power += currentNode.GetComponent<Node>().altar.unit.GetDPS() * totalHealth;
         }
