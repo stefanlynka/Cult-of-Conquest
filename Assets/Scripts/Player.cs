@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
         SetupFactionTraits();
         money = 30;
         zeal = 18;
-        fogEnabled = true;
+        fogEnabled = false;
     }
 
     void SetFaction() {
@@ -136,9 +136,9 @@ public class Player : MonoBehaviour
             else if (LeftClickedAnythingElse()) {
                 selectedArmy.GetComponent<Army>().Deselect();
             }
-
+            //if (nodeRightClicked && notEnemyNode()) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
             if (!selectedArmy) {
-                if (nodeRightClicked && notEnemyNode()) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
+                if (nodeRightClicked) nodeMenu.GetComponent<NodeMenu>().EnterMenu(nodeRightClicked);
                 else if (armyRightClicked) {
                     //print("right clicked army");
                     nodeMenu.GetComponent<NodeMenu>().EnterMenu(armyRightClicked.GetComponent<Army>().currentNode);
@@ -219,7 +219,7 @@ public class Player : MonoBehaviour
     }
 
     public void attackNode(GameObject army, GameObject node) {
-        print("Army: " + army.name + " aims at: " + node.name);
+        //print("Army: " + army.name + " aims at: " + node.name);
         //print("This cost a move");
         List<GameObject> moveList = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetPathTo(node);
         moveList.RemoveAt(0);
@@ -334,8 +334,8 @@ public class Player : MonoBehaviour
     public bool BuyTemple(GameObject node, TempleName templeName) {
         if (node && node.GetComponent<Node>() && node.GetComponent<Node>().owner==gameObject && templeBlueprints.ContainsKey(templeName) && money >= templeBlueprints[templeName].cost) {
             print("node name:" + node.name);
-            print("temple name:" + templeName);
-            print("temple:" + templeBlueprints[templeName]);
+            //print("temple name:" + templeName);
+            //print("temple:" + templeBlueprints[templeName]);
             node.GetComponent<Node>().BuildTemple(templeBlueprints[templeName]);
             money -= templeBlueprints[templeName].cost;
             return true;
@@ -352,7 +352,7 @@ public class Player : MonoBehaviour
     }
 
     public void StartTurn() {
-        print("Start Turn!");
+        print("Start Turn!: "+faction);
         money += GetMoneyIncome();
         //print("Money: " + money);
         zeal += GetZealIncome();

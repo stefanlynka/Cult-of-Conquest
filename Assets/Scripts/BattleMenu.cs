@@ -48,12 +48,12 @@ public class BattleMenu : MonoBehaviour{
     }
 
     void CheckAIDecision() {
-        print("check ai decision");
+        //print("check ai decision");
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && !DefenderIsHuman(defendNode)) {
             //retreatButton.SetActive(false);
-            print("attacker is AI, defender not human");
+            //print("attacker is AI, defender not human");
             if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>().WantsToFight(attackArmy, defendNode) || !retreatAllowed) {
-                print("AI wants to fight AI");
+                //print("AI wants to fight AI");
                 InstantBattle();
             }
             else if (retreatAllowed) Retreat();
@@ -81,7 +81,7 @@ public class BattleMenu : MonoBehaviour{
     }
 
     public void EnterMenu() {
-        print("Enter. ReadyToMove: " + Army.readyToMove);
+        //print("Enter. ReadyToMove: " + Army.readyToMove);
         GetComponent<Panner>().SetTarget(new Vector3(0, 0, -10));
         EnableButtons();
         SetBackButton(false);
@@ -96,7 +96,7 @@ public class BattleMenu : MonoBehaviour{
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
         else if (attackingPlayer && attackingPlayer.GetComponent<AI>()) attackingPlayer.GetComponent<AI>().readyToExecute = true;
         Army.readyToMove = true;
-        print("Exit. ReadyToMove: " + Army.readyToMove);
+        //print("Exit. ReadyToMove: " + Army.readyToMove);
         EnableButtons();
         inBattleMenu = false;
         retreatAllowed = true;

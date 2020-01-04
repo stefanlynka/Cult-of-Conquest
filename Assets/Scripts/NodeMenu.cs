@@ -8,13 +8,13 @@ public class NodeMenu : MonoBehaviour
     public static GameObject currentArmy;
     GameObject[] backRowSpaces = new GameObject[5];
     GameObject[] frontRowSpaces = new GameObject[5];
-    GameObject prophetMenu, buyProphetButton, locationMenu, effigyNodeMenu, effigyArmyMenu, effigyNodeSprite, effigyArmySprite, incomeLabel;
+    GameObject prophetMenu, buyProphetButton, locationMenu, effigyNodeMenu, effigyArmyMenu, effigyNodeSprite, effigyArmySprite, incomeLabel, armyMenu;
 
     public static bool nodeMenuOpen = false;
 
     // Start is called before the first frame update
-    void Start(){
-        FindUnitSpaces();
+    void Start() { 
+        armyMenu = Tools.GetChildNamed(gameObject, "Army Menu");
         prophetMenu = Tools.GetChildNamed(gameObject, "Prophet Menu");
         buyProphetButton = Tools.GetChildNamed(prophetMenu, "Buy Prophet Button");
         locationMenu = Tools.GetChildNamed(gameObject, "Location Menu");
@@ -23,6 +23,7 @@ public class NodeMenu : MonoBehaviour
         effigyNodeSprite = Tools.GetChildNamed(effigyNodeMenu, "Effigy Sprite");
         effigyArmySprite = Tools.GetChildNamed(effigyArmyMenu, "Effigy Sprite");
         incomeLabel = Tools.GetChildNameContains(gameObject, "Node Income Label");
+        FindUnitSpaces();
     }
 
     // Update is called once per frame
@@ -44,7 +45,7 @@ public class NodeMenu : MonoBehaviour
         nodeMenuOpen = true;
         ProphetMenuCheck();
         Player.menuOpen = 1;
-        if (currentArmy) print("Army Power: "+currentArmy.GetComponent<Army>().GetOffensivePower());
+        //if (currentArmy) print("Army Power: "+currentArmy.GetComponent<Army>().GetOffensivePower());
     }
 
     public void ExitMenu() {
@@ -123,7 +124,6 @@ public class NodeMenu : MonoBehaviour
     }
 
     void FindUnitSpaces() {
-        GameObject armyMenu = Tools.GetChildNamed(gameObject, "Army Menu");
         GameObject unitRows = Tools.GetChildNamed(armyMenu, "Unit Rows");
         GameObject backRow = Tools.GetChildNamed(unitRows, "Back Row");
         GameObject frontRow = Tools.GetChildNamed(unitRows, "Front Row");
@@ -206,11 +206,14 @@ public class NodeMenu : MonoBehaviour
 
     public void ProphetMenuCheck() {
         if (currentArmy) {
+            armyMenu.SetActive(true);
             prophetMenu.SetActive(false);
             LoadArmy();
+            //print("army found here");
         }
         else {
             prophetMenu.SetActive(true);
+            armyMenu.SetActive(false);
             if (currentNode.GetComponent<Node>().temple != null && currentNode.GetComponent<Node>().temple.name == TempleName.Origin) {
                 buyProphetButton.GetComponent<BuyProphetButton>().SetTextByTemple(true);
             }

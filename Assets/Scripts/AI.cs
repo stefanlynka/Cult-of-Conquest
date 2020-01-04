@@ -227,6 +227,7 @@ public class AI : MonoBehaviour {
         int totalMoneyNeeded = 0;
         investInProphets = 0;
         unallocatedMoney = GetComponent<Player>().money;
+        print("unallocated money at start" + unallocatedMoney);
         //print("Unallocated Money (before matching): " + unallocatedMoney);
         //Dictionary<GameObject, int> armyRequirements = new Dictionary<GameObject, int>();
         foreach (GameObject army in armies) {
@@ -240,6 +241,8 @@ public class AI : MonoBehaviour {
         //else print("Have enough money to allocate");
         //print("Total Money Needed: " + totalMoneyNeeded);
         while (unallocatedMoney >= 5) {
+            print("new option");
+            print("unallocated money = " + unallocatedMoney);
             bestOptions.Clear();
             GetProphetUtility();
             GetArmyUtility();
@@ -250,6 +253,9 @@ public class AI : MonoBehaviour {
                 CommitBestOption(bestOptions);
             }
             else unallocatedMoney = 0;
+        }
+        foreach (AllocateOption option in committedOptions) {
+            print("Option: " + option.type);
         }
         //print("All money allocated");
     }
@@ -271,7 +277,7 @@ public class AI : MonoBehaviour {
 
             unitsNeeded = UnitsNeededByCopying(frontRowDefault, backRowDefault, templeDefault, altarDefault, threat);
             if (unitsNeeded.Count > 0) {
-                print("Building " + unitsNeeded.Count + " units will be enough");
+                //print("Building " + unitsNeeded.Count + " units will be enough");
                 for (int i = 0; i < unitsNeeded.Count; i++) {
                     moneyNeeded += unitsNeeded[i].moneyCost;
                     //print("this unit cost: " + unitsNeeded[i].moneyCost);
@@ -311,9 +317,9 @@ public class AI : MonoBehaviour {
         enemyUnits.Sort(Tools.SortByPower);
         int index = 1;
         int numOpenSpots = Tools.GetOpenSpotCount(frontRowSimulated, backRowSimulated);
-        print("numOpenSpots " + numOpenSpots);
+        //print("numOpenSpots " + numOpenSpots);
         while (index <= enemyUnits.Count && index <= numOpenSpots && GetDefensivePower(frontRowSimulated, backRowSimulated, templeSimulated, altarSimulated) < threatLevel) {
-            print("copying enemy unit");
+            //print("copying enemy unit");
             MapUnit simulatedUnit = GetComponent<Player>().unitBlueprints[Tools.UnitToIndex(enemyUnits[enemyUnits.Count-index])].DeepCopy();
             Tools.AddUnitToRows(frontRowSimulated, backRowSimulated, simulatedUnit);
             unitsNeeded.Add(simulatedUnit);
@@ -326,7 +332,7 @@ public class AI : MonoBehaviour {
         }
 
         if (templeSimulated == null) {
-            print("build a temple");
+            //print("build a temple");
             templeSimulated = GetComponent<Player>().templeBlueprints[TempleName.Protection].DeepCopy();
             MapUnit templeStandIn = new MapUnit("Temple", Faction.None, "");
             templeStandIn.moneyCost = 30;//GetComponent<Player>().templeBlueprints[TempleName.Protection].cost;
@@ -336,7 +342,7 @@ public class AI : MonoBehaviour {
             }
         }
         if (altarSimulated == null) {
-            print("build an altar");
+            //print("build an altar");
             altarSimulated = GetComponent<Player>().altarBlueprints[AltarName.Conflict].DeepCopy();
             MapUnit altarStandIn = new MapUnit("Altar", Faction.None, "");
             altarStandIn.moneyCost = 20;//GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost;
@@ -414,7 +420,8 @@ public class AI : MonoBehaviour {
     void GetArmyUtility() {
         float maxUtility = 0;
         GameObject armyToImprove = null;
-        int unitIndex = 0;
+        int newUnitIndex = 0;
+        //int bestNewIndex = 0;
         int bestUnitCost = 0;
         OptionType buildType = OptionType.None;
         UnitPos bestUnitPos = new UnitPos();
@@ -485,7 +492,7 @@ public class AI : MonoBehaviour {
                     if (utility > maxUtility && unallocatedMoney >= unitCost) {
                         maxUtility = utility;
                         armyToImprove = army;
-                        unitIndex = i;
+                        newUnitIndex = i;
                         bestUnitCost = unitCost;
                         buildType = OptionType.Unit;
                     }
@@ -494,6 +501,7 @@ public class AI : MonoBehaviour {
             // if there's no open slot, try upgrading each simulated unit or replacing every real unit
             else {
                 foreach (MapUnit unitToBeReplaced in frontRowSimulated) {
+                    int unitToBeReplacedIndex = Tools.UnitToIndex(unitToBeReplaced);
                     for (int i = 1; i < 4; i++) {
                         if (i == 2) i = 3;
                         MapUnit[] frontRowSimulatedUpgrade = Tools.DeepCopyMapUnitArray(frontRowSimulated);
@@ -506,11 +514,11 @@ public class AI : MonoBehaviour {
                             if (i == 1) unitCost = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(1) - army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(0);
                             if (i == 3) unitCost = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(3) - army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(1);
                         }
-                        float utility = (15 * GetOffensivePower(frontRowSimulatedUpgrade, backRowSimulatedUpgrade) / currentPower) / unitCost;
+                        float utility = 15 * (GetOffensivePower(frontRowSimulatedUpgrade, backRowSimulatedUpgrade) - currentPower) / unitCost;
                         if (utility > maxUtility && unallocatedMoney >= unitCost) {
                             maxUtility = utility;
                             armyToImprove = army;
-                            unitIndex = i;
+                            newUnitIndex = i;
                             bestUnitCost = unitCost;
                             if (replacingSimulated) {
                                 buildType = OptionType.Upgrade;
@@ -540,7 +548,7 @@ public class AI : MonoBehaviour {
                         if (utility > maxUtility && unallocatedMoney >= unitCost) {
                             maxUtility = utility;
                             armyToImprove = army;
-                            unitIndex = i;
+                            newUnitIndex = i;
                             bestUnitCost = unitCost;
                             if (replacingSimulated) {
                                 buildType = OptionType.Upgrade;
@@ -557,15 +565,15 @@ public class AI : MonoBehaviour {
         }
         if (armyToImprove != null) {
             if (buildType == OptionType.Unit) {
-                AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, unitIndex);
+                AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, newUnitIndex);
                 bestOptions.Add(option);
             }
             else if (buildType == OptionType.Upgrade) {
-                AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, unitIndex, oldUnitIndex);
+                AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, newUnitIndex, oldUnitIndex);
                 bestOptions.Add(option);
             }
             else if (buildType == OptionType.Replace) {
-                AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, unitIndex, bestUnitPos);
+                AllocateOption option = new AllocateOption(buildType, maxUtility, bestUnitCost, armyToImprove, newUnitIndex, bestUnitPos);
                 bestOptions.Add(option);
             }
             //print("Max Utility = " + maxUtility);
@@ -686,6 +694,7 @@ public class AI : MonoBehaviour {
         //print("Best Option: " + options[bestOptions.Count - 1].type + " utility: " + options[bestOptions.Count - 1].utility);
         //print("Worst Option: " + options[0].type + " utility: "+ options[0].utility);
         AllocateOption bestOption = options[bestOptions.Count - 1];
+        print("Best Option: " + bestOption.type);
         if (bestOption.type != OptionType.Upgrade) committedOptions.Add(bestOption);
         //if (bestOption.type == "prophet") investInProphets += 30;
         if (bestOption.type == OptionType.Upgrade) Replace(bestOption);
@@ -694,41 +703,46 @@ public class AI : MonoBehaviour {
     }
     void ExecuteOptions(List<AllocateOption> options) {
         //print(options.Count + " Actions to Execute");
+        print("Money Before: " + GetComponent<Player>().money);
+        print("Unallocated Money Before: " + unallocatedMoney);
         while (committedOptions.Count > 0) {
             AllocateOption option = options[0];
             committedOptions.RemoveAt(0);
             switch (option.type) {
                 case OptionType.Unit:
-                    //print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
+                    print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
                     option.army.GetComponent<Army>().BuyUnit(option.army.GetComponent<Army>().GetOpenPosition(), GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
                 case OptionType.Replace:
-                    //print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos);
+                    print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos);
                     option.army.GetComponent<Army>().BuyUnit(option.unitPos, GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
                 case OptionType.Replenish:
-                    //print("Saving " + option.cost + " for replenishing");
+                    print("Saving " + option.cost + " for replenishing");
                     option.army.GetComponent<Army>().allocatedReplenish += option.cost;
                     break;
                 case OptionType.Prophet:
-                    //print("Saving " + option.cost + " for prophet");
+                    print("Saving " + option.cost + " for prophet");
                     investInProphets += 30;
                     break;
                 case OptionType.Temple:
-                    //print("Building Temple of " + option.templeName);
+                    print("Building Temple of " + option.templeName);
                     GetComponent<Player>().BuyTemple(option.node, option.templeName);
                     break;
                 case OptionType.Altar:
-                    //print("Building Altar of " + option.altarName);
+                    print("Building Altar of " + option.altarName);
                     GetComponent<Player>().BuyAltar(option.node, option.altarName);
                     break;
             }
         }
+        print("Money After: " + GetComponent<Player>().money);
+        print("Unallocated Money After: " + unallocatedMoney);
     }
     void Replace(AllocateOption upgradedOption) {
         foreach(AllocateOption oldOption in committedOptions) {
             if (oldOption.type == OptionType.Unit && oldOption.army == upgradedOption.army && oldOption.unitIndex == upgradedOption.oldUnitIndex) {
-                oldOption.unitIndex = upgradedOption.oldUnitIndex;
+                //print("upgrade worked. From " + oldOption.unitIndex + " to " + upgradedOption.unitIndex);
+                oldOption.unitIndex = upgradedOption.unitIndex;
                 return;
             }
         }
@@ -764,7 +778,7 @@ public class AI : MonoBehaviour {
         int lowestIncome = 9999;
         foreach (GameObject army in GetComponent<Player>().armies) {
             GameObject armyNode = army.GetComponent<Army>().currentNode;
-            if (armyNode.GetComponent<Node>().altar == null) return armyNode;
+            if (!PlantToUseNodesAltar(armyNode) && armyNode.GetComponent<Node>().altar == null) return armyNode;
         }
         foreach (GameObject node in ownedNodes) {
             if (!PlanToUseNodesAltar(node) && node.GetComponent<Node>().altar == null) {
@@ -1027,7 +1041,7 @@ public class AI : MonoBehaviour {
         for (int i = 0; i < armies.Count; i++) {
             GameObject currentArmy = armies[i];
             if (AttackNeutral(currentArmy)) {
-                print("Attacking Neutral");
+                //print("Attacking Neutral");
                 readyToExecute = false;
                 moreToDoInPhase = true;
                 //print("attacking, not ready to execute");

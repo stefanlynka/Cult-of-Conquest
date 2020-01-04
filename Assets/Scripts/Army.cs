@@ -75,10 +75,10 @@ public class Army : MonoBehaviour {
             float randFloat = Random.Range(0, 10000);
             Intent move = movesToDo[0];
             movesToDo.Remove(move);
-            print("New Move: About to switch readyToMove from:" + readyToMove + " " + randFloat.ToString());
+            //print("New Move: About to switch readyToMove from:" + readyToMove + " " + randFloat.ToString());
             readyToMove = false;
-            print("New Move: Just switched readyToMove to:" + readyToMove + " " + randFloat.ToString());
-            print("Army: " + move.armyMoving.name + " moving to: " + move.targetNode + " " + randFloat.ToString());
+            //print("New Move: Just switched readyToMove to:" + readyToMove + " " + randFloat.ToString());
+            //print("Army: " + move.armyMoving.name + " moving to: " + move.targetNode + " " + randFloat.ToString());
             if (move.armyMoving) move.armyMoving.GetComponent<Army>().EnterNode(move.targetNode);
             else readyToMove = true;
         }

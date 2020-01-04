@@ -21,6 +21,7 @@ public class EffigyInNodeButton : MonoBehaviour{
             Effigy placeholder = NodeMenu.currentArmy.GetComponent<Army>().effigy;
             NodeMenu.currentArmy.GetComponent<Army>().effigy = NodeMenu.currentNode.GetComponent<Node>().effigy;
             NodeMenu.currentNode.GetComponent<Node>().effigy = placeholder;
+            nodeMenu.GetComponent<NodeMenu>().LoadEffigy();
         }
         /*
         if (Player.menuOpen == 1 && NodeMenu.currentArmy!= null && NodeMenu.currentArmy.GetComponent<Army>().effigy != null) {

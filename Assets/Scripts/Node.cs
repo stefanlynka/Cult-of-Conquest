@@ -58,13 +58,20 @@ public class Node : MonoBehaviour
     }
 
     public void Highlight() {
-        //print("highlighted: "+ gameObject);
+        if (occupant != null && !highlighted) {
+            occupant.transform.position = new Vector3(occupant.transform.position.x, occupant.transform.position.y, occupant.transform.position.z - 25);
+        }
         if (!highlighted) transform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z-25);
         highlighted = true;
+
     }
     public void Unhighlight() {
+        if (occupant != null && highlighted) {
+            occupant.transform.position = new Vector3(occupant.transform.position.x, occupant.transform.position.y, occupant.transform.position.z + 25);
+        }
         if (highlighted) transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 25);
         highlighted = false;
+
     }
 
     private void OnMouseDown() {
