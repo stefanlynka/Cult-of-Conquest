@@ -59,12 +59,12 @@ public class MoveAnimator : MonoBehaviour{
             else if (!atTarget) {
                 atTarget = true;
                 if (attacking) {
-                    print("Arrived at battlefield "+targetNode);
+                    //print("Arrived at battlefield "+targetNode);
                     GetComponent<Army>().owner.GetComponent<Player>().PrepBattle(gameObject, targetNode);
                     GameObject.Find("/Battle Menu").GetComponent<BattleMenu>().EnterMenu();
                 }
                 if (!attacking) {
-                    print(gameObject.name + " at Destination: " + target);
+                    //print(gameObject.name + " at Destination: " + target);
                     GetComponent<Army>().OccupyNode(targetNode);
                     Army.readyToMove = true;
                     Army.armyAttacking = false;

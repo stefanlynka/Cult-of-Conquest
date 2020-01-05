@@ -80,10 +80,10 @@ public class Army : MonoBehaviour {
             readyToMove = false;
             armyAttacking = true;
             //print("New Move: Just switched readyToMove to:" + readyToMove + " " + randFloat.ToString());
-            print("Army: " + move.armyMoving.name + " moving to: " + move.targetNode);
+            //print("Army: " + move.armyMoving.name + " moving to: " + move.targetNode);
             if (move.armyMoving) move.armyMoving.GetComponent<Army>().EnterNode(move.targetNode);
             else {
-                print("MOVE INCOMPLETABLE");
+                //print("MOVE INCOMPLETABLE");
                 readyToMove = true;
             }
         }
@@ -380,7 +380,7 @@ return power;
 
     public bool HasOpenPosition() {
         if (units.Count < 8) return true;
-        print("no openings");
+        //print("no openings");
         return false;
     } 
 

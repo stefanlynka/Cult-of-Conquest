@@ -57,6 +57,7 @@ public class BattleMenu : MonoBehaviour{
                 InstantBattle();
             }
             else if (retreatAllowed) Retreat();
+
             ExitMenu();
         }
     }
@@ -358,7 +359,7 @@ public class BattleMenu : MonoBehaviour{
             if (defendArmy) defendingPlayer.GetComponent<Player>().factionTraits.EnemyRetreated(defendArmy);
             if (attackArmy) attackArmy.GetComponent<Army>().OrderToEnterNodeNow(attackArmy.GetComponent<Army>().currentNode);
             else {
-                ExitMenu();
+                //ExitMenu();
             }
             //attackArmy.GetComponent<MoveAnimator>().SetTarget(attackArmy.GetComponent<Army>().currentNode.transform.position, false);
             if (inSimulation) {
@@ -369,7 +370,7 @@ public class BattleMenu : MonoBehaviour{
                 if (attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && defendArmy) {
                     attackArmy.GetComponent<Army>().owner.GetComponent<AI>().RememberArmy(defendArmy);
                 }
-                ExitMenu();
+                //ExitMenu();
             }
         }
     }

@@ -295,7 +295,7 @@ public class FactionManager : MonoBehaviour{
             }
             int rewardMoney = (int)(totalCostLost * differenceInPower * modifier);
 
-            print("Reward Money:" + rewardMoney);
+            //print("Reward Money:" + rewardMoney);
             army.GetComponent<Army>().owner.GetComponent<Player>().money += rewardMoney;
             Tools.CreatePopup(GameObject.Find("/Resource HUD"), "Reward Money: +" + rewardMoney, 40, Color.yellow);
         }

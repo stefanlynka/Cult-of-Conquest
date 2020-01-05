@@ -18,6 +18,8 @@ public class AI : MonoBehaviour {
     bool moreToDoInPhase = false;
     int unallocatedMoney = 0;
     int investInProphets = 0;
+    int endTurnTimer = 0;
+    int endTurnMax = 100;
     //int investInBuildings = 0;
 
 
@@ -42,6 +44,7 @@ public class AI : MonoBehaviour {
             if (readyToExecute && Army.readyToMove && Army.movesToDo.Count == 0) {
                 if (turnPhase == TurnPhase.DefendAgainstThreats) {
                     //print("Defending Phase");
+                    endTurnTimer = 0;
                     Defend();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Scouting;
                 }
@@ -81,7 +84,9 @@ public class AI : MonoBehaviour {
                     if (readyForNextPhase()) turnPhase = TurnPhase.Done;
                 }
                 else if (turnPhase == TurnPhase.Done) {
-                    if (Army.movesToDo.Count==0 && Input.GetKeyDown(KeyCode.Space)) turnManager.GetComponent<TurnManager>().NextTurn();
+                    endTurnTimer++;
+                    endTurnMax = 30 + 5 * armies.Count;
+                    if (Army.movesToDo.Count==0 && endTurnTimer>endTurnMax) turnManager.GetComponent<TurnManager>().NextTurn();
                     //print("Turn Over");
                 }
 
@@ -204,6 +209,7 @@ public class AI : MonoBehaviour {
             if (neighbouringArmy != null && neighbouringArmy.GetComponent<Army>().faction != faction && neighbouringArmy.GetComponent<Army>().faction != Faction.Independent) {
                 if (!enemyArmyInfo.ContainsKey(neighbouringArmy) || (enemyArmyInfo.ContainsKey(neighbouringArmy) && enemyArmyInfo[neighbouringArmy].timeSinceScout >= 2)) {
                     print("Go Scout: " + neighbourNode.name);
+                    if ((enemyArmyInfo.ContainsKey(neighbouringArmy) && enemyArmyInfo[neighbouringArmy].timeSinceScout >= 2)) print("Time since scout: " + enemyArmyInfo[neighbouringArmy].timeSinceScout);
                     readyToExecute = false;
                     RememberArmy(neighbouringArmy);
                     GetComponent<Player>().attackNode(army, neighbourNode);
@@ -1293,6 +1299,7 @@ public class AI : MonoBehaviour {
         turnPhase = TurnPhase.DefendAgainstThreats;
         readyToExecute = true;
         unallocatedMoney = GetComponent<Player>().money;
+        IncrementArmyInfo();
     }
 
 
@@ -1313,11 +1320,19 @@ public class AI : MonoBehaviour {
         }
     }
     void IncrementArmyInfo() {
-        foreach (KeyValuePair<GameObject, ArmyInfo> info in enemyArmyInfo) {
-            ArmyInfo newInfo = info.Value;
+
+        var placeholderList = new List<(GameObject,ArmyInfo)>();
+
+        foreach (KeyValuePair<GameObject, ArmyInfo> originalInfo in enemyArmyInfo) {
+            ArmyInfo newInfo = originalInfo.Value;
             newInfo.timeSinceScout++;
-            enemyArmyInfo[info.Key] = newInfo;
+            var newKeyPair = (originalInfo.Key, newInfo);
+            placeholderList.Add(newKeyPair);
         }
+        foreach((GameObject, ArmyInfo) info in placeholderList) {
+            enemyArmyInfo[info.Item1] = info.Item2;
+        }
+
     }
     bool readyForNextPhase() {
         if (!moreToDoInPhase && Army.readyToMove && !Army.armyAttacking) return true;
