@@ -5,24 +5,38 @@ using UnityEngine;
 public class MoveAnimator : MonoBehaviour{
 
     Vector3 target;
-    bool atTarget;
+    bool atTarget = true;
     bool attacking = false;
     float moveSpeed = 0.05f;
     int waitingTime = 0;
+    GameObject targetNode = null;
 
     // Start is called before the first frame update
     void Start(){
-        SetTarget(transform.position, false);
+        SetTargetPosition(transform.position);
+        atTarget = true;
     }
 
     // Update is called once per frame
     void Update() {
         if (Vector3.Distance(transform.position, target)>0.01) MoveToTarget();
     }
-    public void SetTarget(Vector3 targetPos, bool isAttacking) {
+    public void SetTargetPosition(Vector3 targetPos) {
         target = targetPos;
-        attacking = isAttacking;
+        attacking = false;
         atTarget = false;
+    }
+    public void SetTargetMove(Vector3 targetPos, GameObject destinationNode) {
+        target = targetPos;
+        attacking = false;
+        atTarget = false;
+        targetNode = destinationNode;
+    }
+    public void SetTargetAttack(Vector3 targetPos, GameObject destinationNode) {
+        target = targetPos;
+        attacking = true;
+        atTarget = false;
+        targetNode = destinationNode;
     }
     void MoveToTarget() {
         if (Player.menuOpen != 0) {
@@ -45,11 +59,15 @@ public class MoveAnimator : MonoBehaviour{
             else if (!atTarget) {
                 atTarget = true;
                 if (attacking) {
-                    //print("we're here and ready to rumble");
+                    print("Arrived at battlefield "+targetNode);
+                    GetComponent<Army>().owner.GetComponent<Player>().PrepBattle(gameObject, targetNode);
                     GameObject.Find("/Battle Menu").GetComponent<BattleMenu>().EnterMenu();
                 }
                 if (!attacking) {
+                    print(gameObject.name + " at Destination: " + target);
+                    GetComponent<Army>().OccupyNode(targetNode);
                     Army.readyToMove = true;
+                    Army.armyAttacking = false;
                     //print("at destination, ready to execute");
                     if (GetComponent<Army>().owner.GetComponent<AI>()) GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
                 }

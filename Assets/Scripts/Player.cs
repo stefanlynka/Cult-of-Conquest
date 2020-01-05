@@ -49,6 +49,11 @@ public class Player : MonoBehaviour
                 //Tools.CreatePopup(gameObject, "another check",50, Color.blue);
             }
         }
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            foreach(Intent move in Army.movesToDo) {
+                print(move.armyMoving + " trying to move to " + move.targetNode);
+            }
+        }
     }
 
 
@@ -250,9 +255,20 @@ public class Player : MonoBehaviour
 
 
     public void Invade(GameObject attackingArmy, GameObject defendingNode) {
-        GameObject attackArmyMenu = Tools.GetChildNamed(battleMenu, "Attacking Army Menu");
-        GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
 
+        if (defendingNode.GetComponent<Node>().occupant) {
+            GameObject defendingArmy = defendingNode.GetComponent<Node>().occupant;
+            if (defendingArmy.GetComponent<Army>().owner && defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Defensive Discord")) {
+                int randInt = Random.Range(1, 11); //1 to 10
+                if (randInt <= defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades["Defensive Discord"].currentLevel) {
+                    defendingNode = attackingArmy.GetComponent<Army>().GetRandomDifferentTarget(defendingArmy.GetComponent<Army>().currentNode);
+                }
+            }
+        }
+
+        attackingArmy.GetComponent<MoveAnimator>().SetTargetAttack(defendingNode.transform.position, defendingNode);
+
+        /*
         if (defendingNode.GetComponent<Node>().occupant) {
             GameObject defendingArmy = defendingNode.GetComponent<Node>().occupant;
             if (defendingArmy.GetComponent<Army>().owner && defendingArmy.GetComponent<Army>().owner.GetComponent<Player>().upgrades.ContainsKey("Defensive Discord")) {
@@ -265,6 +281,22 @@ public class Player : MonoBehaviour
         }
 
         attackingArmy.GetComponent<MoveAnimator>().SetTarget(defendingNode.transform.position, true);
+
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingNode);
+        battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingNode);
+        attackArmyMenu.GetComponent<ArmyMenu>().LoadArmy(attackingArmy);
+        defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingNode);
+        */
+    }
+
+    public void PrepBattle(GameObject attackingArmy, GameObject defendingNode) {
+        GameObject attackArmyMenu = Tools.GetChildNamed(battleMenu, "Attacking Army Menu");
+        GameObject defendArmyMenu = Tools.GetChildNamed(battleMenu, "Defending Army Menu");
+
+        if (defendingNode.GetComponent<Node>().occupant) {
+            GameObject defendingArmy = defendingNode.GetComponent<Node>().occupant;
+            defendArmyMenu.GetComponent<ArmyMenu>().LoadArmy(defendingArmy);
+        }
 
         defendArmyMenu.GetComponent<ArmyMenu>().LoadBuildings(defendingNode);
         battleMenu.GetComponent<BattleMenu>().SetupBattle(attackingArmy, defendingNode);
@@ -316,13 +348,14 @@ public class Player : MonoBehaviour
         newArmy.AddComponent<Army>();
         newArmy.AddComponent<CircleCollider2D>();
         newArmy.AddComponent<MoveAnimator>();
-        newArmy.GetComponent<MoveAnimator>().SetTarget(newArmy.transform.position, false);
+        //newArmy.GetComponent<MoveAnimator>().SetTargetPosition(newArmy.transform.position);
         newArmy.transform.position = new Vector3(node.transform.position.x, node.transform.position.y, -1);
         newArmy.transform.parent = gameObject.transform;
         newArmy.GetComponent<Army>().currentNode = node;
         newArmy.GetComponent<Army>().owner = gameObject;
         newArmy.GetComponent<Army>().faction = faction;
-        newArmy.name = "Army";
+        int randomInt = Random.Range(0, 1000);
+        newArmy.name = "Army "+ randomInt;
         newArmy.GetComponent<Army>().AddUnit(0, true, unitBlueprints[2]);
         newArmy.transform.localScale = new Vector3(0.075f, 0.075f, 1f);
         armies.Add(newArmy);
@@ -352,6 +385,7 @@ public class Player : MonoBehaviour
     }
 
     public void StartTurn() {
+        print(".\n.\n.");
         print("Start Turn!: "+faction);
         money += GetMoneyIncome();
         //print("Money: " + money);

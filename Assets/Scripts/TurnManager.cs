@@ -46,7 +46,7 @@ public class TurnManager : MonoBehaviour{
     }
 
     public void NextTurn() {
-        print("Turn Over: "+currentPlayer.GetComponent<Player>().faction + " with " + currentPlayer.GetComponent<Player>().money + " money");
+        print("Turn Over: "+currentPlayer.GetComponent<Player>().faction + " with $" + currentPlayer.GetComponent<Player>().money);
         currentPlayer.GetComponent<Player>().factionTraits.EndTurn(currentPlayer);
         index++;
         if (index >= players.Count) index = 0;

@@ -67,6 +67,9 @@ public class AI : MonoBehaviour {
                 else if (turnPhase == TurnPhase.Spending2) {
                     //print("Spending 2 Phase");
                     SpendSavedMoney();
+                    AllocateMoney();
+                    SpendMoney();
+                    SpendZeal();
                     if (readyForNextPhase()) turnPhase = TurnPhase.Attacks2;
                 }
                 else if (turnPhase == TurnPhase.Attacks2) {
@@ -78,7 +81,7 @@ public class AI : MonoBehaviour {
                     if (readyForNextPhase()) turnPhase = TurnPhase.Done;
                 }
                 else if (turnPhase == TurnPhase.Done) {
-                    turnManager.GetComponent<TurnManager>().NextTurn();
+                    if (Army.movesToDo.Count==0 && Input.GetKeyDown(KeyCode.Space)) turnManager.GetComponent<TurnManager>().NextTurn();
                     //print("Turn Over");
                 }
 
@@ -131,7 +134,7 @@ public class AI : MonoBehaviour {
         }
 
         for (int i = 0; i < nodesByThreat.Count; i++) {
-            print("nodesByThreat: " + nodesByThreat[i].GetComponent<Node>().GetThreatToNode());
+            //print("nodesByThreat: " + nodesByThreat[i].GetComponent<Node>().GetThreatToNode());
         }
 
         GameObject armyNode = army.GetComponent<Army>().currentNode;
@@ -150,7 +153,7 @@ public class AI : MonoBehaviour {
         }
 
         if (reachableThreatenedNode != null && reachableThreatenedNode != armyNode && MoreThreatenedThan(reachableThreatenedNode, armyNode)) {
-            print("found someone worth protecting :')");
+            //print("found someone worth protecting :')");
             readyToExecute = false;
             GetComponent<Player>().attackNode(army, reachableThreatenedNode);
             return true;
@@ -227,7 +230,7 @@ public class AI : MonoBehaviour {
         int totalMoneyNeeded = 0;
         investInProphets = 0;
         unallocatedMoney = GetComponent<Player>().money;
-        print("unallocated money at start" + unallocatedMoney);
+        //print("unallocated money at start $" + unallocatedMoney);
         //print("Unallocated Money (before matching): " + unallocatedMoney);
         //Dictionary<GameObject, int> armyRequirements = new Dictionary<GameObject, int>();
         foreach (GameObject army in armies) {
@@ -241,8 +244,8 @@ public class AI : MonoBehaviour {
         //else print("Have enough money to allocate");
         //print("Total Money Needed: " + totalMoneyNeeded);
         while (unallocatedMoney >= 5) {
-            print("new option");
-            print("unallocated money = " + unallocatedMoney);
+            //print("new option");
+            //print("unallocated money = " + unallocatedMoney);
             bestOptions.Clear();
             GetProphetUtility();
             GetArmyUtility();
@@ -255,7 +258,7 @@ public class AI : MonoBehaviour {
             else unallocatedMoney = 0;
         }
         foreach (AllocateOption option in committedOptions) {
-            print("Option: " + option.type);
+            //print("Option: " + option.type);
         }
         //print("All money allocated");
     }
@@ -694,7 +697,7 @@ public class AI : MonoBehaviour {
         //print("Best Option: " + options[bestOptions.Count - 1].type + " utility: " + options[bestOptions.Count - 1].utility);
         //print("Worst Option: " + options[0].type + " utility: "+ options[0].utility);
         AllocateOption bestOption = options[bestOptions.Count - 1];
-        print("Best Option: " + bestOption.type);
+        //print("Best Option: " + bestOption.type);
         if (bestOption.type != OptionType.Upgrade) committedOptions.Add(bestOption);
         //if (bestOption.type == "prophet") investInProphets += 30;
         if (bestOption.type == OptionType.Upgrade) Replace(bestOption);
@@ -703,40 +706,40 @@ public class AI : MonoBehaviour {
     }
     void ExecuteOptions(List<AllocateOption> options) {
         //print(options.Count + " Actions to Execute");
-        print("Money Before: " + GetComponent<Player>().money);
-        print("Unallocated Money Before: " + unallocatedMoney);
+        //print("Money Before: " + GetComponent<Player>().money);
+        //print("Unallocated Money Before: %" + unallocatedMoney);
         while (committedOptions.Count > 0) {
             AllocateOption option = options[0];
             committedOptions.RemoveAt(0);
             switch (option.type) {
                 case OptionType.Unit:
-                    print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
+                    //print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
                     option.army.GetComponent<Army>().BuyUnit(option.army.GetComponent<Army>().GetOpenPosition(), GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
                 case OptionType.Replace:
-                    print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos);
+                    //print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos);
                     option.army.GetComponent<Army>().BuyUnit(option.unitPos, GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
                 case OptionType.Replenish:
-                    print("Saving " + option.cost + " for replenishing");
+                    //print("Saving " + option.cost + " for replenishing");
                     option.army.GetComponent<Army>().allocatedReplenish += option.cost;
                     break;
                 case OptionType.Prophet:
-                    print("Saving " + option.cost + " for prophet");
+                    //print("Saving " + option.cost + " for prophet");
                     investInProphets += 30;
                     break;
                 case OptionType.Temple:
-                    print("Building Temple of " + option.templeName);
+                    //print("Building Temple of " + option.templeName);
                     GetComponent<Player>().BuyTemple(option.node, option.templeName);
                     break;
                 case OptionType.Altar:
-                    print("Building Altar of " + option.altarName);
+                    //print("Building Altar of " + option.altarName);
                     GetComponent<Player>().BuyAltar(option.node, option.altarName);
                     break;
             }
         }
-        print("Money After: " + GetComponent<Player>().money);
-        print("Unallocated Money After: " + unallocatedMoney);
+        //print("Money After: $" + GetComponent<Player>().money);
+        //print("Unallocated Money After: " + unallocatedMoney);
     }
     void Replace(AllocateOption upgradedOption) {
         foreach(AllocateOption oldOption in committedOptions) {
@@ -778,7 +781,7 @@ public class AI : MonoBehaviour {
         int lowestIncome = 9999;
         foreach (GameObject army in GetComponent<Player>().armies) {
             GameObject armyNode = army.GetComponent<Army>().currentNode;
-            if (!PlantToUseNodesAltar(armyNode) && armyNode.GetComponent<Node>().altar == null) return armyNode;
+            if (!PlanToUseNodesAltar(armyNode) && armyNode.GetComponent<Node>().altar == null) return armyNode;
         }
         foreach (GameObject node in ownedNodes) {
             if (!PlanToUseNodesAltar(node) && node.GetComponent<Node>().altar == null) {
@@ -1317,7 +1320,7 @@ public class AI : MonoBehaviour {
         }
     }
     bool readyForNextPhase() {
-        if (!moreToDoInPhase && Army.readyToMove) return true;
+        if (!moreToDoInPhase && Army.readyToMove && !Army.armyAttacking) return true;
         return false;
     }
     float GetExpectedPower(GameObject army) {

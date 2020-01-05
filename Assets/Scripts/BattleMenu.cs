@@ -95,6 +95,7 @@ public class BattleMenu : MonoBehaviour{
         Player.menuOpen = 0;
         if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>()) attackArmy.GetComponent<Army>().owner.GetComponent<AI>().readyToExecute = true;
         else if (attackingPlayer && attackingPlayer.GetComponent<AI>()) attackingPlayer.GetComponent<AI>().readyToExecute = true;
+        print("Battle over for " + attackArmy + " at " +defendNode);
         Army.readyToMove = true;
         //print("Exit. ReadyToMove: " + Army.readyToMove);
         EnableButtons();
@@ -315,9 +316,9 @@ public class BattleMenu : MonoBehaviour{
         if (target != null && attacker != null) {
             int damage = (int)(attacker.currentDamage * attacker.damageMod * target.vulnerableMod);
             if (attacker.name == "Altar" || attacker.name == "Temple") {
-                print(attacker.name + ": maxDamage = " + attacker.maxDamage);
-                print(attacker.name + ": currentDamage = " + attacker.currentDamage);
-                print(attacker.name + ": calculatedDamage = " + damage);
+                //print(attacker.name + ": maxDamage = " + attacker.maxDamage);
+                //print(attacker.name + ": currentDamage = " + attacker.currentDamage);
+                //print(attacker.name + ": calculatedDamage = " + damage);
             }
             if (attacker.fake) damage = 0;
             if (target.fake) damage *= 2;
@@ -393,15 +394,19 @@ public class BattleMenu : MonoBehaviour{
         RefreshBuildings();
         //GameObject winningArmy = defendArmy;
 
-        if (defenders.Count == 0) attackingPlayer.GetComponent<Player>().factionTraits.WonBattle(attackArmy);
+        if (defenders.Count == 0) {
+            attackingPlayer.GetComponent<Player>().factionTraits.WonBattle(attackArmy);
+            Army.armyAttacking = false;
+        }
         if (attackers.Count == 0) {
             attackArmy.GetComponent<Army>().Defeated();
-            Army.readyToMove = true;
+            ExitMenu();
+            //Army.readyToMove = true;
         }
         else if (defenders.Count == 0) {
             AttackerWins();
         }
-        if (retreating) {
+        if (retreating && attackers.Count != 0) {
             if (attackArmy && attackArmy.GetComponent<Army>().owner.GetComponent<AI>() && defendArmy) {
                 attackArmy.GetComponent<Army>().owner.GetComponent<AI>().RememberArmy(defendArmy);
             }
@@ -425,7 +430,7 @@ public class BattleMenu : MonoBehaviour{
         if (defendArmy && defendArmy.GetComponent<Army>().faction != Faction.Independent) defendArmy.GetComponent<Army>().Defeated();
 
         attackingPlayer.GetComponent<Player>().AddNode(defendNode);
-        attackArmy.GetComponent<Army>().MoveToNode(defendNode);
+        attackArmy.GetComponent<Army>().OccupyNode(defendNode);
         if (!AttackerCanAssimilate()) {
             defendNode.GetComponent<Node>().temple = null;
             defendNode.GetComponent<Node>().altar = null;
