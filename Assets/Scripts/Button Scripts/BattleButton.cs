@@ -29,6 +29,7 @@ public class BattleButton : MonoBehaviour{
             else {
                 print("AI retreating");
                 battleMenu.GetComponent<BattleMenu>().Retreat();
+                battleMenu.GetComponent<BattleMenu>().ExitMenu();
             }
         }
         else {
@@ -42,6 +43,7 @@ public class BattleButton : MonoBehaviour{
             }
             else if (buttonType == "retreat" && !battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
                 battleMenu.GetComponent<BattleMenu>().Retreat();
+                battleMenu.GetComponent<BattleMenu>().ExitMenu();
             }
             else if (buttonType == "back" && battleMenu.GetComponent<BattleMenu>().IsBattleOver()) {
                 battleMenu.GetComponent<BattleMenu>().ExitMenu();

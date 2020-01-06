@@ -334,7 +334,7 @@ public class BattleMenu : MonoBehaviour{
 
             if (target.currentHealth <= 0) {
                 if (defendingUnitArmy && defendingUnitArmy.GetComponent<Army>().owner) defendingUnitArmy.GetComponent<Army>().owner.GetComponent<Player>().factionTraits.ArmyLostUnit(defendingUnitArmy);
-                attackingPlayer.GetComponent<Player>().factionTraits.KilledEnemy(attackingUnitArmy, target);
+                if (attackingUnitArmy) attackingPlayer.GetComponent<Player>().factionTraits.KilledEnemy(attackingUnitArmy, target);
                 RemoveTargetFromCooldowns(target);
                 RemoveUnitFromLists(target);
                 if (defendArmy) defendingUnitArmy.GetComponent<Army>().RemoveUnit(target);

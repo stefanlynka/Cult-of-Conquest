@@ -207,9 +207,8 @@ public class AI : MonoBehaviour {
             GameObject neighbourNode = node.GetComponent<Node>().neighbours[i];
             GameObject neighbouringArmy = neighbourNode.GetComponent<Node>().occupant;
             if (neighbouringArmy != null && neighbouringArmy.GetComponent<Army>().faction != faction && neighbouringArmy.GetComponent<Army>().faction != Faction.Independent) {
-                if (!enemyArmyInfo.ContainsKey(neighbouringArmy) || (enemyArmyInfo.ContainsKey(neighbouringArmy) && enemyArmyInfo[neighbouringArmy].timeSinceScout >= 2)) {
+                if (!enemyArmyInfo.ContainsKey(neighbouringArmy) || (enemyArmyInfo.ContainsKey(neighbouringArmy) && enemyArmyInfo[neighbouringArmy].timeSinceScout >= 3)) {
                     print("Go Scout: " + neighbourNode.name);
-                    if ((enemyArmyInfo.ContainsKey(neighbouringArmy) && enemyArmyInfo[neighbouringArmy].timeSinceScout >= 2)) print("Time since scout: " + enemyArmyInfo[neighbouringArmy].timeSinceScout);
                     readyToExecute = false;
                     RememberArmy(neighbouringArmy);
                     GetComponent<Player>().attackNode(army, neighbourNode);
@@ -411,12 +410,12 @@ public class AI : MonoBehaviour {
     }
 
     void GetProphetUtility() {
-        if (unallocatedMoney >= 30 && investInProphets == 0 && ownedNodes.Count>armies.Count) {
-            float localNodesToConquer = 9;
+        if (unallocatedMoney >= 20 && investInProphets == 0 && ownedNodes.Count > armies.Count) {
+            float localNodesToConquer = 8;
             float expandingUtility = localNodesToConquer / armies.Count + 0.1f;
             //print("expanding Util: " + expandingUtility);
 
-            float protectBordersUtility = (GetFrontierNodeCount() * 5) / (2 * armies.Count + 0.1f);
+            float protectBordersUtility = Mathf.Pow((GetFrontierNodeCount() / armies.Count + 0.1f)-1,2);
             //print("protectborder Util: " + protectBordersUtility);
             float utility = Mathf.Max(expandingUtility, protectBordersUtility);
             AllocateOption option = new AllocateOption(OptionType.Prophet, utility, 30);
@@ -553,8 +552,12 @@ public class AI : MonoBehaviour {
                             if (i == 1) unitCost = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(1) - army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(0);
                             if (i == 3) unitCost = army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(3) - army.GetComponent<Army>().currentNode.GetComponent<Node>().GetUnitCost(1);
                         }
-                        float utility = (15 * GetOffensivePower(frontRowSimulatedUpgrade, backRowSimulatedUpgrade) / currentPower) / unitCost;
+                        float utility = 15 * (GetOffensivePower(frontRowSimulatedUpgrade, backRowSimulatedUpgrade) - currentPower) / unitCost;
                         if (utility > maxUtility && unallocatedMoney >= unitCost) {
+                            print("Current Power: " + currentPower);
+                            print("New Power: " + GetOffensivePower(frontRowSimulatedUpgrade, backRowSimulatedUpgrade));
+                            print("Unit Cost: " + unitCost);
+                            print("Utility: " + utility);
                             maxUtility = utility;
                             armyToImprove = army;
                             newUnitIndex = i;
@@ -717,29 +720,30 @@ public class AI : MonoBehaviour {
         while (committedOptions.Count > 0) {
             AllocateOption option = options[0];
             committedOptions.RemoveAt(0);
+            print("Utility: " + option.utility);
             switch (option.type) {
                 case OptionType.Unit:
-                    //print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
+                    print("Building unit: " + GetComponent<Player>().unitBlueprints[option.unitIndex].name + " for Army: " + option.army.name);
                     option.army.GetComponent<Army>().BuyUnit(option.army.GetComponent<Army>().GetOpenPosition(), GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
                 case OptionType.Replace:
-                    //print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos);
+                    print("Replacing Unit with "+ GetComponent<Player>().unitBlueprints[option.unitIndex].name + " in Army: "+ option.army + " at position "+ option.unitPos.position + " in frontrow " + option.unitPos.frontRow);
                     option.army.GetComponent<Army>().BuyUnit(option.unitPos, GetComponent<Player>().unitBlueprints[option.unitIndex]);
                     break;
                 case OptionType.Replenish:
-                    //print("Saving " + option.cost + " for replenishing");
+                    print("Saving " + option.cost + " for replenishing");
                     option.army.GetComponent<Army>().allocatedReplenish += option.cost;
                     break;
                 case OptionType.Prophet:
-                    //print("Saving " + option.cost + " for prophet");
+                    print("Saving " + option.cost + " for prophet");
                     investInProphets += 30;
                     break;
                 case OptionType.Temple:
-                    //print("Building Temple of " + option.templeName);
+                    print("Building Temple of " + option.templeName);
                     GetComponent<Player>().BuyTemple(option.node, option.templeName);
                     break;
                 case OptionType.Altar:
-                    //print("Building Altar of " + option.altarName);
+                    print("Building Altar of " + option.altarName);
                     GetComponent<Player>().BuyAltar(option.node, option.altarName);
                     break;
             }
@@ -1141,7 +1145,7 @@ public class AI : MonoBehaviour {
         for (int i = 0; i < neighbouringNodes.Count; i++) {
             GameObject neighbourArmy = neighbouringNodes[i].GetComponent<Node>().occupant;
             if (neighbourArmy && neighbourArmy.GetComponent<Army>().faction != faction && neighbourArmy.GetComponent<Army>().faction != Faction.Independent) {
-                if (!enemyArmyInfo.ContainsKey(neighbourArmy) || enemyArmyInfo.ContainsKey(neighbourArmy) && enemyArmyInfo[neighbourArmy].timeSinceScout >= 2) {
+                if (!enemyArmyInfo.ContainsKey(neighbourArmy) || enemyArmyInfo.ContainsKey(neighbourArmy) && enemyArmyInfo[neighbourArmy].timeSinceScout >= 3) {
                     print("We don't know everybody");
                     return false;
                 }
@@ -1267,7 +1271,7 @@ public class AI : MonoBehaviour {
 
     void SpendSavedMoney() {
         //print("invested in prophets: " + investInProphets);
-        if (investInProphets >= 30) {
+        if (investInProphets >= 20) {
             GameObject originNode = GetOriginNode();
             if (originNode) {
                 GetComponent<Player>().BuyProphet(originNode);
@@ -1275,15 +1279,21 @@ public class AI : MonoBehaviour {
             }
         }
         foreach (GameObject army in armies) {
-            if (army.GetComponent<Army>().allocatedReplenish >= GetComponent<Player>().templeBlueprints[TempleName.Protection].cost) {
+            GameObject armyNode = army.GetComponent<Army>().currentNode;
+            if (army.GetComponent<Army>().allocatedReplenish >= GetComponent<Player>().templeBlueprints[TempleName.Protection].cost && armyNode.GetComponent<Node>().temple==null) {
                 GetComponent<Player>().BuyTemple(army.GetComponent<Army>().currentNode, TempleName.Protection);
                 army.GetComponent<Army>().allocatedReplenish -= GetComponent<Player>().templeBlueprints[TempleName.Protection].cost;
             }
-            if (army.GetComponent<Army>().allocatedReplenish >= GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost) {
+            if (army.GetComponent<Army>().allocatedReplenish >= GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost && armyNode.GetComponent<Node>().altar == null) {
                 GetComponent<Player>().BuyAltar(army.GetComponent<Army>().currentNode, AltarName.Conflict);
                 army.GetComponent<Army>().allocatedReplenish -= GetComponent<Player>().altarBlueprints[AltarName.Conflict].cost;
             }
         }
+        int emptyUnitSpots = 0;
+        foreach(GameObject army in armies) {
+            emptyUnitSpots += 8 - army.GetComponent<Army>().units.Count;
+        }
+
     }
     GameObject GetOriginNode() {
         foreach(GameObject node in ownedNodes) {

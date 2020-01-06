@@ -86,7 +86,7 @@ public class FactionManager : MonoBehaviour{
         traits.EndTurn = IncreaseFog;
     }
     void MakeUnmar(FactionTraits traits) { 
-        traits.NewUnit = GiveShield;
+        traits.NewUnit = Empty;
         traits.Precombat = BoostMarred;
         traits.PrecombatAttacker = Empty;
         traits.PrecombatDefender = BoostDefense;
@@ -144,10 +144,6 @@ public class FactionManager : MonoBehaviour{
 
 
 
-    public void GiveShield(MapUnit unit) {
-        unit.maxShield = 1;
-        unit.currentShield = 1;
-    }
     public void UnitBecomeMarred(GameObject army, MapUnit unit){
         if (unit.marred == false) {
             //print("got marred");

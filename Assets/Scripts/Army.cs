@@ -200,19 +200,24 @@ public void OrderToEnterNode(GameObject targetNode) {
 
     public void BuyUnit(UnitPos unitPos, MapUnit unit) {
         //print("trying to buy unit");
-        int unitCost = currentNode.GetComponent<Node>().GetUnitCost(Tools.UnitToIndex(unit));
-        if (unitCost <= owner.GetComponent<Player>().money && unit.zealCost <= owner.GetComponent<Player>().zeal) {
+        MapUnit newUnit = unit.DeepCopy();
+        int unitCost = currentNode.GetComponent<Node>().GetUnitCost(Tools.UnitToIndex(newUnit));
+        if (unitCost <= owner.GetComponent<Player>().money && newUnit.zealCost <= owner.GetComponent<Player>().zeal) {
             if (owner.GetComponent<Player>().upgrades.ContainsKey("Protect the Pure")) {
                 float upgradeLevel = owner.GetComponent<Player>().upgrades["Protect the Pure"].currentLevel;
-                unit.maxHealth = (int)(unit.maxHealth - 0.1f * upgradeLevel);
-                unit.currentHealth = unit.maxHealth;
-                unit.maxShield += (int)upgradeLevel * 2;
-                unit.currentShield = unit.maxShield;
+                newUnit.SetHealth((int)(newUnit.maxHealth - (0.1f * upgradeLevel * newUnit.maxHealth)));
+                print("Health Lost: " + (int)(newUnit.maxHealth - (0.1f * upgradeLevel * newUnit.maxHealth)));
+                print("Upgrade Level: " + upgradeLevel);
+                //newUnit.currentHealth = newUnit.maxHealth;
+                newUnit.maxShield += (int)upgradeLevel * 2;
+                newUnit.currentShield = newUnit.maxShield;
+                print("Maxshield: " + newUnit.maxShield);
+                print("Currentshield: " + newUnit.currentShield);
             }
             owner.GetComponent<Player>().money -= unitCost;
-            owner.GetComponent<Player>().zeal -= unit.zealCost;
-            owner.GetComponent<Player>().factionTraits.NewUnit(unit);
-            AddUnit(unitPos.position, unitPos.frontRow, unit);
+            owner.GetComponent<Player>().zeal -= newUnit.zealCost;
+            owner.GetComponent<Player>().factionTraits.NewUnit(newUnit);
+            AddUnit(unitPos.position, unitPos.frontRow, newUnit);
         }
         //else print("not enough money");
     }
