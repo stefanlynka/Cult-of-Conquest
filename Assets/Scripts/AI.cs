@@ -86,7 +86,7 @@ public class AI : MonoBehaviour {
                 else if (turnPhase == TurnPhase.Done) {
                     endTurnTimer++;
                     endTurnMax = 30 + 5 * armies.Count;
-                    if (Army.movesToDo.Count==0 && endTurnTimer>endTurnMax) turnManager.GetComponent<TurnManager>().NextTurn();
+                    if (Army.movesToDo.Count==0 && endTurnTimer>endTurnMax && Input.GetKeyDown(KeyCode.Space)) turnManager.GetComponent<TurnManager>().NextTurn();
                     //print("Turn Over");
                 }
 

@@ -9,6 +9,7 @@ public class Controller : MonoBehaviour{
 
 
     private void Awake() {
+        DontDestroyOnLoad(gameObject);
         FindMembers();
     }
     // Start is called before the first frame update
@@ -19,6 +20,7 @@ public class Controller : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
+        //if (Input.GetKeyDown(KeyCode.))
     }
 
     void FindMembers() {
